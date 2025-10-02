@@ -1,0 +1,6 @@
+@Al_Maaly_Gate_School_HostAddress = http://localhost:5168
+
+GET {{Al_Maaly_Gate_School_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
