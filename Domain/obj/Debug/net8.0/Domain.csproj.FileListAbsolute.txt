@@ -1,0 +1,6 @@
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\Debug\net8.0\Domain.csproj.AssemblyReference.cache
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\Debug\net8.0\Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\Debug\net8.0\Domain.AssemblyInfoInputs.cache
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\Debug\net8.0\Domain.AssemblyInfo.cs
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\Debug\net8.0\Domain.csproj.CoreCompileInputs.cache
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\Debug\net8.0\Domain.sourcelink.json

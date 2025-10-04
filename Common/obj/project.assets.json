@@ -558,23 +558,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Golden10s\\.nuget\\packages\\": {},
+    "C:\\Users\\Ramy Mahana\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\Al-Maaly-Gate-School-API-main\\Common\\Common.csproj",
+      "projectUniqueName": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\Common.csproj",
       "projectName": "Common",
-      "projectPath": "F:\\Al-Maaly-Gate-School-API-main\\Common\\Common.csproj",
-      "packagesPath": "C:\\Users\\Golden10s\\.nuget\\packages\\",
-      "outputPath": "F:\\Al-Maaly-Gate-School-API-main\\Common\\obj\\",
+      "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\Common.csproj",
+      "packagesPath": "C:\\Users\\Ramy Mahana\\.nuget\\packages\\",
+      "outputPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Golden10s\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Ramy Mahana\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -583,7 +583,8 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {}
+        "C:\\Program Files\\dotnet\\library-packs": {},
+        "https://www.nuget.org/api/v2/": {}
       },
       "frameworks": {
         "net8.0": {
