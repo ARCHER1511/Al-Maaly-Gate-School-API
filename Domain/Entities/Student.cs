@@ -10,5 +10,11 @@
         public bool IsApproved { get; set; } = false;
         public string ClassId { get; set; } = string.Empty;
         public Class? Class { get; set; }
+
+        public List<ParentStudent> ParentStudent { get; set; } = new List<ParentStudent>();
+        public List<StudentSubjectExam> StudentSubjectExam { get; set; } = new List<StudentSubjectExam>();
+        public List<StudentQuestionAnswerExam> StudentQuestionAnswerExam { get; set; } = new List<StudentQuestionAnswerExam>();
+
+
     }
 }
