@@ -63,7 +63,7 @@ Packages:
 
 Microsoft.EntityFrameworkCore
 
-Microsoft.EntityFrameworkCore.SqlServer (or preferred DB provider)
+Microsoft.EntityFrameworkCore.SqlServer 
 
 Microsoft.EntityFrameworkCore.Tools
 
