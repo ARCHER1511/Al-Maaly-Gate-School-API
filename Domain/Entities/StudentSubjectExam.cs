@@ -4,10 +4,10 @@
     {
         public decimal? Grade { get; set; }
         public string? StudentId {  get; set; } 
-        public Student? student { get; set; }
+        public Student? Student { get; set; }
         public string? SubjectId { get; set; }
         public Subject? Subject { get; set; }
-        public string? ExamId { get; set; }
+        public int ExamId { get; set; }
         public Exam? Exam { get; set; }
 
 

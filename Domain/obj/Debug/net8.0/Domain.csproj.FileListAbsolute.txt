@@ -4,3 +4,10 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\D
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\Debug\net8.0\Domain.AssemblyInfo.cs
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\Debug\net8.0\Domain.csproj.CoreCompileInputs.cache
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\Debug\net8.0\Domain.sourcelink.json
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\bin\Debug\net8.0\Domain.deps.json
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\bin\Debug\net8.0\Domain.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\bin\Debug\net8.0\Domain.pdb
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\Debug\net8.0\Domain.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\Debug\net8.0\refint\Domain.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\Debug\net8.0\Domain.pdb
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Domain\obj\Debug\net8.0\ref\Domain.dll

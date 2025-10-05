@@ -7,7 +7,7 @@
         public string TeacherId { get; set; } = string.Empty;
         public Teacher? Teacher { get; set; }
 
-        public string ExamId { get; set; } = string.Empty;
+        public int ExamId { get; set; }
         public Exam? Exam { get; set; }
     }
 }

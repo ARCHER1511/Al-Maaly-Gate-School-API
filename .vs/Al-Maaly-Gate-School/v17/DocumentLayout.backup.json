@@ -3,28 +3,128 @@
   "WorkspaceRootPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\teachersubjectexamconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\teachersubjectexamconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F7F66F95-943E-483D-B01A-D2907D06CFA0}|Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\al-maaly-gate-school\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{F7F66F95-943E-483D-B01A-D2907D06CFA0}|Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj|solutionrelative:al-maaly-gate-school\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\data\\almaalygateschoolcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\data\\almaalygateschoolcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\data\\almaalygateschoolcontextdesignfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\data\\almaalygateschoolcontextdesignfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\teacherconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\teacherconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\question.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\question.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\subjectconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\subjectconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\questionexamteacher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\questionexamteacher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\student.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\student.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\studentquestionanswerexam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\studentquestionanswerexam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\studentsubjectexam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\studentsubjectexam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\subject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\subject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\teacher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\teacher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\teachersubjectexam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\teachersubjectexam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\userbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\userbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\classassets.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\classassets.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\appuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\appuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\approle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\approle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\answer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\answer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\admin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\admin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\parentstudent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\parentstudent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\parent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\parent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\exam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\exam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\classsubject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\classsubject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\classappointment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\classappointment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\class.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\class.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\appuserrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\appuserrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\studentsubjectexamconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\studentsubjectexamconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\teachersubjectexamconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\teachersubjectexamconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\studentquestionanswerexamconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\studentquestionanswerexamconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\parentstudentconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\parentstudentconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\appuserroleconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\appuserroleconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\classappointmentconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\classappointmentconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\subjectconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\subjectconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\teacherconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\teacherconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\studentconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -39,10 +139,6 @@
       "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\questionconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\parentstudentconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\parentstudentconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\parentconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\parentconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -55,32 +151,40 @@
       "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\classsubjectconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\classconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\classconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\classassetsconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\classassetsconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\appuserconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\appuserconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\approleconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\approleconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\answerconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\answerconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\classconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\classconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\classappointmentconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\classappointmentconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\questionexamteacher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\questionexamteacher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\domain\\entities\\parent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1A3A854E-B259-4750-BD6E-68A124E17CAC}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\parent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\configurations\\adminconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\configurations\\adminconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\data\\almaalygateschoolcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\data\\almaalygateschoolcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F7F66F95-943E-483D-B01A-D2907D06CFA0}|Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\al-maaly-gate-school\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F7F66F95-943E-483D-B01A-D2907D06CFA0}|Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj|solutionrelative:al-maaly-gate-school\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F7F66F95-943E-483D-B01A-D2907D06CFA0}|Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\al-maaly-gate-school\\al-maaly-gate-school.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{F7F66F95-943E-483D-B01A-D2907D06CFA0}|Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj|solutionrelative:al-maaly-gate-school\\al-maaly-gate-school.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -90,60 +194,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 210,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 55,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "TeacherSubjectExamConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\TeacherSubjectExamConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\TeacherSubjectExamConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\TeacherSubjectExamConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\TeacherSubjectExamConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:29:42.341Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "TeacherConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\TeacherConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\TeacherConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\TeacherConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\TeacherConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:28:42.563Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "SubjectConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\SubjectConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\SubjectConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\SubjectConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\SubjectConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABBAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:27:34.68Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "StudentSubjectExamConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\StudentSubjectExamConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\StudentSubjectExamConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\StudentSubjectExamConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\StudentSubjectExamConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:26:31.574Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
@@ -338,210 +390,600 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AlMaalyGateSchoolContext.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Data\\AlMaalyGateSchoolContext.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Data\\AlMaalyGateSchoolContext.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Data\\AlMaalyGateSchoolContext.cs",
-              "RelativeToolTip": "Infrastructure\\Data\\AlMaalyGateSchoolContext.cs",
-              "ViewState": "AgIAABcAAAAAAAAAAAAUwB4AAAAnAAAAAAAAAA==",
+              "DocumentIndex": 7,
+              "Title": "Subject.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Subject.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\Subject.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Subject.cs",
+              "RelativeToolTip": "Domain\\Entities\\Subject.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T18:48:44.849Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "StudentQuestionAnswerExamConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\StudentQuestionAnswerExamConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\StudentQuestionAnswerExamConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\StudentQuestionAnswerExamConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\StudentQuestionAnswerExamConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:24:59.827Z",
+              "WhenOpened": "2025-10-05T12:52:03.237Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "StudentConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\StudentConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\StudentConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\StudentConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\StudentConfiguration.cs",
+              "Title": "StudentSubjectExam.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\StudentSubjectExam.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\StudentSubjectExam.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\StudentSubjectExam.cs",
+              "RelativeToolTip": "Domain\\Entities\\StudentSubjectExam.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:51:53.693Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "StudentQuestionAnswerExam.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\StudentQuestionAnswerExam.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\StudentQuestionAnswerExam.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\StudentQuestionAnswerExam.cs",
+              "RelativeToolTip": "Domain\\Entities\\StudentQuestionAnswerExam.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAkwBEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:51:44.434Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Student.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Student.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\Student.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Student.cs",
+              "RelativeToolTip": "Domain\\Entities\\Student.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:23:49.313Z",
+              "WhenOpened": "2025-10-05T12:51:33.022Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "QuestionExamTeacherConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\QuestionExamTeacherConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\QuestionExamTeacherConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\QuestionExamTeacherConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\QuestionExamTeacherConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:22:30.885Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "QuestionConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\QuestionConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\QuestionConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\QuestionConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\QuestionConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:20:15.929Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "ParentStudentConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ParentStudentConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ParentStudentConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ParentStudentConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\ParentStudentConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:19:02.798Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "ParentConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ParentConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ParentConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ParentConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\ParentConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:17:02.512Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "ExamConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ExamConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ExamConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ExamConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\ExamConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:15:24.233Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "ClassSubjectConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassSubjectConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ClassSubjectConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassSubjectConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\ClassSubjectConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:14:08.44Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "ClassAssetsConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassAssetsConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ClassAssetsConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassAssetsConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\ClassAssetsConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:11:43.769Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "AnswerConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\AnswerConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\AnswerConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\AnswerConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\AnswerConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:05:21.541Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "ClassConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ClassConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\ClassConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:03:58.532Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "ClassAppointmentConfiguration.cs",
-              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassAppointmentConfiguration.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ClassAppointmentConfiguration.cs",
-              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassAppointmentConfiguration.cs",
-              "RelativeToolTip": "Infrastructure\\Configurations\\ClassAppointmentConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-04T22:09:40.062Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 3,
               "Title": "QuestionExamTeacher.cs",
               "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\QuestionExamTeacher.cs",
               "RelativeDocumentMoniker": "Domain\\Entities\\QuestionExamTeacher.cs",
               "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\QuestionExamTeacher.cs",
               "RelativeToolTip": "Domain\\Entities\\QuestionExamTeacher.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAcAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-04T22:08:39.164Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 2,
+              "Title": "Question.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Question.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\Question.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Question.cs",
+              "RelativeToolTip": "Domain\\Entities\\Question.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAYwAoAAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:51:05.155Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AlMaalyGateSchoolContextDesignFactory.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Data\\AlMaalyGateSchoolContextDesignFactory.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Data\\AlMaalyGateSchoolContextDesignFactory.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Data\\AlMaalyGateSchoolContextDesignFactory.cs",
+              "RelativeToolTip": "Infrastructure\\Data\\AlMaalyGateSchoolContextDesignFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T16:31:50.156Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\appsettings.json",
+              "RelativeDocumentMoniker": "Al-Maaly-Gate-School\\appsettings.json",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\appsettings.json",
+              "RelativeToolTip": "Al-Maaly-Gate-School\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-05T16:27:39.914Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Teacher.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Teacher.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\Teacher.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Teacher.cs",
+              "RelativeToolTip": "Domain\\Entities\\Teacher.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:52:11.88Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "TeacherSubjectExam.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\TeacherSubjectExam.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\TeacherSubjectExam.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\TeacherSubjectExam.cs",
+              "RelativeToolTip": "Domain\\Entities\\TeacherSubjectExam.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:52:25.408Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "UserBase.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\UserBase.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\UserBase.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\UserBase.cs",
+              "RelativeToolTip": "Domain\\Entities\\UserBase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T13:14:40.481Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ClassAssets.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\ClassAssets.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\ClassAssets.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\ClassAssets.cs",
+              "RelativeToolTip": "Domain\\Entities\\ClassAssets.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:50:01.931Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "AppUser.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\AppUser.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\AppUser.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\AppUser.cs",
+              "RelativeToolTip": "Domain\\Entities\\AppUser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:49:06.625Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "AppRole.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\AppRole.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\AppRole.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\AppRole.cs",
+              "RelativeToolTip": "Domain\\Entities\\AppRole.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:48:57.614Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Answer.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Answer.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\Answer.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Answer.cs",
+              "RelativeToolTip": "Domain\\Entities\\Answer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:48:43.599Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Admin.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Admin.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\Admin.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Admin.cs",
+              "RelativeToolTip": "Domain\\Entities\\Admin.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:48:30.787Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "ParentStudent.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\ParentStudent.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\ParentStudent.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\ParentStudent.cs",
+              "RelativeToolTip": "Domain\\Entities\\ParentStudent.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:50:57.89Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
               "Title": "Parent.cs",
               "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Parent.cs",
               "RelativeDocumentMoniker": "Domain\\Entities\\Parent.cs",
               "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Parent.cs",
               "RelativeToolTip": "Domain\\Entities\\Parent.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-04T22:08:29.363Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Exam.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Exam.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\Exam.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Exam.cs",
+              "RelativeToolTip": "Domain\\Entities\\Exam.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:50:27.171Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 19,
+              "Title": "ClassSubject.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\ClassSubject.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\ClassSubject.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\ClassSubject.cs",
+              "RelativeToolTip": "Domain\\Entities\\ClassSubject.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:50:12.471Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "ClassAppointment.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\ClassAppointment.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\ClassAppointment.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\ClassAppointment.cs",
+              "RelativeToolTip": "Domain\\Entities\\ClassAppointment.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:49:35.985Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Class.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Class.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\Class.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\Class.cs",
+              "RelativeToolTip": "Domain\\Entities\\Class.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T12:49:37.174Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "AppUserRole.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\AppUserRole.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\AppUserRole.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Entities\\AppUserRole.cs",
+              "RelativeToolTip": "Domain\\Entities\\AppUserRole.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T13:20:50.162Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "StudentSubjectExamConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\StudentSubjectExamConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\StudentSubjectExamConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\StudentSubjectExamConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\StudentSubjectExamConfiguration.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAcwBYAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:26:31.574Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "TeacherSubjectExamConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\TeacherSubjectExamConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\TeacherSubjectExamConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\TeacherSubjectExamConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\TeacherSubjectExamConfiguration.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAA4wBEAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:29:42.341Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "StudentQuestionAnswerExamConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\StudentQuestionAnswerExamConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\StudentQuestionAnswerExamConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\StudentQuestionAnswerExamConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\StudentQuestionAnswerExamConfiguration.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAiwBoAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:24:59.827Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "ParentStudentConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ParentStudentConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ParentStudentConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ParentStudentConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\ParentStudentConfiguration.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABIAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:19:02.798Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "AppUserRoleConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\AppUserRoleConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\AppUserRoleConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\AppUserRoleConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\AppUserRoleConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAALAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T15:14:40.341Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "ClassAppointmentConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassAppointmentConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ClassAppointmentConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassAppointmentConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\ClassAppointmentConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:09:40.062Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "SubjectConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\SubjectConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\SubjectConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\SubjectConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\SubjectConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:27:34.68Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "TeacherConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\TeacherConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\TeacherConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\TeacherConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\TeacherConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:28:42.563Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "StudentConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\StudentConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\StudentConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\StudentConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\StudentConfiguration.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAmwBsAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:23:49.313Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "QuestionExamTeacherConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\QuestionExamTeacherConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\QuestionExamTeacherConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\QuestionExamTeacherConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\QuestionExamTeacherConfiguration.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAcwBEAAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:22:30.885Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "QuestionConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\QuestionConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\QuestionConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\QuestionConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\QuestionConfiguration.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAA4wBkAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:20:15.929Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "ParentConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ParentConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ParentConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ParentConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\ParentConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:17:02.512Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "ExamConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ExamConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ExamConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ExamConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\ExamConfiguration.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAA4wB4AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:15:24.233Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "ClassSubjectConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassSubjectConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ClassSubjectConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassSubjectConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\ClassSubjectConfiguration.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAcwBEAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:14:08.44Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "ClassConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ClassConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\ClassConfiguration.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAA4wBcAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:03:58.532Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "ClassAssetsConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassAssetsConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\ClassAssetsConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\ClassAssetsConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\ClassAssetsConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:11:43.769Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "AppUserConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\AppUserConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\AppUserConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\AppUserConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\AppUserConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T15:13:04.285Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "AppRoleConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\AppRoleConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\AppRoleConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\AppRoleConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\AppRoleConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T15:14:09.5Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "AnswerConfiguration.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\AnswerConfiguration.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Configurations\\AnswerConfiguration.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\AnswerConfiguration.cs",
+              "RelativeToolTip": "Infrastructure\\Configurations\\AnswerConfiguration.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAcwBkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T22:05:21.541Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
               "Title": "AdminConfiguration.cs",
               "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\AdminConfiguration.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Configurations\\AdminConfiguration.cs",
               "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Configurations\\AdminConfiguration.cs",
               "RelativeToolTip": "Infrastructure\\Configurations\\AdminConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-04T22:05:18.607Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "AlMaalyGateSchoolContext.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Data\\AlMaalyGateSchoolContext.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Data\\AlMaalyGateSchoolContext.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Data\\AlMaalyGateSchoolContext.cs",
+              "RelativeToolTip": "Infrastructure\\Data\\AlMaalyGateSchoolContext.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAowA8AAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T18:48:44.849Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Program.cs",
+              "RelativeDocumentMoniker": "Al-Maaly-Gate-School\\Program.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Program.cs",
+              "RelativeToolTip": "Al-Maaly-Gate-School\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAABZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T16:23:28.135Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "Al-Maaly-Gate-School",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj",
+              "RelativeDocumentMoniker": "Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj",
+              "RelativeToolTip": "Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-10-05T16:23:22.303Z",
               "EditorCaption": ""
             }
           ]

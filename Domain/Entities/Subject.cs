@@ -4,6 +4,6 @@
     {
         public string ClassYear { get; set; } = string.Empty;
         public List<ClassSubject> ClassSubjects { get; set; } = new List<ClassSubject>();
-        public List<TeacherSubjectExam> TeacherSubjectExam { get; set; } = new List<TeacherSubjectExam>();
+        public List<TeacherSubjectExam> TeacherSubjectExams { get; set; } = new List<TeacherSubjectExam>();
     }
 }

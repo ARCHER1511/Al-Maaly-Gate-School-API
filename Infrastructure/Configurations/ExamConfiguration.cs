@@ -13,7 +13,21 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Exam> builder) 
         {
+            builder.HasMany(e => e.TeacherSubjectExams)
+               .WithOne(te => te.Exam)
+               .HasForeignKey(te => te.ExamId);
 
+            builder.HasMany(e => e.StudentSubjectExams)
+                   .WithOne(se => se.Exam)
+                   .HasForeignKey(se => se.ExamId);
+
+            builder.HasMany(e => e.QuestionExamTeachers)
+                   .WithOne(qe => qe.Exam)
+                   .HasForeignKey(qe => qe.ExamId);
+
+            builder.HasMany(e => e.StudentQuestionAnswerExams)
+                   .WithOne(sa => sa.Exam)
+                   .HasForeignKey(sa => sa.ExamId);
         }
     }
 }

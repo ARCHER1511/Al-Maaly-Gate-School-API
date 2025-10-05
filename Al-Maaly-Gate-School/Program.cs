@@ -1,3 +1,5 @@
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Al_Maaly_Gate_School
 {
@@ -6,8 +8,13 @@ namespace Al_Maaly_Gate_School
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            var configuration = builder.Configuration;
             // Add services to the container.
+            builder.Services.AddDbContext<AlMaalyGateSchoolContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+            );
+
+            builder.Services.AddScoped<IDbContextFactory<AlMaalyGateSchoolContext>, DbContextFactory>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -26,7 +33,6 @@ namespace Al_Maaly_Gate_School
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

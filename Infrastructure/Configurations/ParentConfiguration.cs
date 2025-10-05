@@ -8,7 +8,13 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Parent> builder)
         {
-            
+            builder.HasOne(p => p.AppUser)
+               .WithMany()
+               .HasForeignKey(p => p.AppUserId);
+
+            builder.HasMany(p => p.ParentStudent)
+                   .WithOne(ps => ps.Parent)
+                   .HasForeignKey(ps => ps.ParentId);
         }
     }
 }

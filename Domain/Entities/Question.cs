@@ -8,10 +8,10 @@
         public string? CorrectAnswer { get; set; }
         public decimal Degree { get; set; }
         public bool IsRequired { get; set; }
-        public int TeacherId { get; set; }
+        public string TeacherId { get; set; } = string.Empty;
         public Teacher? Teacher { get; set; }
-        public List<QuestionExamTeacher> QuestionExamTeacher { get; set; } = new List<QuestionExamTeacher>();
-        public List<Answer> Answer { get; set; } = new List<Answer> ();
+        public List<QuestionExamTeacher> QuestionExamTeachers { get; set; } = new List<QuestionExamTeacher>();
+        public List<Answer> Answers { get; set; } = new List<Answer>();
         public List<StudentQuestionAnswerExam> StudentQuestionAnswerExam { get; set; } = new List<StudentQuestionAnswerExam>();
 
 

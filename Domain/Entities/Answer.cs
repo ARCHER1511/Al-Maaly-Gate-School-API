@@ -7,7 +7,7 @@
         public bool IsCorrect { get; set; }
         public string TeacherId { get; set; } = string.Empty;
         public Teacher? Teacher { get; set; }
-        public string QuestionId { get; set; } = string.Empty;
+        public int QuestionId { get; set; }
         public Question? Question { get; set; }
         public List<StudentQuestionAnswerExam> StudentQuestionAnswerExam { get; set; } = new List<StudentQuestionAnswerExam>();
 
