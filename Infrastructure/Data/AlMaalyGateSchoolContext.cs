@@ -29,8 +29,8 @@ namespace Infrastructure.Data
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<TeacherSubjectExam> TeacherSubjectExams { get; set; }
-        
 
+        //On model creating with configuration and Factory On using onion architecture
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

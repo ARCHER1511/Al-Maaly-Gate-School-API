@@ -18,3 +18,5 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructu
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.pdb
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.genruntimeconfig.cache
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\ref\Infrastructure.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Application.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Application.pdb
