@@ -1,7 +1,6 @@
 using Application.DependencyInjection;
-using Infrastructure.Data;
 using Infrastructure.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
+using Infrastructure.SignalR;
 
 namespace Al_Maaly_Gate_School
 {
@@ -33,6 +32,7 @@ namespace Al_Maaly_Gate_School
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+            app.MapHub<NotificationHub>("/hubs/notifications");
 
             app.MapControllers();
 

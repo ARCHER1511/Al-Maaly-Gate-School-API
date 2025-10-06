@@ -4,3 +4,7 @@ GET {{Al_Maaly_Gate_School_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+GET {{Al_Maaly_Gate_School_HostAddress}}/admin/
+Accept: application/json
+###
