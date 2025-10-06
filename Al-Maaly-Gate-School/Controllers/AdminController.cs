@@ -27,7 +27,7 @@ namespace Al_Maaly_Gate_School.Controllers
 
         //GET: api/Admin/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(string id)
         {
             var admin = await _adminService.GetByIdAsync(id);
             if (admin == null)
@@ -65,7 +65,7 @@ namespace Al_Maaly_Gate_School.Controllers
 
         //DELETE: api/Admin/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             var deleted = await _adminService.DeleteAsync(id);
             if (!deleted)
