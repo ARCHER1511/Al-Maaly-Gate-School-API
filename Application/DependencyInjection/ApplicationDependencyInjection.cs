@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Domain.Interfaces.ApplicationInterfaces;
+using Application.Services;
 
 namespace Application.DependencyInjection
 {
@@ -7,8 +9,7 @@ namespace Application.DependencyInjection
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            // Here you can add application-level services, for example:
-            // services.AddScoped<IYourService, YourServiceImplementation>();
+            services.AddScoped<IAdminService, AdminService>();
             return services;
         }
     }

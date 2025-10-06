@@ -1,7 +1,28 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{53CEB137-F0E1-49B5-B52E-B07CE3CBDF23}|Common\\Common.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\common\\wrappers\\response.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{53CEB137-F0E1-49B5-B52E-B07CE3CBDF23}|Common\\Common.csproj|solutionrelative:common\\wrappers\\response.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F7F66F95-943E-483D-B01A-D2907D06CFA0}|Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\al-maaly-gate-school\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F7F66F95-943E-483D-B01A-D2907D06CFA0}|Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj|solutionrelative:al-maaly-gate-school\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2EE3DC3A-CE0C-4F5F-8896-CAB9384DFC6C}|Application\\Application.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\application\\dependencyinjection\\applicationdependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2EE3DC3A-CE0C-4F5F-8896-CAB9384DFC6C}|Application\\Application.csproj|solutionrelative:application\\dependencyinjection\\applicationdependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2EE3DC3A-CE0C-4F5F-8896-CAB9384DFC6C}|Application\\Application.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\application\\services\\adminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2EE3DC3A-CE0C-4F5F-8896-CAB9384DFC6C}|Application\\Application.csproj|solutionrelative:application\\services\\adminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|d:\\_development vault\\al-maaly-gate-school\\al-maaly-gate-school-api\\infrastructure\\repositories\\adminrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4258F169-E051-4F82-837D-09564DFC00CC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\repositories\\adminrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 210,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 50,
           "Children": [
             {
               "$type": "Bookmark",
@@ -206,6 +227,71 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{004be353-6879-467c-9d1e-9ac23cdf6d49}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AdminController.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Controllers\\AdminController.cs",
+              "RelativeDocumentMoniker": "Al-Maaly-Gate-School\\Controllers\\AdminController.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Controllers\\AdminController.cs",
+              "RelativeToolTip": "Al-Maaly-Gate-School\\Controllers\\AdminController.cs",
+              "ViewState": "AgIAADwAAAAAAAAAAAAowEkAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-06T11:50:50.866Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Response.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\Wrappers\\Response.cs",
+              "RelativeDocumentMoniker": "Common\\Wrappers\\Response.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\Wrappers\\Response.cs",
+              "RelativeToolTip": "Common\\Wrappers\\Response.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-06T11:47:28.382Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ApplicationDependencyInjection.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Application\\DependencyInjection\\ApplicationDependencyInjection.cs",
+              "RelativeDocumentMoniker": "Application\\DependencyInjection\\ApplicationDependencyInjection.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Application\\DependencyInjection\\ApplicationDependencyInjection.cs",
+              "RelativeToolTip": "Application\\DependencyInjection\\ApplicationDependencyInjection.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-06T11:45:04.34Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AdminService.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Application\\Services\\AdminService.cs",
+              "RelativeDocumentMoniker": "Application\\Services\\AdminService.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Application\\Services\\AdminService.cs",
+              "RelativeToolTip": "Application\\Services\\AdminService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-06T11:44:57.646Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AdminRepository.cs",
+              "DocumentMoniker": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Repositories\\AdminRepository.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Repositories\\AdminRepository.cs",
+              "ToolTip": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Repositories\\AdminRepository.cs",
+              "RelativeToolTip": "Infrastructure\\Repositories\\AdminRepository.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-06T11:41:23.573Z",
+              "EditorCaption": ""
             }
           ]
         },

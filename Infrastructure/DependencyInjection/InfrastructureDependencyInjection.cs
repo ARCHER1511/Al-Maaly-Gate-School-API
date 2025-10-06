@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 using Infrastructure.Data;
-using Infrastructure.Interfaces;
+using Domain.Interfaces.ApplicationInterfaces;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +23,7 @@ namespace Infrastructure.DependencyInjection
                 .AddDefaultTokenProviders();
             // Repositories
             services.AddScoped<IDbContextFactory<AlMaalyGateSchoolContext>, DbContextFactory>();
-            services.AddScoped<IAdminRepository, AdminRepository>();
+            services.AddScoped<IAdminRepository,AdminRepository>();
             services.AddScoped<IAnswerRepository,AnswerRepository>();
             services.AddScoped<IAppRoleRepository,AppRoleRepository>();
             services.AddScoped<IAppUserRepository,AppUserRepository>();

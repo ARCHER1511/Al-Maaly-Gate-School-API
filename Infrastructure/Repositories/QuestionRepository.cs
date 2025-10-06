@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 using Infrastructure.Data;
-using Infrastructure.Interfaces;
+using Domain.Interfaces.ApplicationInterfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
