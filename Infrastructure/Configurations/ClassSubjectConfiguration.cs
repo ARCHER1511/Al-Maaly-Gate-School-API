@@ -6,7 +6,7 @@ namespace Infrastructure.Configurations
 {
     public class ClassSubjectConfiguration : IEntityTypeConfiguration<ClassSubject>
     {
-        public void Configure(EntityTypeBuilder<ClassSubject> builder) 
+        public void Configure(EntityTypeBuilder<ClassSubject> builder)
         {
             builder.HasKey(cs => new { cs.ClassId, cs.SubjectId });
 

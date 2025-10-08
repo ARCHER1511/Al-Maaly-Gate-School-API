@@ -6,23 +6,23 @@ namespace Infrastructure.Configurations
 {
     public class ClassConfiguration : IEntityTypeConfiguration<Class>
     {
-        public void Configure(EntityTypeBuilder<Class> builder) 
+        public void Configure(EntityTypeBuilder<Class> builder)
         {
+            new BaseEntityConfiguration<Class>().Configure(builder);
+
+            builder.Property(c => c.ClassYear)
+                   .IsRequired()
+                   .HasMaxLength(50);
+
             builder.HasOne(c => c.Teacher)
-               .WithMany(t => t.Classes)
-               .HasForeignKey(c => c.TeacherId);
+                   .WithMany(t => t.Classes)
+                   .HasForeignKey(c => c.TeacherId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(c => c.ClassSubjects)
-                   .WithOne(cs => cs.Class)
-                   .HasForeignKey(cs => cs.ClassId);
-
-            builder.HasMany(c => c.ClassAssets)
-                   .WithOne(a => a.Class)
-                   .HasForeignKey(a => a.ClassId);
-
-            builder.HasMany(c => c.ClassAppointments)
-                   .WithOne(a => a.Class)
-                   .HasForeignKey(a => a.ClassId);
+            builder.HasMany(c => c.Students)
+                   .WithOne(s => s.Class)
+                   .HasForeignKey(s => s.ClassId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -8,9 +8,11 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Admin> builder)
         {
-            builder.HasOne(a => a.AppUser)
-               .WithMany()
-               .HasForeignKey(a => a.AppUserId);
+            new UserBaseConfiguration<Admin>().Configure(builder);
+
+            builder.Property(a => a.Type)
+                   .IsRequired()
+                   .HasMaxLength(100);
         }
     }
 }

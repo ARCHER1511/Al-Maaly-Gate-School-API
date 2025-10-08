@@ -2,8 +2,10 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructu
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Infrastructure.runtimeconfig.json
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Infrastructure.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Infrastructure.pdb
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Application.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Common.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Domain.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Application.pdb
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Common.pdb
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Domain.pdb
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.csproj.AssemblyReference.cache
@@ -18,5 +20,3 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructu
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.pdb
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.genruntimeconfig.cache
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\ref\Infrastructure.dll
-D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Application.dll
-D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Application.pdb

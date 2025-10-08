@@ -459,6 +459,13 @@
               "$ref": "#/components/schemas/AppUserRole"
             },
             "nullable": true
+          },
+          "userNotifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserNotification"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -546,6 +553,97 @@
           },
           "userId": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Notification": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "notificationType": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "creatorUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "creatorUser": {
+            "$ref": "#/components/schemas/AppUser"
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          },
+          "isBroadcast": {
+            "type": "boolean"
+          },
+          "userNotifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserNotification"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserNotification": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "notificationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "notification": {
+            "$ref": "#/components/schemas/Notification"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "user": {
+            "$ref": "#/components/schemas/AppUser"
+          },
+          "isRead": {
+            "type": "boolean"
+          },
+          "isDelivered": {
+            "type": "boolean"
+          },
+          "deliveredAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },

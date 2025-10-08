@@ -10,12 +10,16 @@ namespace Infrastructure.Configurations
         {
             builder.HasKey(sse => new { sse.StudentId, sse.SubjectId, sse.ExamId });
 
+            builder.Property(sse => sse.Grade)
+                   .HasColumnType("decimal(5,2)");
+
             builder.HasOne(sse => sse.Student)
                    .WithMany(s => s.SubjectExams)
-                   .HasForeignKey(sse => sse.StudentId);
+                   .HasForeignKey(sse => sse.StudentId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(sse => sse.Subject)
-                   .WithMany()
+                   .WithMany(s => s.StudentSubjectExams)
                    .HasForeignKey(sse => sse.SubjectId);
 
             builder.HasOne(sse => sse.Exam)
@@ -23,5 +27,4 @@ namespace Infrastructure.Configurations
                    .HasForeignKey(sse => sse.ExamId);
         }
     }
-    
 }

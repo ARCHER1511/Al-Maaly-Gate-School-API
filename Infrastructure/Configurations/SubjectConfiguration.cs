@@ -8,14 +8,12 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Subject> builder)
         {
-            builder.HasMany(s => s.ClassSubjects)
-               .WithOne(cs => cs.Subject)   
-               .HasForeignKey(cs => cs.SubjectId);
+            new BaseEntityConfiguration<Subject>().Configure(builder);
 
-            builder.HasMany(s => s.TeacherSubjectExams)
-                   .WithOne(te => te.Subject)
-                   .HasForeignKey(te => te.SubjectId);
+            builder.Property(s => s.ClassYear)
+                   .IsRequired()
+                   .HasMaxLength(50);
         }
     }
-    
+
 }

@@ -7,19 +7,22 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<TeacherSubjectExam> builder)
         {
-            builder.HasKey(te => new { te.TeacherId, te.SubjectId, te.ExamId });
+            builder.HasKey(tse => new { tse.TeacherId, tse.SubjectId, tse.ExamId });
 
-            builder.HasOne(te => te.Teacher)
+            builder.HasOne(tse => tse.Teacher)
                    .WithMany(t => t.SubjectExams)
-                   .HasForeignKey(te => te.TeacherId);
+                   .HasForeignKey(tse => tse.TeacherId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(te => te.Subject)
+            builder.HasOne(tse => tse.Subject)
                    .WithMany(s => s.TeacherSubjectExams)
-                   .HasForeignKey(te => te.SubjectId);
+                   .HasForeignKey(tse => tse.SubjectId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(te => te.Exam)
+            builder.HasOne(tse => tse.Exam)
                    .WithMany(e => e.TeacherSubjectExams)
-                   .HasForeignKey(te => te.ExamId);
+                   .HasForeignKey(tse => tse.ExamId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

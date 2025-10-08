@@ -9,8 +9,12 @@ namespace Infrastructure.Configurations
         public void Configure(EntityTypeBuilder<AppUser> builder)
         {
             builder.HasMany(u => u.UserRoles)
-                   .WithOne()
+                   .WithOne(ur => ur.User)
                    .HasForeignKey(ur => ur.UserId);
+
+            builder.HasMany(u => u.UserNotifications)
+                   .WithOne(un => un.User)
+                   .HasForeignKey(un => un.UserId);
         }
     }
 }

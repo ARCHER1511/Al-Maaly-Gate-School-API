@@ -9,7 +9,7 @@ namespace Infrastructure.Configurations
         public void Configure(EntityTypeBuilder<AppRole> builder)
         {
             builder.HasMany(r => r.UserRoles)
-                   .WithOne()
+                   .WithOne(ur => ur.Role)
                    .HasForeignKey(ur => ur.RoleId);
         }
     }

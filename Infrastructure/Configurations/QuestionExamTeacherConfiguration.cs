@@ -8,20 +8,21 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<QuestionExamTeacher> builder)
         {
-            builder.HasKey(qe => new { qe.QuestionId, qe.ExamId, qe.TeacherId })
-                   .IsClustered(false);
+            builder.HasKey(qet => new { qet.QuestionId, qet.TeacherId, qet.ExamId });
 
-            builder.HasOne(qe => qe.Question)
+            builder.HasOne(qet => qet.Question)
                    .WithMany(q => q.QuestionExamTeachers)
-                   .HasForeignKey(qe => qe.QuestionId);
+                   .HasForeignKey(qet => qet.QuestionId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(qe => qe.Exam)
-                   .WithMany(e => e.QuestionExamTeachers)
-                   .HasForeignKey(qe => qe.ExamId);
-
-            builder.HasOne(qe => qe.Teacher)
+            builder.HasOne(qet => qet.Teacher)
                    .WithMany(t => t.QuestionExams)
-                   .HasForeignKey(qe => qe.TeacherId)
+                   .HasForeignKey(qet => qet.TeacherId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(qet => qet.Exam)
+                   .WithMany(e => e.QuestionExamTeachers)
+                   .HasForeignKey(qet => qet.ExamId)
                    .OnDelete(DeleteBehavior.Restrict);
         }
     }
