@@ -31,5 +31,9 @@ namespace Infrastructure.Repositories
                 .Include(un => un.Notification)
                 .FirstOrDefaultAsync(un => un.NotificationId == notificationId && un.UserId == userId);
         }
+        public async Task<bool> UserExistsAsync(string userId)
+        {
+            return await _context.Users.AnyAsync(u => u.Id == userId);
+        }
     }
 }

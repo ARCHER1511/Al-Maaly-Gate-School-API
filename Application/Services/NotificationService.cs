@@ -33,6 +33,23 @@ namespace Application.Services
             string? role = null,
             bool isBroadcast = false)
         {
+
+            // Validate creator
+            if (!string.IsNullOrWhiteSpace(creatorUserId))
+            {
+                var creatorExists = await _userNotificationRepo.UserExistsAsync(creatorUserId);
+                if (!creatorExists)
+                    throw new ArgumentException($"Creator user ID '{creatorUserId}' does not exist.");
+            }
+
+            // Validate targets
+            foreach (var userId in targetUserIds)
+            {
+                var userExists = await _userNotificationRepo.UserExistsAsync(userId);
+                if (!userExists)
+                    throw new ArgumentException($"Target user ID '{userId}' does not exist.");
+            }
+
             var notification = new Notification
             {
                 Title = title,

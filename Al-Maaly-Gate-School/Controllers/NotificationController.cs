@@ -21,7 +21,7 @@ namespace Al_Maaly_Gate_School.Controllers
         public async Task<IActionResult> Create([FromBody] CreateNotificationDto dto)
         {
             if (dto == null || string.IsNullOrWhiteSpace(dto.Title))
-                return BadRequest(Response<CreateNotificationDto>.Fail("Invalid notification data."));
+                return BadRequest(ApiResponse<CreateNotificationDto>.Fail("Invalid notification data."));
 
             var notification = await _notificationService.CreateNotificationAsync(
                 dto.Title,

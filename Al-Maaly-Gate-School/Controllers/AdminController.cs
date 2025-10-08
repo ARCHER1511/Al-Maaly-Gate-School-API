@@ -22,7 +22,7 @@ namespace Al_Maaly_Gate_School.Controllers
         public async Task<IActionResult> GetAll()
         {
             var admins = await _adminService.GetAllAsync();
-            return Ok(Response<IEnumerable<Admin>>.Ok(admins, "Admins retrieved successfully"));
+            return Ok(ApiResponse<IEnumerable<Admin>>.Ok(admins, "Admins retrieved successfully"));
         }
 
         //GET: api/Admin/{id}
@@ -31,9 +31,9 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var admin = await _adminService.GetByIdAsync(id);
             if (admin == null)
-                return NotFound(Response<Admin>.Fail($"Admin with Id {id} not found."));
+                return NotFound(ApiResponse<Admin>.Fail($"Admin with Id {id} not found."));
 
-            return Ok(Response<Admin>.Ok(admin, "Admin retrieved successfully"));
+            return Ok(ApiResponse<Admin>.Ok(admin, "Admin retrieved successfully"));
         }
 
         //POST: api/Admin
@@ -41,11 +41,11 @@ namespace Al_Maaly_Gate_School.Controllers
         public async Task<IActionResult> Create([FromBody] Admin admin)
         {
             if (!ModelState.IsValid)
-                return BadRequest(Response<Admin>.Fail("Invalid admin data."));
+                return BadRequest(ApiResponse<Admin>.Fail("Invalid admin data."));
 
             var created = await _adminService.CreateAsync(admin);
             return CreatedAtAction(nameof(GetById), new { id = created.Id },
-                Response<Admin>.Ok(created, "Admin created successfully"));
+                ApiResponse<Admin>.Ok(created, "Admin created successfully"));
         }
 
         //PUT: api/Admin/{id}
@@ -53,14 +53,14 @@ namespace Al_Maaly_Gate_School.Controllers
         public async Task<IActionResult> Update(string id, [FromBody] Admin admin)
         {
             if (id != admin.Id)
-                return BadRequest(Response<Admin>.Fail("ID in URL does not match ID in body."));
+                return BadRequest(ApiResponse<Admin>.Fail("ID in URL does not match ID in body."));
 
             var existing = await _adminService.GetByIdAsync(id);
             if (existing == null)
-                return NotFound(Response<Admin>.Fail($"Admin with Id {id} not found."));
+                return NotFound(ApiResponse<Admin>.Fail($"Admin with Id {id} not found."));
 
             var updated = await _adminService.UpdateAsync(admin);
-            return Ok(Response<Admin>.Ok(updated, "Admin updated successfully"));
+            return Ok(ApiResponse<Admin>.Ok(updated, "Admin updated successfully"));
         }
 
         //DELETE: api/Admin/{id}
@@ -69,9 +69,9 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var deleted = await _adminService.DeleteAsync(id);
             if (!deleted)
-                return NotFound(Response<string>.Fail($"Admin with Id {id} not found."));
+                return NotFound(ApiResponse<string>.Fail($"Admin with Id {id} not found."));
 
-            return Ok(Response<string>.Ok($"Admin with Id {id} deleted successfully"));
+            return Ok(ApiResponse<string>.Ok($"Admin with Id {id} deleted successfully"));
         }
     }
 }

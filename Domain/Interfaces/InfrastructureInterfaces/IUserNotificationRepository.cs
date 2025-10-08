@@ -7,5 +7,6 @@ namespace Domain.Interfaces.InfrastructureInterfaces
     {
         Task<IEnumerable<UserNotification>> GetByUserIdAsync(string userId);
         Task<UserNotification?> GetByNotificationAndUserAsync(string notificationId, string userId);
+        Task<bool> UserExistsAsync(string userId);
     }
 }
