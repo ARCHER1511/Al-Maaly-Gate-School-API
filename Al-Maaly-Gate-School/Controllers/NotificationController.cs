@@ -1,6 +1,6 @@
 ﻿using Application.DTOs.NotificationDTOs;
 using Domain.Wrappers;
-using Domain.Interfaces.ApplicationInterfaces;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

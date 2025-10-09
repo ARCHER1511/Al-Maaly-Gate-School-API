@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
-using Domain.Interfaces.ApplicationInterfaces;
-using Domain.Interfaces.InfrastructureInterfaces;
+using Application.Interfaces;
+using Infrastructure.Interfaces;
 
 namespace Application.Services
 {

@@ -1,8 +1,9 @@
 ﻿using Domain.Wrappers;
 using Domain.Entities;
-using Domain.Interfaces.ApplicationInterfaces;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Application.DTOs.AdminDTOs;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
@@ -23,8 +24,8 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var result = await _adminService.GetAllAsync();
             if(!result.Success)
-               return NotFound(ApiResponse<IEnumerable<Admin>>.Fail(result.Message!));
-            return Ok(ApiResponse<IEnumerable<Admin>>.Ok(result.Data!, result.Message));
+               return NotFound(ApiResponse<IEnumerable<AdminViewDto>>.Fail(result.Message!));
+            return Ok(ApiResponse<IEnumerable<AdminViewDto>>.Ok(result.Data!, result.Message));
         }
 
         //GET: api/Admin/{id}
@@ -33,14 +34,14 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var result = await _adminService.GetByIdAsync(id);
             if (!result.Success)
-                return NotFound(ApiResponse<Admin>.Fail(result.Message!));
+                return NotFound(ApiResponse<AdminViewDto>.Fail(result.Message!));
 
-            return Ok(ApiResponse<Admin>.Ok(result.Data!, result.Message));
+            return Ok(ApiResponse<AdminViewDto>.Ok(result.Data!, result.Message));
         }
 
         //POST: api/Admin
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Admin admin)
+        public async Task<IActionResult> Create([FromBody] AdminCreateDto admin)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ApiResponse<Admin>.Fail("Invalid admin data."));
@@ -51,26 +52,26 @@ namespace Al_Maaly_Gate_School.Controllers
                 return BadRequest(ApiResponse<Admin>.Fail(result.Message!));
 
             return CreatedAtAction(nameof(GetById), new { id = result.Data!.Id },
-                ApiResponse<Admin>.Ok(result.Data, result.Message));
+                ApiResponse<AdminViewDto>.Ok(result.Data, result.Message));
         }
 
         // PUT: api/Admin/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] Admin admin)
+        public async Task<IActionResult> Update(string id, [FromBody] AdminUpdateDto admin)
         {
             if (id != admin.Id)
-                return BadRequest(ApiResponse<Admin>.Fail("ID in URL does not match ID in body."));
+                return BadRequest(ApiResponse<AdminViewDto>.Fail("ID in URL does not match ID in body."));
 
             var exists = await _adminService.GetByIdAsync(id);
             if (!exists.Success)
-                return NotFound(ApiResponse<Admin>.Fail(exists.Message!));
+                return NotFound(ApiResponse<AdminViewDto>.Fail(exists.Message!));
 
             var result = await _adminService.UpdateAsync(admin);
 
             if (!result.Success)
-                return BadRequest(ApiResponse<Admin>.Fail(result.Message!));
+                return BadRequest(ApiResponse<AdminViewDto>.Fail(result.Message!));
 
-            return Ok(ApiResponse<Admin>.Ok(result.Data!, result.Message));
+            return Ok(ApiResponse<AdminViewDto>.Ok(result.Data!, result.Message));
         }
 
         // DELETE: api/Admin/{id}

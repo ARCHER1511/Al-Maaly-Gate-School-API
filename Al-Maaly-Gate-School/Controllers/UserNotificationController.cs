@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.UserNotificationDTOs;
-using Domain.Interfaces.ApplicationInterfaces;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

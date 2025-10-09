@@ -16,3 +16,5 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Application\
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\refint\Application.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\Application.pdb
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\ref\Application.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Application\bin\Debug\net8.0\Infrastructure.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Application\bin\Debug\net8.0\Infrastructure.pdb

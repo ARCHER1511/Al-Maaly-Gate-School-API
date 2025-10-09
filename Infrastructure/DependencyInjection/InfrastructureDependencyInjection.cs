@@ -1,13 +1,11 @@
 ﻿using Domain.Entities;
 using Infrastructure.Data;
-using Infrastructure.SignalR;
-using Domain.Interfaces.ApplicationInterfaces;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Domain.Interfaces.InfrastructureInterfaces;
+using Infrastructure.Interfaces;
 namespace Infrastructure.DependencyInjection
 {
     public static class InfrastructureDependencyInjection
@@ -49,8 +47,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
-            services.AddSignalR();
-            services.AddScoped<INotificationBroadcaster, SignalRNotificationBroadcaster>();
+            
 
             return services;
         }

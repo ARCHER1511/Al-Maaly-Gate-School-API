@@ -1,5 +1,5 @@
 ﻿using Infrastructure.Data;
-using Domain.Interfaces.ApplicationInterfaces;
+using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;

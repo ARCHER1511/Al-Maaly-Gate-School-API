@@ -1,8 +1,11 @@
-﻿using Domain.Interfaces.ApplicationInterfaces;
+﻿using Application.DTOs.AdminDTOs;
+using AutoMapper;
 using Domain.Entities;
+using Application.Interfaces;
+using Infrastructure.Interfaces;
+using Domain.Wrappers;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
-using Domain.Wrappers;
 
 namespace Application.Services
 {
@@ -10,42 +13,49 @@ namespace Application.Services
     {
         private readonly IAdminRepository _adminRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public AdminService(IAdminRepository adminRepository, IUnitOfWork unitOfWork)
+        public AdminService(IAdminRepository adminRepository, IUnitOfWork unitOfWork,IMapper mapper)
         {
             _adminRepository = adminRepository;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public async Task<ServiceResult<Admin>> GetByIdAsync(object id)
+        public async Task<ServiceResult<AdminViewDto>> GetByIdAsync(object id)
         {
             var admin = await _adminRepository.GetByIdAsync(id);
             if(admin == null)
-                return ServiceResult<Admin>.Fail("Admin not found");
+            return ServiceResult<AdminViewDto>.Fail("Admin not found");
+            var adminDto = _mapper.Map<AdminViewDto>(admin);
 
-            return ServiceResult<Admin>.Ok(admin,"Admin retrieved successfully");
+            return ServiceResult<AdminViewDto>.Ok(adminDto, "Admin retrieved successfully");
         }
 
-        public async Task<ServiceResult<IEnumerable<Admin>>> GetAllAsync()
+        public async Task<ServiceResult<IEnumerable<AdminViewDto>>> GetAllAsync()
         {
             var admins = await _adminRepository.GetAllAsync();
             if(admins == null)
-            return ServiceResult<IEnumerable<Admin>>.Fail("No admins found");
+            return ServiceResult<IEnumerable<AdminViewDto>>.Fail("No admins found");
 
-            return ServiceResult<IEnumerable<Admin>>.Ok(admins,"Admins retrieved successfully");
+            var adminDto = _mapper.Map<IEnumerable<AdminViewDto>>(admins);
+
+            return ServiceResult<IEnumerable<AdminViewDto>>.Ok(adminDto, "Admins retrieved successfully");
         }
 
-        public async Task<ServiceResult<Admin?>> GetAsync(Expression<Func<Admin, bool>> predicate,
+        public async Task<ServiceResult<AdminViewDto?>> GetAsync(Expression<Func<Admin, bool>> predicate,
                                            Func<IQueryable<Admin>, IIncludableQueryable<Admin, object>>? include = null)
         {
             var admin = await _adminRepository.GetAsync(predicate, include);
             if(admin == null)
-                return ServiceResult<Admin?>.Fail("Admin not found");
+                return ServiceResult<AdminViewDto?>.Fail("Admin not found");
 
-            return ServiceResult<Admin?>.Ok(admin,"Admin retrieved successfully");
+            var adminDto = _mapper?.Map<AdminViewDto>(admin);
+
+            return ServiceResult<AdminViewDto?>.Ok(adminDto,"Admin retrieved successfully");
         }
 
-        public async Task<ServiceResult<IEnumerable<Admin>>> GetAllAsync(Expression<Func<Admin, bool>>? predicate = null,
+        public async Task<ServiceResult<IEnumerable<AdminViewDto>>> GetAllAsync(Expression<Func<Admin, bool>>? predicate = null,
                                                           Func<IQueryable<Admin>, IIncludableQueryable<Admin, object>>? include = null,
                                                           Func<IQueryable<Admin>, IOrderedQueryable<Admin>>? orderBy = null,
                                                           int? skip = null,
@@ -53,23 +63,37 @@ namespace Application.Services
         {
             var admins = await _adminRepository.GetAllAsync(predicate, include, orderBy, skip, take);
             if(admins == null)
-                return ServiceResult<IEnumerable<Admin>>.Fail("No admins found");
+                return ServiceResult<IEnumerable<AdminViewDto>>.Fail("No admins found");
+            var adminDto = _mapper.Map<IEnumerable<AdminViewDto>>(admins);
 
-            return ServiceResult<IEnumerable<Admin>>.Ok(admins, "Admins retrieved successfully");
+            return ServiceResult<IEnumerable<AdminViewDto>>.Ok(adminDto, "Admins retrieved successfully");
         }
 
-        public async Task<ServiceResult<Admin>> CreateAsync(Admin admin)
+        public async Task<ServiceResult<AdminViewDto>> CreateAsync(AdminCreateDto dto)
         {
+            var admin = _mapper.Map<Admin>(dto);
+
             await _adminRepository.AddAsync(admin);
             await _unitOfWork.SaveChangesAsync();
-            return ServiceResult<Admin>.Ok(admin, "Admin created successfully");
+
+            var viewDto = _mapper.Map<AdminViewDto>(admin);
+            return ServiceResult<AdminViewDto>.Ok(viewDto, "Admin created successfully");
         }
 
-        public async Task<ServiceResult<Admin>> UpdateAsync(Admin admin)
+        public async Task<ServiceResult<AdminViewDto>> UpdateAsync(AdminUpdateDto dto)
         {
-            _adminRepository.Update(admin);
+            var existingAdmin = await _adminRepository.GetByIdAsync(dto.Id);
+            if (existingAdmin == null)
+                return ServiceResult<AdminViewDto>.Fail("Admin not found");
+
+            // Apply updates from DTO to the tracked entity
+            _mapper.Map(dto, existingAdmin);
+
+            _adminRepository.Update(existingAdmin); // Optional if tracked
             await _unitOfWork.SaveChangesAsync();
-            return ServiceResult<Admin>.Ok(admin, "Admin updated successfully");
+
+            var viewDto = _mapper.Map<AdminViewDto>(existingAdmin);
+            return ServiceResult<AdminViewDto>.Ok(viewDto, "Admin updated successfully");
         }
 
         public async Task<ServiceResult<bool>> DeleteAsync(object id)

@@ -24,17 +24,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Admin"
+                "$ref": "#/components/schemas/AdminCreateDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Admin"
+                "$ref": "#/components/schemas/AdminCreateDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Admin"
+                "$ref": "#/components/schemas/AdminCreateDto"
               }
             }
           }
@@ -85,17 +85,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Admin"
+                "$ref": "#/components/schemas/AdminUpdateDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Admin"
+                "$ref": "#/components/schemas/AdminUpdateDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Admin"
+                "$ref": "#/components/schemas/AdminUpdateDto"
               }
             }
           }
@@ -328,7 +328,36 @@
   },
   "components": {
     "schemas": {
-      "Admin": {
+      "AdminCreateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactInfo": {
+            "type": "string",
+            "nullable": true
+          },
+          "isApproved": {
+            "type": "boolean"
+          },
+          "appUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AdminUpdateDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -354,138 +383,9 @@
             "type": "string",
             "nullable": true
           },
-          "appUser": {
-            "$ref": "#/components/schemas/AppUser"
-          },
           "type": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AppRole": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "normalizedName": {
-            "type": "string",
-            "nullable": true
-          },
-          "concurrencyStamp": {
-            "type": "string",
-            "nullable": true
-          },
-          "userRoles": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AppUserRole"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AppUser": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "userName": {
-            "type": "string",
-            "nullable": true
-          },
-          "normalizedUserName": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "normalizedEmail": {
-            "type": "string",
-            "nullable": true
-          },
-          "emailConfirmed": {
-            "type": "boolean"
-          },
-          "passwordHash": {
-            "type": "string",
-            "nullable": true
-          },
-          "securityStamp": {
-            "type": "string",
-            "nullable": true
-          },
-          "concurrencyStamp": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumberConfirmed": {
-            "type": "boolean"
-          },
-          "twoFactorEnabled": {
-            "type": "boolean"
-          },
-          "lockoutEnd": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "lockoutEnabled": {
-            "type": "boolean"
-          },
-          "accessFailedCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "userRoles": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AppUserRole"
-            },
-            "nullable": true
-          },
-          "userNotifications": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserNotification"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AppUserRole": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string",
-            "nullable": true
-          },
-          "roleId": {
-            "type": "string",
-            "nullable": true
-          },
-          "user": {
-            "$ref": "#/components/schemas/AppUser"
-          },
-          "role": {
-            "$ref": "#/components/schemas/AppRole"
           }
         },
         "additionalProperties": false
@@ -553,97 +453,6 @@
           },
           "userId": {
             "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Notification": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "url": {
-            "type": "string",
-            "nullable": true
-          },
-          "notificationType": {
-            "type": "string",
-            "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "creatorUserId": {
-            "type": "string",
-            "nullable": true
-          },
-          "creatorUser": {
-            "$ref": "#/components/schemas/AppUser"
-          },
-          "role": {
-            "type": "string",
-            "nullable": true
-          },
-          "isBroadcast": {
-            "type": "boolean"
-          },
-          "userNotifications": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserNotification"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "UserNotification": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "notificationId": {
-            "type": "string",
-            "nullable": true
-          },
-          "notification": {
-            "$ref": "#/components/schemas/Notification"
-          },
-          "userId": {
-            "type": "string",
-            "nullable": true
-          },
-          "user": {
-            "$ref": "#/components/schemas/AppUser"
-          },
-          "isRead": {
-            "type": "boolean"
-          },
-          "isDelivered": {
-            "type": "boolean"
-          },
-          "deliveredAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "readAt": {
-            "type": "string",
-            "format": "date-time",
             "nullable": true
           }
         },

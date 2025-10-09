@@ -1,6 +1,6 @@
 using Application.DependencyInjection;
 using Infrastructure.DependencyInjection;
-using Infrastructure.SignalR;
+using Application.SignalR;
 
 namespace Al_Maaly_Gate_School
 {
