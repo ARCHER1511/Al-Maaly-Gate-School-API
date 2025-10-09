@@ -1,6 +1,5 @@
 ﻿using Application.DTOs.UserNotificationDTOs;
 using Application.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Al_Maaly_Gate_School.Controllers

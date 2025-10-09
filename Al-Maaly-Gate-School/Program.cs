@@ -31,6 +31,7 @@ namespace Al_Maaly_Gate_School
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapHub<NotificationHub>("/hubs/notifications");
 

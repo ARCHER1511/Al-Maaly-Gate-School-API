@@ -164,3 +164,4 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\obj\De
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\obj\Debug\net8.0\Tests.pdb
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\obj\Debug\net8.0\Tests.genruntimeconfig.cache
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\obj\Debug\net8.0\ref\Tests.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

@@ -1,7 +1,6 @@
 ﻿using Application.DTOs.NotificationDTOs;
-using Domain.Wrappers;
 using Application.Interfaces;
-using Microsoft.AspNetCore.Http;
+using Domain.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Al_Maaly_Gate_School.Controllers

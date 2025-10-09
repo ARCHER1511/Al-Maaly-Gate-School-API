@@ -125,4 +125,5 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gat
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\AutoMapper.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
