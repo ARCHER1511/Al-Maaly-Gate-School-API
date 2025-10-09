@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
+using Domain.Wrappers;
 
 namespace Application.Services
 {
@@ -16,54 +17,70 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Admin?> GetByIdAsync(object id)
+        public async Task<ServiceResult<Admin>> GetByIdAsync(object id)
         {
-            return await _adminRepository.GetByIdAsync(id);
+            var admin = await _adminRepository.GetByIdAsync(id);
+            if(admin == null)
+                return ServiceResult<Admin>.Fail("Admin not found");
+
+            return ServiceResult<Admin>.Ok(admin,"Admin retrieved successfully");
         }
 
-        public async Task<IEnumerable<Admin>> GetAllAsync()
+        public async Task<ServiceResult<IEnumerable<Admin>>> GetAllAsync()
         {
-            return await _adminRepository.GetAllAsync();
+            var admins = await _adminRepository.GetAllAsync();
+            if(admins == null)
+            return ServiceResult<IEnumerable<Admin>>.Fail("No admins found");
+
+            return ServiceResult<IEnumerable<Admin>>.Ok(admins,"Admins retrieved successfully");
         }
 
-        public async Task<Admin?> GetAsync(Expression<Func<Admin, bool>> predicate,
+        public async Task<ServiceResult<Admin?>> GetAsync(Expression<Func<Admin, bool>> predicate,
                                            Func<IQueryable<Admin>, IIncludableQueryable<Admin, object>>? include = null)
         {
-            return await _adminRepository.GetAsync(predicate, include);
+            var admin = await _adminRepository.GetAsync(predicate, include);
+            if(admin == null)
+                return ServiceResult<Admin?>.Fail("Admin not found");
+
+            return ServiceResult<Admin?>.Ok(admin,"Admin retrieved successfully");
         }
 
-        public async Task<IEnumerable<Admin>> GetAllAsync(Expression<Func<Admin, bool>>? predicate = null,
+        public async Task<ServiceResult<IEnumerable<Admin>>> GetAllAsync(Expression<Func<Admin, bool>>? predicate = null,
                                                           Func<IQueryable<Admin>, IIncludableQueryable<Admin, object>>? include = null,
                                                           Func<IQueryable<Admin>, IOrderedQueryable<Admin>>? orderBy = null,
                                                           int? skip = null,
                                                           int? take = null)
         {
-            return await _adminRepository.GetAllAsync(predicate, include, orderBy, skip, take);
+            var admins = await _adminRepository.GetAllAsync(predicate, include, orderBy, skip, take);
+            if(admins == null)
+                return ServiceResult<IEnumerable<Admin>>.Fail("No admins found");
+
+            return ServiceResult<IEnumerable<Admin>>.Ok(admins, "Admins retrieved successfully");
         }
 
-        public async Task<Admin> CreateAsync(Admin admin)
+        public async Task<ServiceResult<Admin>> CreateAsync(Admin admin)
         {
             await _adminRepository.AddAsync(admin);
             await _unitOfWork.SaveChangesAsync();
-            return admin;
+            return ServiceResult<Admin>.Ok(admin, "Admin created successfully");
         }
 
-        public async Task<Admin> UpdateAsync(Admin admin)
+        public async Task<ServiceResult<Admin>> UpdateAsync(Admin admin)
         {
             _adminRepository.Update(admin);
             await _unitOfWork.SaveChangesAsync();
-            return admin;
+            return ServiceResult<Admin>.Ok(admin, "Admin updated successfully");
         }
 
-        public async Task<bool> DeleteAsync(object id)
+        public async Task<ServiceResult<bool>> DeleteAsync(object id)
         {
             var entity = await _adminRepository.GetByIdAsync(id);
             if (entity == null)
-                return false;
+                return ServiceResult<bool>.Fail("Admin not found");
 
             _adminRepository.Delete(entity);
             await _unitOfWork.SaveChangesAsync();
-            return true;
+            return ServiceResult<bool>.Ok(true, "Admin deleted successfully");
         }
     }
 }

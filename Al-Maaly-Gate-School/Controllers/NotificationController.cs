@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.NotificationDTOs;
-using Common.Wrappers;
+using Domain.Wrappers;
 using Domain.Interfaces.ApplicationInterfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

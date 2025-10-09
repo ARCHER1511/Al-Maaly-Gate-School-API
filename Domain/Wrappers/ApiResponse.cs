@@ -1,4 +1,4 @@
-﻿namespace Common.Wrappers
+﻿namespace Domain.Wrappers
 {
     public class ApiResponse<T>
     {

@@ -1,4 +1,4 @@
-﻿using Common.Wrappers;
+﻿using Domain.Wrappers;
 using Domain.Entities;
 using Domain.Interfaces.ApplicationInterfaces;
 using Microsoft.AspNetCore.Http;
@@ -21,19 +21,21 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var admins = await _adminService.GetAllAsync();
-            return Ok(ApiResponse<IEnumerable<Admin>>.Ok(admins, "Admins retrieved successfully"));
+            var result = await _adminService.GetAllAsync();
+            if(!result.Success)
+               return NotFound(ApiResponse<IEnumerable<Admin>>.Fail(result.Message!));
+            return Ok(ApiResponse<IEnumerable<Admin>>.Ok(result.Data!, result.Message));
         }
 
         //GET: api/Admin/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            var admin = await _adminService.GetByIdAsync(id);
-            if (admin == null)
-                return NotFound(ApiResponse<Admin>.Fail($"Admin with Id {id} not found."));
+            var result = await _adminService.GetByIdAsync(id);
+            if (!result.Success)
+                return NotFound(ApiResponse<Admin>.Fail(result.Message!));
 
-            return Ok(ApiResponse<Admin>.Ok(admin, "Admin retrieved successfully"));
+            return Ok(ApiResponse<Admin>.Ok(result.Data!, result.Message));
         }
 
         //POST: api/Admin
@@ -43,35 +45,44 @@ namespace Al_Maaly_Gate_School.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ApiResponse<Admin>.Fail("Invalid admin data."));
 
-            var created = await _adminService.CreateAsync(admin);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id },
-                ApiResponse<Admin>.Ok(created, "Admin created successfully"));
+            var result = await _adminService.CreateAsync(admin);
+
+            if (!result.Success)
+                return BadRequest(ApiResponse<Admin>.Fail(result.Message!));
+
+            return CreatedAtAction(nameof(GetById), new { id = result.Data!.Id },
+                ApiResponse<Admin>.Ok(result.Data, result.Message));
         }
 
-        //PUT: api/Admin/{id}
+        // PUT: api/Admin/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] Admin admin)
         {
             if (id != admin.Id)
                 return BadRequest(ApiResponse<Admin>.Fail("ID in URL does not match ID in body."));
 
-            var existing = await _adminService.GetByIdAsync(id);
-            if (existing == null)
-                return NotFound(ApiResponse<Admin>.Fail($"Admin with Id {id} not found."));
+            var exists = await _adminService.GetByIdAsync(id);
+            if (!exists.Success)
+                return NotFound(ApiResponse<Admin>.Fail(exists.Message!));
 
-            var updated = await _adminService.UpdateAsync(admin);
-            return Ok(ApiResponse<Admin>.Ok(updated, "Admin updated successfully"));
+            var result = await _adminService.UpdateAsync(admin);
+
+            if (!result.Success)
+                return BadRequest(ApiResponse<Admin>.Fail(result.Message!));
+
+            return Ok(ApiResponse<Admin>.Ok(result.Data!, result.Message));
         }
 
-        //DELETE: api/Admin/{id}
+        // DELETE: api/Admin/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var deleted = await _adminService.DeleteAsync(id);
-            if (!deleted)
-                return NotFound(ApiResponse<string>.Fail($"Admin with Id {id} not found."));
+            var result = await _adminService.DeleteAsync(id);
 
-            return Ok(ApiResponse<string>.Ok($"Admin with Id {id} deleted successfully"));
+            if (!result.Success)
+                return NotFound(ApiResponse<string>.Fail(result.Message!));
+
+            return Ok(ApiResponse<string>.Ok("Admin deleted successfully."));
         }
     }
 }
