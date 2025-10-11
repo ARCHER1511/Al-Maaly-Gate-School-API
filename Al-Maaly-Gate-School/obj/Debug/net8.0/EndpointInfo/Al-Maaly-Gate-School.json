@@ -424,7 +424,7 @@
       "AdminCreateDto": {
         "type": "object",
         "properties": {
-          "name": {
+          "fullName": {
             "type": "string",
             "nullable": true
           },
@@ -457,7 +457,7 @@
             "type": "string",
             "nullable": true
           },
-          "name": {
+          "fullName": {
             "type": "string",
             "nullable": true
           },
@@ -578,6 +578,10 @@
       "RegisterRequest": {
         "type": "object",
         "properties": {
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
           "fullName": {
             "type": "string",
             "nullable": true

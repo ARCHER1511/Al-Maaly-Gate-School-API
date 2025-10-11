@@ -16,18 +16,33 @@ namespace Application.Services
     {
         private readonly IAppUserRepository _userRepo;
         private readonly IAppRoleRepository _roleRepo;
+        private readonly IAdminRepository _adminRepo;
+        private readonly ITeacherRepository _teacherRepo;
+        private readonly IStudentRepository _studentRepo;
+        private readonly IParentRepository _parentRepo;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
 
         public AuthenticationService(
             IAppUserRepository userRepo,
             IAppRoleRepository roleRepo,
+            IAdminRepository adminRepo,
+            ITeacherRepository teacherRepo,
+            IStudentRepository studentRepo,
+            IParentRepository parentRepo,
+            IUnitOfWork unitOfWork,
             IConfiguration config,
             IMapper mapper
         )
         {
             _userRepo = userRepo;
             _roleRepo = roleRepo;
+            _adminRepo = adminRepo;
+            _teacherRepo = teacherRepo;
+            _studentRepo = studentRepo;
+            _parentRepo = parentRepo;
+            _unitOfWork = unitOfWork;
             _config = config;
             _mapper = mapper;
         }
@@ -45,12 +60,45 @@ namespace Application.Services
 
             var result = await _userRepo.CreateAsync(user, request.Password);
 
-            if (!result.Succeeded)
-                return ServiceResult<AuthResponse>.Fail("User creation failed");
+            if (!result.Succeeded) 
+            {
+                var errorMessages = string.Join(", ",result.Errors.Select(e => e.Description));
+                return ServiceResult<AuthResponse>.Fail($"User creation failed: {errorMessages}");
+            }
 
             if (!string.IsNullOrEmpty(request.Role))
                 await _userRepo.AddToRoleAsync(user, request.Role);
+            switch (request.Role.ToLower()) 
+            {
+                
+                case "admin":
+                    var admin = _mapper.Map<Admin>(request);
+                    admin.AppUserId = user.Id;
+                    await _adminRepo.AddAsync(admin);
+                    await _unitOfWork.SaveChangesAsync();
+                    break;
 
+                case "teacher":
+                    var teacher = _mapper.Map<Teacher>(request);
+                    teacher.AppUserId = user.Id;
+                    await _teacherRepo.AddAsync(teacher);
+                    await _unitOfWork.SaveChangesAsync();
+                    break;
+                
+                case "student":
+                    var student = _mapper.Map<Student>(request);
+                    student.AppUserId = user.Id;
+                    await _studentRepo.AddAsync(student);
+                    await _unitOfWork.SaveChangesAsync();
+                    break;
+
+                case "parent":
+                    var parent = _mapper.Map<Parent>(request);
+                    parent.AppUserId = user.Id;
+                    await _parentRepo.AddAsync(parent);
+                    await _unitOfWork.SaveChangesAsync();
+                    break;
+            }
             var roles = await _userRepo.GetRolesAsync(user);
             var response = _mapper.Map<AuthResponse>(user);
             response.Roles = roles;
@@ -97,6 +145,7 @@ namespace Application.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, user.FullName),
+                new Claim(ClaimTypes.UserData,user.UserName)
             };
 
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
