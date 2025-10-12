@@ -18,6 +18,8 @@ namespace Infrastructure.Configurations
                    .WithMany(s => s.Parents)
                    .HasForeignKey(ps => ps.StudentId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.ToTable("ParentStudents", "Academics");
         }
     }
 }

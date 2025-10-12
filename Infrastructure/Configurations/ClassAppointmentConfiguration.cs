@@ -17,6 +17,8 @@ namespace Infrastructure.Configurations
                    .WithMany(c => c.ClassAppointments)
                    .HasForeignKey(ca => ca.ClassId)
                    .OnDelete(DeleteBehavior.Cascade);
+
+            builder.ToTable("ClassAppointments", "Academics");
         }
     }
 }

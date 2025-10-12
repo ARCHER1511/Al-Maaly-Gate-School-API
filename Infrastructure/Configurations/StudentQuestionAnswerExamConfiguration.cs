@@ -26,6 +26,8 @@ namespace Infrastructure.Configurations
             builder.HasOne(sqae => sqae.Answer)
                    .WithMany(a => a.StudentQuestionAnswerExam)
                    .HasForeignKey(sqae => sqae.AnswerId);
+
+            builder.ToTable("StudentQuestionAnswerExam", "Academics");
         }
     }
 }

@@ -16,6 +16,8 @@ namespace Infrastructure.Configurations
 
             builder.Property(e => e.Link)
                    .HasMaxLength(500);
+
+            builder.ToTable("Exams", "Academics");
         }
     }
 }

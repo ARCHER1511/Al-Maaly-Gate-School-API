@@ -25,6 +25,8 @@ namespace Infrastructure.Configurations
             builder.HasOne(sse => sse.Exam)
                    .WithMany(e => e.StudentSubjectExams)
                    .HasForeignKey(sse => sse.ExamId);
+
+            builder.ToTable("StudentSubjectExams", "Academics");
         }
     }
 }

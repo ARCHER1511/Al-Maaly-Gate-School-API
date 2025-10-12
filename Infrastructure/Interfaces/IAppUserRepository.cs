@@ -14,5 +14,8 @@ namespace Infrastructure.Interfaces
         Task<IdentityResult> CreateAsync(AppUser user, string password);
         Task<IdentityResult> UpdateAsync(AppUser user);
         Task<IdentityResult> DeleteAsync(AppUser user);
+        Task<bool> ChangePasswordAsync(AppUser user, string oldPassword, string newPassword);
+        Task<string> GeneratePasswordResetTokenAsync(AppUser user);
+        Task<bool> ResetPasswordAsync(AppUser user, string token, string newPassword);
     }
 }

@@ -12,6 +12,8 @@ namespace Infrastructure.Configurations
 
             builder.Property(p => p.Relation)
                    .HasMaxLength(100);
+
+            builder.ToTable("Parents", "Academics");
         }
     }
 }

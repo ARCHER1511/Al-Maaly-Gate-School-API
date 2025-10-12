@@ -9,6 +9,8 @@ namespace Infrastructure.Configurations
         public void Configure(EntityTypeBuilder<AppUserRole> builder)
         {
             builder.HasKey(ur => new { ur.UserId, ur.RoleId });
+
+            builder.ToTable("AppUserRoles", "Identity");
         }
     }
 }

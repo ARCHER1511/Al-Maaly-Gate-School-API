@@ -20,6 +20,8 @@ namespace Infrastructure.Configurations
                    .WithMany()
                    .HasForeignKey(n => n.CreatorUserId)
                    .OnDelete(DeleteBehavior.SetNull);
+
+            builder.ToTable("Notifications", "Notifications");
         }
     }
 }

@@ -17,6 +17,8 @@ namespace Infrastructure.Configurations
             builder.HasOne(cs => cs.Subject)
                    .WithMany(s => s.ClassSubjects)
                    .HasForeignKey(cs => cs.SubjectId);
+
+            builder.ToTable("ClassSubjects", "Academics");
         }
     }
 }

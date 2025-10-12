@@ -45,5 +45,24 @@ namespace Infrastructure.Repositories
 
         public async Task<IdentityResult> DeleteAsync(AppUser user) =>
             await _userManager.DeleteAsync(user);
+
+        public async Task<bool> ChangePasswordAsync(AppUser user, string oldPassword, string newPassword)
+        {
+            var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+            return result.Succeeded;
+        }
+
+        public async Task<string> GeneratePasswordResetTokenAsync(AppUser user)
+        {
+            // Generate a secure token (used in reset password link)
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public async Task<bool> ResetPasswordAsync(AppUser user, string token, string newPassword)
+        {
+            // Reset password using the provided token
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+            return result.Succeeded;
+        }
     }
 }

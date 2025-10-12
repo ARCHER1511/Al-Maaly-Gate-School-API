@@ -15,6 +15,8 @@ namespace Infrastructure.Configurations
             builder.HasMany(u => u.UserNotifications)
                    .WithOne(un => un.User)
                    .HasForeignKey(un => un.UserId);
+
+            builder.ToTable("AppUsers", "Identity");
         }
     }
 }

@@ -13,6 +13,8 @@ namespace Infrastructure.Configurations
             builder.Property(a => a.Type)
                    .IsRequired()
                    .HasMaxLength(100);
+
+            builder.ToTable("Admins", "Identity");
         }
     }
 }

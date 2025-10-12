@@ -21,6 +21,7 @@ namespace Infrastructure.Configurations
                    .WithMany(c => c.Students)
                    .HasForeignKey(s => s.ClassId)
                    .OnDelete(DeleteBehavior.Restrict);
+            builder.ToTable("Students", "Identity");
         }
     }
 }

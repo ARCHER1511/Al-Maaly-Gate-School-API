@@ -59,7 +59,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("Admins");
+                    b.ToTable("Admins", "Identity");
                 });
 
             modelBuilder.Entity("Domain.Entities.Answer", b =>
@@ -90,7 +90,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answers", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.AppRole", b =>
@@ -117,7 +117,7 @@ namespace Infrastructure.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("AppRoles", "Identity");
                 });
 
             modelBuilder.Entity("Domain.Entities.AppUser", b =>
@@ -130,6 +130,10 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactInfo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -186,7 +190,7 @@ namespace Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("AppUsers", "Identity");
                 });
 
             modelBuilder.Entity("Domain.Entities.AppUserRole", b =>
@@ -201,7 +205,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("AppUserRoles", "Identity");
                 });
 
             modelBuilder.Entity("Domain.Entities.Class", b =>
@@ -228,7 +232,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Classes");
+                    b.ToTable("Classes", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.ClassAppointment", b =>
@@ -253,7 +257,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ClassId");
 
-                    b.ToTable("ClassAppointments");
+                    b.ToTable("ClassAppointments", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.ClassAssets", b =>
@@ -279,7 +283,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ClassId");
 
-                    b.ToTable("ClassAssets");
+                    b.ToTable("ClassAssets", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.ClassSubject", b =>
@@ -294,7 +298,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("ClassSubjects");
+                    b.ToTable("ClassSubjects", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.Exam", b =>
@@ -323,7 +327,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Exams");
+                    b.ToTable("Exams", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.Notification", b =>
@@ -368,7 +372,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CreatorUserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", "Notifications");
                 });
 
             modelBuilder.Entity("Domain.Entities.Parent", b =>
@@ -407,7 +411,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("Parents");
+                    b.ToTable("Parents", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.ParentStudent", b =>
@@ -422,7 +426,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("ParentStudents");
+                    b.ToTable("ParentStudents", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.Question", b =>
@@ -459,7 +463,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.QuestionExamTeacher", b =>
@@ -479,7 +483,51 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("QuestionExamTeachers");
+                    b.ToTable("QuestionExamTeachers", "Academics");
+                });
+
+            modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JwtId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.ToTable("RefreshTokens", "Identity");
                 });
 
             modelBuilder.Entity("Domain.Entities.Student", b =>
@@ -528,7 +576,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ClassId");
 
-                    b.ToTable("Students");
+                    b.ToTable("Students", "Identity");
                 });
 
             modelBuilder.Entity("Domain.Entities.StudentQuestionAnswerExam", b =>
@@ -553,7 +601,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("StudentQuestionAnswerExams");
+                    b.ToTable("StudentQuestionAnswerExam", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.StudentSubjectExam", b =>
@@ -576,7 +624,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("StudentSubjectExams");
+                    b.ToTable("StudentSubjectExams", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.Subject", b =>
@@ -597,7 +645,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subjects");
+                    b.ToTable("Subjects", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.Teacher", b =>
@@ -632,7 +680,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("Teachers");
+                    b.ToTable("Teachers", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.TeacherSubjectExam", b =>
@@ -652,7 +700,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("TeacherSubjectExams");
+                    b.ToTable("TeacherSubjectExams", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserNotification", b =>
@@ -686,7 +734,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserNotifications");
+                    b.ToTable("UserNotifications", "Notifications");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -957,6 +1005,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("Question");
 
                     b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("Domain.Entities.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
                 });
 
             modelBuilder.Entity("Domain.Entities.Student", b =>

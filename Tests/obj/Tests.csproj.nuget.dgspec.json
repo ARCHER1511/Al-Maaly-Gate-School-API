@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\tests\\Tests.csproj": {}
+    "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Tests\\Tests.csproj": {}
   },
   "projects": {
     "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj": {
@@ -442,14 +442,14 @@
         }
       }
     },
-    "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\tests\\Tests.csproj": {
+    "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Tests\\Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\tests\\Tests.csproj",
+        "projectUniqueName": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Tests\\Tests.csproj",
         "projectName": "Tests",
-        "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\tests\\Tests.csproj",
+        "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Tests\\Tests.csproj",
         "packagesPath": "C:\\Users\\Ramy Mahana\\.nuget\\packages\\",
-        "outputPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\tests\\obj\\",
+        "outputPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Tests\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

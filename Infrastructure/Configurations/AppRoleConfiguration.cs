@@ -11,6 +11,8 @@ namespace Infrastructure.Configurations
             builder.HasMany(r => r.UserRoles)
                    .WithOne(ur => ur.Role)
                    .HasForeignKey(ur => ur.RoleId);
+
+            builder.ToTable("AppRoles", "Identity");
         }
     }
 }

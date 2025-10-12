@@ -13,6 +13,8 @@ namespace Infrastructure.Configurations
             builder.Property(s => s.ClassYear)
                    .IsRequired()
                    .HasMaxLength(50);
+
+            builder.ToTable("Subjects", "Academics");
         }
     }
 

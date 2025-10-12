@@ -23,6 +23,8 @@ namespace Infrastructure.Configurations
                    .WithOne(s => s.Class)
                    .HasForeignKey(s => s.ClassId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.ToTable("Classes", "Academics");
         }
     }
 }

@@ -11,6 +11,8 @@ namespace Infrastructure.Configurations
             new UserBaseConfiguration<Teacher>().Configure(builder);
 
             // Relationships are configured in related entities
+
+            builder.ToTable("Teachers", "Academics");
         }
     }
 

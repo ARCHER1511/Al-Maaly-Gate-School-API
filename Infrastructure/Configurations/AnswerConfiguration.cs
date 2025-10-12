@@ -22,6 +22,8 @@ namespace Infrastructure.Configurations
                    .WithMany(q => q.Answers)
                    .HasForeignKey(a => a.QuestionId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.ToTable("Answers", "Academics");
         }
     }
 

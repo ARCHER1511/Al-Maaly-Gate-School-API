@@ -46,7 +46,7 @@ namespace Application.Services
         public async Task<ServiceResult<AdminViewDto?>> GetAsync(Expression<Func<Admin, bool>> predicate,
                                            Func<IQueryable<Admin>, IIncludableQueryable<Admin, object>>? include = null)
         {
-            var admin = await _adminRepository.GetAsync(predicate, include);
+            var admin = await _adminRepository.FirstOrDefaultAsync(predicate, include);
             if(admin == null)
                 return ServiceResult<AdminViewDto?>.Fail("Admin not found");
 
@@ -61,7 +61,7 @@ namespace Application.Services
                                                           int? skip = null,
                                                           int? take = null)
         {
-            var admins = await _adminRepository.GetAllAsync(predicate, include, orderBy, skip, take);
+            var admins = await _adminRepository.FindAllAsync(predicate, include, orderBy, skip, take);
             if(admins == null)
                 return ServiceResult<IEnumerable<AdminViewDto>>.Fail("No admins found");
             var adminDto = _mapper.Map<IEnumerable<AdminViewDto>>(admins);
