@@ -1,13 +1,15 @@
 ﻿using Application.DTOs.AuthDTOs;
 using Application.Interfaces;
 using Domain.Wrappers;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")]
+    [AllowAnonymous]
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authService;
@@ -22,8 +24,8 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var result = await _authService.RegisterAsync(request);
             return result.Success
-                ? Ok(ApiResponse<AuthResponse>.Ok(result.Data))
-                : BadRequest(ApiResponse<AuthResponse>.Fail(result.Message));
+                ? Ok(ApiResponse<AuthResponse>.Ok(result.Data!))
+                : BadRequest(ApiResponse<AuthResponse>.Fail(result.Message!));
         }
 
         [HttpPost("login")]
@@ -31,8 +33,8 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var result = await _authService.LoginAsync(request);
             return result.Success
-                ? Ok(ApiResponse<AuthResponse>.Ok(result.Data))
-                : Unauthorized(ApiResponse<AuthResponse>.Fail(result.Message));
+                ? Ok(ApiResponse<AuthResponse>.Ok(result.Data!))
+                : Unauthorized(ApiResponse<AuthResponse>.Fail(result.Message!));
         }
 
         [HttpPost("create-role")]
@@ -40,8 +42,8 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var result = await _authService.CreateRoleAsync(request);
             return result.Success
-                ? Ok(ApiResponse<string>.Ok(result.Data, result.Message))
-                : BadRequest(ApiResponse<string>.Fail(result.Message));
+                ? Ok(ApiResponse<string>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<string>.Fail(result.Message!));
         }
 
         [HttpPost("assign-role")]

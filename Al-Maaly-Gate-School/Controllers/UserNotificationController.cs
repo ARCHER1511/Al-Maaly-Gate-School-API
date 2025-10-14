@@ -2,11 +2,13 @@
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
     [Route("api/[Controller]")]
     [ApiController]
+    [Authorize]
     public class UserNotificationController : ControllerBase
     {
         private readonly IUserNotificationService _userNotificationService;

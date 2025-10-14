@@ -1,10 +1,11 @@
-﻿using System.Text.Json.Serialization;
-using Al_Maaly_Gate_School.Controllers;
-using Application.DependencyInjection;
+﻿using Application.DependencyInjection;
 using Application.SignalR;
 using Common.Extensions;
 using Infrastructure.DependencyInjection;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 namespace Al_Maaly_Gate_School
 {
@@ -23,14 +24,21 @@ namespace Al_Maaly_Gate_School
             builder.Services.AddCustomCORS(builder.Configuration);
             builder.Services.AddJwtAuthentication(builder.Configuration);
             builder
-                .Services.AddControllers()
-                .AddApplicationPart(typeof(AfterAuthenticationController).Assembly)
+                .Services.AddControllers(opt => 
+                {
+                    var policy = new AuthorizationPolicyBuilder("Bearer").RequireAuthenticatedUser().Build();
+                    opt.Filters.Add(new AuthorizeFilter(policy));
+                })
                 .AddJsonOptions(opt =>
                 {
                     opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddHttpsRedirection(options =>
+            {
+                options.HttpsPort = 7002;
+            });
             builder.Services.AddAuthorization();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

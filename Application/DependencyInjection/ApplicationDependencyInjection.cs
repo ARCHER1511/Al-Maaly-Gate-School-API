@@ -1,5 +1,4 @@
-﻿using Application.Authentication;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using Application.Mappings;
 using Application.Services;
 using Application.SignalR;
@@ -19,7 +18,7 @@ namespace Application.DependencyInjection
             
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
-            
+            services.AddScoped<ITeacherService, TeacherService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IUserNotificationService, UserNotificationService>();
             //SignalR

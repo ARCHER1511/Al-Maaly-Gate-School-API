@@ -190,14 +190,14 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
 
             var user = await _userRepo.GetByIdAsync(userId);
-            var roles = await _userRepo.GetRolesAsync(user);
+            var roles = await _userRepo.GetRolesAsync(user!);
 
-            var newJwt = JwtExtensions.GenerateJwtToken(user, roles, _config);
+            var newJwt = JwtExtensions.GenerateJwtToken(user!, roles, _config);
             var newRefresh = new RefreshToken
             {
                 Token = Guid.NewGuid().ToString(),
                 JwtId = Guid.NewGuid().ToString(),
-                AppUserId = user.Id,
+                AppUserId = user!.Id,
                 ExpiryDate = DateTime.UtcNow.AddDays(30),
             };
             await _unitOfWork.Repository<RefreshToken>().AddAsync(newRefresh);
@@ -208,10 +208,10 @@ namespace Application.Services
                 Token = newJwt,
                 RefreshToken = newRefresh.Token,
                 Roles = roles,
-                Email = user.Email,
+                Email = user.Email ?? string.Empty,
                 FullName = user.FullName,
                 UserId = user.Id,
-                UserName = user.UserName,
+                UserName = user.UserName ?? string.Empty,
             };
 
             return ServiceResult<AuthResponse>.Ok(response);
@@ -231,10 +231,10 @@ namespace Application.Services
         public async Task<AuthResponse> GetUserProfileAsync(string userId)
         {
             var user = await _userRepo.GetByIdAsync(userId);
-            var roles = await _userRepo.GetRolesAsync(user);
+            var roles = await _userRepo.GetRolesAsync(user!);
             var response = _mapper.Map<AuthResponse>(user);
             response.Roles = roles;
-            response.UserId = user.Id;
+            response.UserId = user!.Id;
 
             return response;
         }
@@ -246,7 +246,7 @@ namespace Application.Services
         {
             var user = await _userRepo.GetByIdAsync(userId);
             var result = await _userRepo.ChangePasswordAsync(
-                user,
+                user!,
                 request.OldPassword,
                 request.NewPassword
             );

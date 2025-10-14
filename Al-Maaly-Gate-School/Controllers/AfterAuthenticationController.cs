@@ -23,15 +23,18 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            await _authService.RevokeTokensAsync(userId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            await _authService.RevokeTokensAsync(userId!);
             return Ok("Logged out successfully");
         }
 
         [HttpGet("profile")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            
             if (userId == null)
                 return Unauthorized();
             var user = await _authService.GetUserProfileAsync(userId);
@@ -43,7 +46,8 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
         {
-            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized("User not found or not authenticated");
 
@@ -57,8 +61,9 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpDelete("delete-account")]
         public async Task<IActionResult> DeleteAccount()
         {
-            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            var result = await _authService.DeleteAccountAsync(userId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var result = await _authService.DeleteAccountAsync(userId!);
             return result.Success ? Ok(result.Message) : BadRequest(result.Message);
         }
 
@@ -66,7 +71,8 @@ namespace Al_Maaly_Gate_School.Controllers
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
         {
             // extract the current userId from JWT claims
-            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized("User not authenticated.");
 

@@ -42,8 +42,13 @@ namespace Common.Extensions
         {
             var jwtSettings = config.GetSection("Jwt");
             services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+                .AddAuthentication(
+                options => 
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                } ).AddJwtBearer(options =>
                 {
                     JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // Prevent remapping
 
@@ -71,6 +76,7 @@ namespace Common.Extensions
                         OnAuthenticationFailed = ctx =>
                         {
                             Console.WriteLine($"JWT auth failed: {ctx.Exception.Message}");
+                            ctx.Response.StatusCode = 401;
                             return Task.CompletedTask;
                         },
                         OnTokenValidated = ctx =>

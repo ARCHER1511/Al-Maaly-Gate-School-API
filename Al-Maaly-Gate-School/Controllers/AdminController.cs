@@ -4,11 +4,13 @@ using Domain.Entities;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
     [Route("api/[Controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;

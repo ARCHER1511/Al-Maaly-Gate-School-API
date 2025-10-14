@@ -19,17 +19,17 @@ namespace Application.Authentication
             {
                 // Use "sub" as the user ID — standard and consistent with validation
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email!),
                 new Claim(JwtRegisteredClaimNames.Name, user.FullName),
-                new Claim(ClaimTypes.Name, user.UserName), // Optional: for display
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!), // Optional: for display
             };
 
             // Use ClaimTypes.Role for role mapping consistency
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.UtcNow.AddDays(double.Parse(_config["Jwt:DurationInDays"]));
+            var expires = DateTime.UtcNow.AddDays(double.Parse(_config["Jwt:DurationInDays"]!));
 
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
