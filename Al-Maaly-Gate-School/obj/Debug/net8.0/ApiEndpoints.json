@@ -79,6 +79,68 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.AfterAuthenticationController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/AfterAuthentication/change-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Application.DTOs.AuthDTOs.ChangePasswordRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.AfterAuthenticationController",
+    "Method": "DeleteAccount",
+    "RelativePath": "api/AfterAuthentication/delete-account",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.AfterAuthenticationController",
+    "Method": "Logout",
+    "RelativePath": "api/AfterAuthentication/logout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.AfterAuthenticationController",
+    "Method": "GetCurrentUser",
+    "RelativePath": "api/AfterAuthentication/profile",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.AfterAuthenticationController",
+    "Method": "UpdateProfile",
+    "RelativePath": "api/AfterAuthentication/update-profile",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Application.DTOs.AuthDTOs.UpdateProfileRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Al_Maaly_Gate_School.Controllers.AuthenticationController",
     "Method": "AssignRole",
     "RelativePath": "api/Authentication/assign-role",
@@ -89,22 +151,6 @@
       {
         "Name": "request",
         "Type": "Application.DTOs.AuthDTOs.AssignRoleRequest",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Al_Maaly_Gate_School.Controllers.AuthenticationController",
-    "Method": "ChangePassword",
-    "RelativePath": "api/Authentication/change-password",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "request",
-        "Type": "Application.DTOs.AuthDTOs.ChangePasswordRequest",
         "IsRequired": true
       }
     ],
@@ -124,16 +170,6 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Al_Maaly_Gate_School.Controllers.AuthenticationController",
-    "Method": "DeleteAccount",
-    "RelativePath": "api/Authentication/delete-account",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -166,26 +202,6 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Al_Maaly_Gate_School.Controllers.AuthenticationController",
-    "Method": "Logout",
-    "RelativePath": "api/Authentication/logout",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Al_Maaly_Gate_School.Controllers.AuthenticationController",
-    "Method": "GetCurrentUser",
-    "RelativePath": "api/Authentication/me",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -231,22 +247,6 @@
       {
         "Name": "request",
         "Type": "Application.DTOs.AuthDTOs.ResetPasswordRequest",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Al_Maaly_Gate_School.Controllers.AuthenticationController",
-    "Method": "UpdateProfile",
-    "RelativePath": "api/Authentication/update-profile",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "request",
-        "Type": "Application.DTOs.AuthDTOs.UpdateProfileRequest",
         "IsRequired": true
       }
     ],
@@ -314,6 +314,16 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.TeacherController",
+    "Method": "GetAll",
+    "RelativePath": "api/Teacher",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {

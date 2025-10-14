@@ -1,14 +1,13 @@
-﻿using Application.DTOs.AuthDTOs;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Application.Authentication;
+using Application.DTOs.AuthDTOs;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace Application.Services
 {
@@ -60,17 +59,16 @@ namespace Application.Services
 
             var result = await _userRepo.CreateAsync(user, request.Password);
 
-            if (!result.Succeeded) 
+            if (!result.Succeeded)
             {
-                var errorMessages = string.Join(", ",result.Errors.Select(e => e.Description));
+                var errorMessages = string.Join(", ", result.Errors.Select(e => e.Description));
                 return ServiceResult<AuthResponse>.Fail($"User creation failed: {errorMessages}");
             }
 
             if (!string.IsNullOrEmpty(request.Role))
                 await _userRepo.AddToRoleAsync(user, request.Role);
-            switch (request.Role.ToLower()) 
+            switch (request.Role.ToLower())
             {
-                
                 case "admin":
                     var admin = _mapper.Map<Admin>(request);
                     admin.AppUserId = user.Id;
@@ -84,7 +82,7 @@ namespace Application.Services
                     await _teacherRepo.AddAsync(teacher);
                     await _unitOfWork.SaveChangesAsync();
                     break;
-                
+
                 case "student":
                     var student = _mapper.Map<Student>(request);
                     student.AppUserId = user.Id;
@@ -102,7 +100,8 @@ namespace Application.Services
             var roles = await _userRepo.GetRolesAsync(user);
             var response = _mapper.Map<AuthResponse>(user);
             response.Roles = roles;
-            response.Token = GenerateJwtToken(user, roles);
+            response.Token = JwtExtensions.GenerateJwtToken(user, roles, _config);
+            response.UserId = user.Id;
 
             return ServiceResult<AuthResponse>.Ok(response);
         }
@@ -116,18 +115,19 @@ namespace Application.Services
             var roles = await _userRepo.GetRolesAsync(user);
             var response = _mapper.Map<AuthResponse>(user);
             response.Roles = roles;
-            response.Token = GenerateJwtToken(user, roles);
+            response.Token = JwtExtensions.GenerateJwtToken(user, roles, _config);
 
             var refreshToken = new RefreshToken
             {
                 Token = Guid.NewGuid().ToString(),
                 JwtId = Guid.NewGuid().ToString(),
                 AppUserId = user.Id,
-                ExpiryDate = DateTime.Now.AddDays(30)
+                ExpiryDate = DateTime.Now.AddDays(30),
             };
             await _unitOfWork.Repository<RefreshToken>().AddAsync(refreshToken);
             await _unitOfWork.SaveChangesAsync();
             response.RefreshToken = refreshToken.Token;
+            response.UserId = user.Id;
 
             return ServiceResult<AuthResponse>.Ok(response);
         }
@@ -149,32 +149,41 @@ namespace Application.Services
                 : ServiceResult<string>.Fail("Failed to create role");
         }
 
-        public async Task<ServiceResult<string>> AssignRoleAsync(AssignRoleRequest request) 
+        public async Task<ServiceResult<string>> AssignRoleAsync(AssignRoleRequest request)
         {
             var user = await _userRepo.GetByIdAsync(request.UserId);
             if (user == null)
                 return ServiceResult<string>.Fail($"UserId {request.UserId} not found");
 
             var roleExists = await _roleRepo.GetByNameAsync(request.RoleName);
-            if(roleExists == null)
+            if (roleExists == null)
                 return ServiceResult<string>.Fail($"Role {request.RoleName} does not exist");
 
             var result = await _userRepo.AddToRoleAsync(user, request.RoleName);
 
-            return result? ServiceResult<string>.Ok($"Role '{request.RoleName}' assigned to {user.Email}")
+            return result
+                ? ServiceResult<string>.Ok($"Role '{request.RoleName}' assigned to {user.Email}")
                 : ServiceResult<string>.Fail("Failed to assign role");
         }
 
-        public async Task<ServiceResult<AuthResponse>> RefreshTokenAsync(RefreshTokenRequest request) 
+        public async Task<ServiceResult<AuthResponse>> RefreshTokenAsync(
+            RefreshTokenRequest request
+        )
         {
             var jwtHandler = new JwtSecurityTokenHandler();
             var token = jwtHandler.ReadJwtToken(request.Token);
             var userId = token.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
 
-            var savedToken = await _unitOfWork.Repository<RefreshToken>()
+            var savedToken = await _unitOfWork
+                .Repository<RefreshToken>()
                 .FirstOrDefaultAsync(x => x.Token == request.RefreshToken && x.AppUserId == userId);
 
-            if (savedToken == null || savedToken.IsUsed || savedToken.IsRevoked || savedToken.ExpiryDate < DateTime.UtcNow)
+            if (
+                savedToken == null
+                || savedToken.IsUsed
+                || savedToken.IsRevoked
+                || savedToken.ExpiryDate < DateTime.UtcNow
+            )
                 return ServiceResult<AuthResponse>.Fail("Invalid refresh token");
 
             savedToken.IsUsed = true;
@@ -183,13 +192,13 @@ namespace Application.Services
             var user = await _userRepo.GetByIdAsync(userId);
             var roles = await _userRepo.GetRolesAsync(user);
 
-            var newJwt = GenerateJwtToken(user, roles);
+            var newJwt = JwtExtensions.GenerateJwtToken(user, roles, _config);
             var newRefresh = new RefreshToken
             {
                 Token = Guid.NewGuid().ToString(),
                 JwtId = Guid.NewGuid().ToString(),
                 AppUserId = user.Id,
-                ExpiryDate = DateTime.UtcNow.AddDays(30)
+                ExpiryDate = DateTime.UtcNow.AddDays(30),
             };
             await _unitOfWork.Repository<RefreshToken>().AddAsync(newRefresh);
             await _unitOfWork.SaveChangesAsync();
@@ -200,7 +209,9 @@ namespace Application.Services
                 RefreshToken = newRefresh.Token,
                 Roles = roles,
                 Email = user.Email,
-                FullName = user.FullName
+                FullName = user.FullName,
+                UserId = user.Id,
+                UserName = user.UserName,
             };
 
             return ServiceResult<AuthResponse>.Ok(response);
@@ -208,7 +219,9 @@ namespace Application.Services
 
         public async Task RevokeTokensAsync(string userId)
         {
-            var tokens = await _unitOfWork.Repository<RefreshToken>().FindAllAsync(t => t.AppUserId == userId && !t.IsRevoked);
+            var tokens = await _unitOfWork
+                .Repository<RefreshToken>()
+                .FindAllAsync(t => t.AppUserId == userId && !t.IsRevoked);
             foreach (var t in tokens)
                 t.IsRevoked = true;
 
@@ -221,13 +234,22 @@ namespace Application.Services
             var roles = await _userRepo.GetRolesAsync(user);
             var response = _mapper.Map<AuthResponse>(user);
             response.Roles = roles;
+            response.UserId = user.Id;
+
             return response;
         }
 
-        public async Task<ServiceResult<string>> ChangePasswordAsync(string userId, ChangePasswordRequest request)
+        public async Task<ServiceResult<string>> ChangePasswordAsync(
+            string userId,
+            ChangePasswordRequest request
+        )
         {
             var user = await _userRepo.GetByIdAsync(userId);
-            var result = await _userRepo.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+            var result = await _userRepo.ChangePasswordAsync(
+                user,
+                request.OldPassword,
+                request.NewPassword
+            );
 
             return result
                 ? ServiceResult<string>.Ok("Password changed successfully")
@@ -251,7 +273,11 @@ namespace Application.Services
             if (user == null)
                 return ServiceResult<string>.Fail("User not found");
 
-            var result = await _userRepo.ResetPasswordAsync(user, request.Token, request.NewPassword);
+            var result = await _userRepo.ResetPasswordAsync(
+                user,
+                request.Token,
+                request.NewPassword
+            );
             return result
                 ? ServiceResult<string>.Ok("Password reset successful")
                 : ServiceResult<string>.Fail("Invalid token or password");
@@ -269,7 +295,10 @@ namespace Application.Services
             return ServiceResult<string>.Ok("Account deleted successfully");
         }
 
-        public async Task<ServiceResult<AuthResponse>> UpdateProfileAsync(string userId, UpdateProfileRequest request)
+        public async Task<ServiceResult<AuthResponse>> UpdateProfileAsync(
+            string userId,
+            UpdateProfileRequest request
+        )
         {
             var user = await _userRepo.GetByIdAsync(userId);
             if (user == null)
@@ -282,34 +311,8 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
 
             var response = _mapper.Map<AuthResponse>(user);
+            response.UserId = user.Id;
             return ServiceResult<AuthResponse>.Ok(response, "Profile updated");
-        }
-
-        private string GenerateJwtToken(AppUser user, IList<string> roles)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.FullName),
-                new Claim(ClaimTypes.UserData,user.UserName)
-            };
-
-            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.UtcNow.AddDays(7);
-
-            var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
-                claims: claims,
-                expires: expires,
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

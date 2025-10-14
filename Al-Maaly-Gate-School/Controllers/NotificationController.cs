@@ -2,10 +2,11 @@
 using Application.Interfaces;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[Controller]")]
     [ApiController]
     public class NotificationController : ControllerBase
     {

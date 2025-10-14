@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Exceptions\" />
-    <Folder Include="Constants\" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -19,5 +18,24 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="12.0.1" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- JWT Authentication -->
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+
+		<!-- Entity Framework Core -->
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+
+		<!-- Configuration Binding -->
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0" />
+
+		<!-- Optional: Swagger for API documentation -->
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 	</ItemGroup>
 </Project>

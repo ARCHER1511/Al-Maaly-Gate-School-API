@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.AdminDTOs;
 using Application.DTOs.AuthDTOs;
+using Application.DTOs.TeacherDTOs;
 using AutoMapper;
 using Common.Extensions;
 using Domain.Entities;
@@ -85,6 +86,11 @@ namespace Application.Mappings
                 })).IgnoreUnmapped();
 
 
+            #endregion
+
+            #region Teacher Mappings
+            //View
+            CreateMap<Teacher, TeacherViewDto>();
             #endregion
         }
     }

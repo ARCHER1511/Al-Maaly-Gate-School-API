@@ -1,10 +1,11 @@
 ﻿using Application.DTOs.UserNotificationDTOs;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[Controller]")]
     [ApiController]
     public class UserNotificationController : ControllerBase
     {

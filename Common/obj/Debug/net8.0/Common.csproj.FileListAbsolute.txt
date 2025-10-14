@@ -11,3 +11,5 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Common\obj\D
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\refint\Common.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\Common.pdb
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\ref\Common.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Common\bin\Debug\net8.0\Common.runtimeconfig.json
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\Common.genruntimeconfig.cache

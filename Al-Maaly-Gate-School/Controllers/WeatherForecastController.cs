@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[Controller]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
