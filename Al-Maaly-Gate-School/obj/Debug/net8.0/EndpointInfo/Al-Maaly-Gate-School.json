@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Auth API",
+    "title": "Al-Maaly-Gate-School API",
     "version": "v1"
   },
   "paths": {
@@ -435,6 +435,334 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/File/upload/{controllerName}": {
+      "post": {
+        "tags": [
+          "File"
+        ],
+        "parameters": [
+          {
+            "name": "controllerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "File"
+                ],
+                "type": "object",
+                "properties": {
+                  "File": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/File/upload-multiple/{controllerName}": {
+      "post": {
+        "tags": [
+          "File"
+        ],
+        "parameters": [
+          {
+            "name": "controllerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "Files": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/File/replace/{controllerName}": {
+      "put": {
+        "tags": [
+          "File"
+        ],
+        "parameters": [
+          {
+            "name": "existingFilePath",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "controllerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "File"
+                ],
+                "type": "object",
+                "properties": {
+                  "File": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/File/delete": {
+      "delete": {
+        "tags": [
+          "File"
+        ],
+        "parameters": [
+          {
+            "name": "filePath",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/File/{id}": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/File/path": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "parameters": [
+          {
+            "name": "relativePath",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/File/all": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/File/controller/{controllerName}": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "parameters": [
+          {
+            "name": "controllerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "File"
+        ],
+        "parameters": [
+          {
+            "name": "controllerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/File/type/{fileType}": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "parameters": [
+          {
+            "name": "fileType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/File/recent": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 7
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/File/storage/total": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/File/download": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "parameters": [
+          {
+            "name": "filePath",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"

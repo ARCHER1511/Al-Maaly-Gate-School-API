@@ -29,7 +29,7 @@ namespace Application.Authentication
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.UtcNow.AddDays(double.Parse(_config["Jwt:DurationInDays"]!));
+            var expires = DateTime.Now.AddDays(double.Parse(_config["Jwt:DurationInDays"]!));
 
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "YmxWM3QW4ZQ=",
+  "dgSpecHash": "KBJ5Sf6q0Mo=",
   "success": true,
   "projectFilePath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Tests\\Tests.csproj",
   "expectedPackageFiles": [
@@ -96,7 +96,10 @@
     "C:\\Users\\Ramy Mahana\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "C:\\Users\\Ramy Mahana\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
     "C:\\Users\\Ramy Mahana\\.nuget\\packages\\nuget.frameworks\\6.5.0\\nuget.frameworks.6.5.0.nupkg.sha512",
+    "C:\\Users\\Ramy Mahana\\.nuget\\packages\\scrutor\\3.3.0\\scrutor.3.3.0.nupkg.sha512",
     "C:\\Users\\Ramy Mahana\\.nuget\\packages\\swashbuckle.aspnetcore\\6.6.2\\swashbuckle.aspnetcore.6.6.2.nupkg.sha512",
+    "C:\\Users\\Ramy Mahana\\.nuget\\packages\\swashbuckle.aspnetcore.filters\\8.0.0\\swashbuckle.aspnetcore.filters.8.0.0.nupkg.sha512",
+    "C:\\Users\\Ramy Mahana\\.nuget\\packages\\swashbuckle.aspnetcore.filters.abstractions\\8.0.0\\swashbuckle.aspnetcore.filters.abstractions.8.0.0.nupkg.sha512",
     "C:\\Users\\Ramy Mahana\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.6.2\\swashbuckle.aspnetcore.swagger.6.6.2.nupkg.sha512",
     "C:\\Users\\Ramy Mahana\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.6.2\\swashbuckle.aspnetcore.swaggergen.6.6.2.nupkg.sha512",
     "C:\\Users\\Ramy Mahana\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.6.2\\swashbuckle.aspnetcore.swaggerui.6.6.2.nupkg.sha512",

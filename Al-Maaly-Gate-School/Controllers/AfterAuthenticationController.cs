@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
+using Domain.Wrappers;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
@@ -39,8 +40,9 @@ namespace Al_Maaly_Gate_School.Controllers
                 return Unauthorized();
             var user = await _authService.GetUserProfileAsync(userId);
             if (user == null)
-                return NotFound();
-            return Ok(user);
+                return NotFound(ApiResponse<AuthResponse>.Fail("Not Found"));
+            
+            return Ok(ApiResponse<AuthResponse>.Ok(user.Data!,user.Message));
         }
 
         [HttpPost("change-password")]

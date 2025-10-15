@@ -182,7 +182,7 @@ namespace Application.Services
                 savedToken == null
                 || savedToken.IsUsed
                 || savedToken.IsRevoked
-                || savedToken.ExpiryDate < DateTime.UtcNow
+                || savedToken.ExpiryDate < DateTime.Now
             )
                 return ServiceResult<AuthResponse>.Fail("Invalid refresh token");
 
@@ -198,7 +198,7 @@ namespace Application.Services
                 Token = Guid.NewGuid().ToString(),
                 JwtId = Guid.NewGuid().ToString(),
                 AppUserId = user!.Id,
-                ExpiryDate = DateTime.UtcNow.AddDays(30),
+                ExpiryDate = DateTime.Now.AddDays(30),
             };
             await _unitOfWork.Repository<RefreshToken>().AddAsync(newRefresh);
             await _unitOfWork.SaveChangesAsync();
@@ -228,7 +228,7 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task<AuthResponse> GetUserProfileAsync(string userId)
+        public async Task<ServiceResult<AuthResponse>> GetUserProfileAsync(string userId)
         {
             var user = await _userRepo.GetByIdAsync(userId);
             var roles = await _userRepo.GetRolesAsync(user!);
@@ -236,7 +236,7 @@ namespace Application.Services
             response.Roles = roles;
             response.UserId = user!.Id;
 
-            return response;
+            return ServiceResult<AuthResponse>.Ok(response, "Token is valid");
         }
 
         public async Task<ServiceResult<string>> ChangePasswordAsync(

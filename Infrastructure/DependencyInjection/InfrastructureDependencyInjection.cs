@@ -45,6 +45,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
+            services.AddScoped<IFileRecordRepository, FileRecordRepository>();
 
             return services;
         }

@@ -45,7 +45,8 @@ namespace Al_Maaly_Gate_School
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new() { Title = "Auth API", Version = "v1" });
+                c.SwaggerDoc("v1", new() { Title = "Al-Maaly-Gate-School API", Version = "v1" });
+                c.OperationFilter<FileUploadOperationFilter>();
                 c.AddSecurityDefinition(
                     "Bearer",
                     new OpenApiSecurityScheme
@@ -78,6 +79,7 @@ namespace Al_Maaly_Gate_School
 
             var app = builder.Build();
 
+            app.UseStaticFiles();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

@@ -11,7 +11,7 @@ namespace Application.Interfaces
         Task<ServiceResult<string>> AssignRoleAsync(AssignRoleRequest request);
         Task<ServiceResult<AuthResponse>> RefreshTokenAsync(RefreshTokenRequest request);
         Task RevokeTokensAsync(string userId);
-        Task<AuthResponse> GetUserProfileAsync(string userId);
+        Task<ServiceResult<AuthResponse>> GetUserProfileAsync(string userId);
         Task<ServiceResult<string>> ChangePasswordAsync(string userId, ChangePasswordRequest request);
         Task<ServiceResult<string>> ForgotPasswordAsync(string email);
         Task<ServiceResult<string>> ResetPasswordAsync(ResetPasswordRequest request);

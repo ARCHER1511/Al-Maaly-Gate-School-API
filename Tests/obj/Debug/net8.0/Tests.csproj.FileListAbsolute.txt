@@ -4,6 +4,7 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\De
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Al-Maaly-Gate-School.runtimeconfig.json
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\appsettings.Development.json
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\appsettings.json
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Al-Maaly-Gate-School.staticwebassets.runtime.json
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Al-Maaly-Gate-School.staticwebassets.endpoints.json
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Al-Maaly-Gate-School.exe
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\testhost.exe
@@ -357,6 +358,9 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\De
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Newtonsoft.Json.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\NuGet.Frameworks.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Scrutor.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Swashbuckle.AspNetCore.Filters.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Swashbuckle.AspNetCore.Filters.Abstractions.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll

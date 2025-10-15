@@ -25,6 +25,7 @@ namespace Infrastructure.Data
         public DbSet<ClassAssets> ClassAssets { get; set; }
         public DbSet<ClassSubject> ClassSubjects { get; set; }
         public DbSet<Exam> Exams { get; set; }
+        public DbSet<FileRecord> FileRecords { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Parent> Parents { get; set; }
         public DbSet<ParentStudent> ParentStudents { get; set; }

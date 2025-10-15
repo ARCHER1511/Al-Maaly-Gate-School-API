@@ -35,6 +35,7 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School\Al-Maaly-Gate-Sc
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School\Al-Maaly-Gate-School\obj\Debug\net8.0\ref\Al-Maaly-Gate-School.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\appsettings.Development.json
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\appsettings.json
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Al-Maaly-Gate-School.staticwebassets.runtime.json
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Al-Maaly-Gate-School.staticwebassets.endpoints.json
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Al-Maaly-Gate-School.exe
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Al-Maaly-Gate-School.deps.json
@@ -54,6 +55,7 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gat
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.SqlServer.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Microsoft.Extensions.Hosting.Abstractions.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
@@ -71,6 +73,9 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gat
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Scrutor.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Swashbuckle.AspNetCore.Filters.dll
+D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Swashbuckle.AspNetCore.Filters.Abstractions.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Al-Maaly-Gate-School\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
