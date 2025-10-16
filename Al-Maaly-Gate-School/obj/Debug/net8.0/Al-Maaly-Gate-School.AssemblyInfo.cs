@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Al-Maaly-Gate-School")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0b43a58f3b6dcb453e9e07d700fcdac94fcef2b7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d7fcc0cbaefbccdf4ff75960d813c5d10f81e6c3")]
 [assembly: System.Reflection.AssemblyProductAttribute("Al-Maaly-Gate-School")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Al-Maaly-Gate-School")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

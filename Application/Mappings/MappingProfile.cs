@@ -22,12 +22,9 @@ namespace Application.Mappings
 
             #region Admin Mappings
             //Create
-            CreateMap<AdminCreateDto, Admin>()
-                .IgnoreUnmapped();
+            CreateMap<AdminCreateDto, Admin>().IgnoreUnmapped();
             //Edit
-            CreateMap<AdminUpdateDto, Admin>()
-                .IgnoreUnmapped()
-                .ReverseMap();
+            CreateMap<AdminUpdateDto, Admin>().IgnoreUnmapped().ReverseMap();
             //View
             CreateMap<Admin, AdminViewDto>();
             #endregion
@@ -40,7 +37,7 @@ namespace Application.Mappings
                 .IgnoreUnmapped();
 
             CreateMap<AppUser, AuthResponse>()
-                .ForMember(dest => dest.UserName,opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
                 .IgnoreUnmapped();
@@ -49,43 +46,45 @@ namespace Application.Mappings
             CreateMap<RegisterRequest, Admin>()
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.AppUser, opt => opt.MapFrom(src => new AppUser
-                {
-                    UserName = src.Email,
-                    Email = src.Email
-                })).IgnoreUnmapped();
+                .ForMember(
+                    dest => dest.AppUser,
+                    opt =>
+                        opt.MapFrom(src => new AppUser { UserName = src.Email, Email = src.Email })
+                )
+                .IgnoreUnmapped();
 
             // ===== TEACHER =====
             CreateMap<RegisterRequest, Teacher>()
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.AppUser, opt => opt.MapFrom(src => new AppUser
-                {
-                    UserName = src.Email,
-                    Email = src.Email
-                })).IgnoreUnmapped();
+                .ForMember(
+                    dest => dest.AppUser,
+                    opt =>
+                        opt.MapFrom(src => new AppUser { UserName = src.Email, Email = src.Email })
+                )
+                .IgnoreUnmapped();
 
             // ===== STUDENT =====
             CreateMap<RegisterRequest, Student>()
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.AppUser, opt => opt.MapFrom(src => new AppUser
-                {
-                    UserName = src.Email,
-                    Email = src.Email
-                })).IgnoreUnmapped();
+                .ForMember(
+                    dest => dest.AppUser,
+                    opt =>
+                        opt.MapFrom(src => new AppUser { UserName = src.Email, Email = src.Email })
+                )
+                .IgnoreUnmapped();
 
             // ===== PARENT =====
             CreateMap<RegisterRequest, Parent>()
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.AppUser, opt => opt.MapFrom(src => new AppUser
-                {
-                    UserName = src.Email,
-                    Email = src.Email
-                })).IgnoreUnmapped();
-
-
+                .ForMember(
+                    dest => dest.AppUser,
+                    opt =>
+                        opt.MapFrom(src => new AppUser { UserName = src.Email, Email = src.Email })
+                )
+                .IgnoreUnmapped();
             #endregion
 
             #region Teacher Mappings

@@ -4,6 +4,6 @@ namespace Infrastructure.Interfaces
 {
     public interface ITeacherRepository : IGenericRepository<Teacher>
     {
-
+        Task<Teacher?> GetByAppUserIdAsync(string appUserId);
     }
 }

@@ -4,7 +4,6 @@ using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Http;
 using Domain.Wrappers;
 
 namespace Al_Maaly_Gate_School.Controllers
@@ -26,8 +25,12 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
                          ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            await _authService.RevokeTokensAsync(userId!);
-            return Ok("Logged out successfully");
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(ApiResponse<string>.Fail("User not authenticated."));
+
+            await _authService.RevokeTokensAsync(userId);
+            return Ok(ApiResponse<string>.Ok(null!, "Logged out successfully."));
         }
 
         [HttpGet("profile")]
@@ -35,14 +38,15 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
                          ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            
-            if (userId == null)
-                return Unauthorized();
-            var user = await _authService.GetUserProfileAsync(userId);
-            if (user == null)
-                return NotFound(ApiResponse<AuthResponse>.Fail("Not Found"));
-            
-            return Ok(ApiResponse<AuthResponse>.Ok(user.Data!,user.Message));
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(ApiResponse<AuthResponse>.Fail("User not authenticated."));
+
+            var result = await _authService.GetUserProfileAsync(userId);
+
+            return result.Success
+                ? Ok(ApiResponse<AuthResponse>.Ok(result.Data!, result.Message))
+                : NotFound(ApiResponse<AuthResponse>.Fail(result.Message!));
         }
 
         [HttpPost("change-password")]
@@ -50,14 +54,15 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
                          ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
             if (string.IsNullOrEmpty(userId))
-                return Unauthorized("User not found or not authenticated");
+                return Unauthorized(ApiResponse<string>.Fail("User not authenticated."));
 
             var result = await _authService.ChangePasswordAsync(userId, request);
-            if (result.Success)
-                return Ok(new { message = result.Data });
 
-            return BadRequest(new { error = result.Message });
+            return result.Success
+                ? Ok(ApiResponse<string>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<string>.Fail(result.Message!));
         }
 
         [HttpDelete("delete-account")]
@@ -65,25 +70,31 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
                          ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            var result = await _authService.DeleteAccountAsync(userId!);
-            return result.Success ? Ok(result.Message) : BadRequest(result.Message);
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(ApiResponse<string>.Fail("User not authenticated."));
+
+            var result = await _authService.DeleteAccountAsync(userId);
+
+            return result.Success
+                ? Ok(ApiResponse<string>.Ok(null!, result.Message))
+                : BadRequest(ApiResponse<string>.Fail(result.Message!));
         }
 
         [HttpPut("update-profile")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
         {
-            // extract the current userId from JWT claims
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
                          ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
             if (string.IsNullOrEmpty(userId))
-                return Unauthorized("User not authenticated.");
+                return Unauthorized(ApiResponse<string>.Fail("User not authenticated."));
 
             var result = await _authService.UpdateProfileAsync(userId, request);
 
-            if (!result.Success)
-                return BadRequest(result.Message);
-
-            return Ok(new { message = result.Message, data = result.Data });
+            return result.Success
+                ? Ok(ApiResponse<AuthResponse>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<AuthResponse>.Fail(result.Message!));
         }
     }
 }

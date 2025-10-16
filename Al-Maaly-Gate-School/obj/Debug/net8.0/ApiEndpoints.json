@@ -253,6 +253,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.AuthenticationController",
+    "Method": "UnassignRole",
+    "RelativePath": "api/Authentication/unassign-role",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Application.DTOs.AuthDTOs.AssignRoleRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Al_Maaly_Gate_School.Controllers.FileController",
     "Method": "GetById",
     "RelativePath": "api/File/{id}",

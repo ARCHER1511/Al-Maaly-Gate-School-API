@@ -15,5 +15,9 @@ namespace Infrastructure.Repositories
             _context = context;
             _dbSet = context.Set<Student>();
         }
+        public async Task<Student?> GetByAppUserIdAsync(string appUserId)
+        {
+            return await _dbSet.FirstOrDefaultAsync(t => t.AppUserId == appUserId);
+        }
     }
 }

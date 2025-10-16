@@ -64,5 +64,9 @@ namespace Infrastructure.Repositories
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
             return result.Succeeded;
         }
+        public async Task<IList<string>> GetUserRolesAsync(AppUser user)
+        {
+            return await _userManager.GetRolesAsync(user);
+        }
     }
 }

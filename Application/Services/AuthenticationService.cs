@@ -153,17 +153,137 @@ namespace Application.Services
         {
             var user = await _userRepo.GetByIdAsync(request.UserId);
             if (user == null)
-                return ServiceResult<string>.Fail($"UserId {request.UserId} not found");
+                return ServiceResult<string>.Fail($"UserId '{request.UserId}' not found.");
+
+            // Check if role exists
+            var roleExists = await _roleRepo.GetByNameAsync(request.RoleName);
+            if (roleExists == null)
+                return ServiceResult<string>.Fail($"Role '{request.RoleName}' does not exist.");
+
+            // Check if user already has this role
+            var userRoles = await _userRepo.GetUserRolesAsync(user);
+            if (userRoles.Any(r => r.Equals(request.RoleName, StringComparison.OrdinalIgnoreCase)))
+                return ServiceResult<string>.Fail($"User '{user.Email}' already has role '{request.RoleName}'.");
+
+            // Assign role
+            var added = await _userRepo.AddToRoleAsync(user, request.RoleName);
+            if (!added)
+                return ServiceResult<string>.Fail("Failed to assign role.");
+
+            // Common user info (safe fallbacks)
+            string fullName = user.FullName ?? "Unknown";
+            string email = user.Email ?? "unknown@example.com";
+            string contactInfo = user.PhoneNumber ?? "N/A";
+
+            switch (request.RoleName.ToLower())
+            {
+                case "admin":
+                    await _adminRepo.AddAsync(new Admin
+                    {
+                        AppUserId = user.Id,
+                        FullName = fullName,
+                        Email = email,
+                        ContactInfo = contactInfo,
+                        IsApproved = false
+                    });
+                    break;
+
+                case "teacher":
+                    await _teacherRepo.AddAsync(new Teacher
+                    {
+                        AppUserId = user.Id,
+                        FullName = fullName,
+                        Email = email,
+                        ContactInfo = contactInfo,
+                        IsApproved = false
+                    });
+                    break;
+
+                case "student":
+                    await _studentRepo.AddAsync(new Student
+                    {
+                        AppUserId = user.Id,
+                        FullName = fullName,
+                        Email = email,
+                        ContactInfo = contactInfo,
+                        IsApproved = false
+                    });
+                    break;
+
+                case "parent":
+                    await _parentRepo.AddAsync(new Parent
+                    {
+                        AppUserId = user.Id,
+                        FullName = fullName,
+                        Email = email,
+                        ContactInfo = contactInfo,
+                        IsApproved = false
+                    });
+                    break;
+
+                default:
+                    return ServiceResult<string>.Fail($"Unhandled role type '{request.RoleName}'.");
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return ServiceResult<string>.Ok($"Role '{request.RoleName}' assigned successfully to '{user.Email}'.");
+        }
+
+        public async Task<ServiceResult<string>> UnassignRoleAsync(AssignRoleRequest request)
+        {
+            var user = await _userRepo.GetByIdAsync(request.UserId);
+            if (user == null)
+                return ServiceResult<string>.Fail($"UserId '{request.UserId}' not found.");
 
             var roleExists = await _roleRepo.GetByNameAsync(request.RoleName);
             if (roleExists == null)
-                return ServiceResult<string>.Fail($"Role {request.RoleName} does not exist");
+                return ServiceResult<string>.Fail($"Role '{request.RoleName}' does not exist.");
 
-            var result = await _userRepo.AddToRoleAsync(user, request.RoleName);
+            // Check if user actually has this role
+            var userRoles = await _userRepo.GetUserRolesAsync(user);
+            if (!userRoles.Any(r => r.Equals(request.RoleName, StringComparison.OrdinalIgnoreCase)))
+                return ServiceResult<string>.Fail($"User '{user.Email}' does not have role '{request.RoleName}'.");
 
-            return result
-                ? ServiceResult<string>.Ok($"Role '{request.RoleName}' assigned to {user.Email}")
-                : ServiceResult<string>.Fail("Failed to assign role");
+            // Remove from Identity role
+            var removed = await _userRepo.RemoveFromRoleAsync(user, request.RoleName);
+            if (!removed)
+                return ServiceResult<string>.Fail($"Failed to remove role '{request.RoleName}' from user '{user.Email}'.");
+
+            // Remove from domain entities
+            switch (request.RoleName.ToLower())
+            {
+                case "admin":
+                    var admin = await _adminRepo.GetByAppUserIdAsync(user.Id);
+                    if (admin != null)
+                        _adminRepo.Delete(admin);
+                    break;
+
+                case "teacher":
+                    var teacher = await _teacherRepo.GetByAppUserIdAsync(user.Id);
+                    if (teacher != null)
+                        _teacherRepo.Delete(teacher);
+                    break;
+
+                case "student":
+                    var student = await _studentRepo.GetByAppUserIdAsync(user.Id);
+                    if (student != null)
+                        _studentRepo.Delete(student);
+                    break;
+
+                case "parent":
+                    var parent = await _parentRepo.GetByAppUserIdAsync(user.Id);
+                    if (parent != null)
+                        _parentRepo.Delete(parent);
+                    break;
+
+                default:
+                    return ServiceResult<string>.Fail($"Unhandled role type '{request.RoleName}'.");
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return ServiceResult<string>.Ok($"Role '{request.RoleName}' unassigned successfully from '{user.Email}'.");
         }
 
         public async Task<ServiceResult<AuthResponse>> RefreshTokenAsync(

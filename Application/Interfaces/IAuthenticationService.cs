@@ -9,6 +9,7 @@ namespace Application.Interfaces
         Task<ServiceResult<AuthResponse>> LoginAsync(LoginRequest request);
         Task<ServiceResult<string>> CreateRoleAsync(CreateRoleRequest roleName);
         Task<ServiceResult<string>> AssignRoleAsync(AssignRoleRequest request);
+        Task<ServiceResult<string>> UnassignRoleAsync(AssignRoleRequest request);
         Task<ServiceResult<AuthResponse>> RefreshTokenAsync(RefreshTokenRequest request);
         Task RevokeTokensAsync(string userId);
         Task<ServiceResult<AuthResponse>> GetUserProfileAsync(string userId);

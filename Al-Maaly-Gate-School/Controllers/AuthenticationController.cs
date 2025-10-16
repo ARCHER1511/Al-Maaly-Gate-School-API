@@ -2,7 +2,6 @@
 using Application.Interfaces;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Al_Maaly_Gate_School.Controllers
@@ -24,7 +23,7 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var result = await _authService.RegisterAsync(request);
             return result.Success
-                ? Ok(ApiResponse<AuthResponse>.Ok(result.Data!))
+                ? Ok(ApiResponse<AuthResponse>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<AuthResponse>.Fail(result.Message!));
         }
 
@@ -33,7 +32,7 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var result = await _authService.LoginAsync(request);
             return result.Success
-                ? Ok(ApiResponse<AuthResponse>.Ok(result.Data!))
+                ? Ok(ApiResponse<AuthResponse>.Ok(result.Data!, result.Message))
                 : Unauthorized(ApiResponse<AuthResponse>.Fail(result.Message!));
         }
 
@@ -47,46 +46,56 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpPost("assign-role")]
-        public async Task<IActionResult> AssignRole(AssignRoleRequest request)
+        public async Task<IActionResult> AssignRole([FromBody] AssignRoleRequest request)
         {
             var result = await _authService.AssignRoleAsync(request);
-            return result.Success ? Ok(result) : BadRequest(result);
+            return result.Success
+                ? Ok(ApiResponse<string>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<string>.Fail(result.Message!));
+        }
+
+        [HttpPost("unassign-role")]
+        public async Task<IActionResult> UnassignRole([FromBody] AssignRoleRequest request)
+        {
+            var result = await _authService.UnassignRoleAsync(request);
+            return result.Success
+                ? Ok(ApiResponse<string>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<string>.Fail(result.Message!));
         }
 
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
         {
             var result = await _authService.RefreshTokenAsync(request);
-            return result.Success ? Ok(result) : BadRequest(result);
+            return result.Success
+                ? Ok(ApiResponse<AuthResponse>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<AuthResponse>.Fail(result.Message!));
         }
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Email))
-                return BadRequest("Email is required.");
+                return BadRequest(ApiResponse<string>.Fail("Email is required."));
 
             var result = await _authService.ForgotPasswordAsync(request.Email);
 
-            if (!result.Success)
-                return BadRequest(result.Message);
-
-            // In production, don't return the token directly (used for testing or admin purpose)
-            return Ok(new { message = result.Message, token = result.Data });
+            return result.Success
+                ? Ok(ApiResponse<string>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<string>.Fail(result.Message!));
         }
 
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(ApiResponse<string>.Fail("Invalid input data."));
 
             var result = await _authService.ResetPasswordAsync(request);
 
-            if (!result.Success)
-                return BadRequest(result.Message);
-
-            return Ok(new { message = result.Message });
+            return result.Success
+                ? Ok(ApiResponse<string>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<string>.Fail(result.Message!));
         }
     }
 }
