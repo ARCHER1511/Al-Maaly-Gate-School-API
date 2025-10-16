@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.AdminDTOs;
 using Application.DTOs.AuthDTOs;
 using Application.DTOs.TeacherDTOs;
+using Application.Services;
 using AutoMapper;
 using Common.Extensions;
 using Domain.Entities;
@@ -90,6 +91,12 @@ namespace Application.Mappings
             #region Teacher Mappings
             //View
             CreateMap<Teacher, TeacherViewDto>();
+            #endregion
+
+            #region Question Mappings
+
+            //View
+            CreateMap<Question, QuestionService>();
             #endregion
         }
     }

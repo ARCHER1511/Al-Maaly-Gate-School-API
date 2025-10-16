@@ -22,6 +22,7 @@ namespace Application.DependencyInjection
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IUserNotificationService, UserNotificationService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IQuestionService, QuestionService>();
             //SignalR
             services.AddSignalR();
             services.AddScoped<INotificationBroadcaster, SignalRNotificationBroadcaster>();

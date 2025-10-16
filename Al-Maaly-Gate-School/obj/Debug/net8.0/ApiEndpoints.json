@@ -549,6 +549,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.QuestionController",
+    "Method": "GetAll",
+    "RelativePath": "api/Question",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Al_Maaly_Gate_School.Controllers.TeacherController",
     "Method": "GetAll",
     "RelativePath": "api/Teacher",

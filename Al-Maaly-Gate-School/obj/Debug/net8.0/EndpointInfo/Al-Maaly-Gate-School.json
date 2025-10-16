@@ -907,6 +907,18 @@
         }
       }
     },
+    "/api/Question": {
+      "get": {
+        "tags": [
+          "Question"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Teacher": {
       "get": {
         "tags": [
