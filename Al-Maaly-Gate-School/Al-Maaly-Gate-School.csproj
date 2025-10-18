@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Al_Maaly_Gate_School</RootNamespace>
+    <UserSecretsId>4836cb4e-b46c-492d-b639-ef8b2a9a6580</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

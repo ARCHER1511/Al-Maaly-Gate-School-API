@@ -9,7 +9,7 @@ using System.Text.Json.Serialization;
 
 namespace Al_Maaly_Gate_School
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -24,7 +24,7 @@ namespace Al_Maaly_Gate_School
             builder.Services.AddCustomCORS(builder.Configuration);
             builder.Services.AddJwtAuthentication(builder.Configuration);
             builder
-                .Services.AddControllers(opt => 
+                .Services.AddControllers(opt =>
                 {
                     var policy = new AuthorizationPolicyBuilder("Bearer").RequireAuthenticatedUser().Build();
                     opt.Filters.Add(new AuthorizeFilter(policy));
