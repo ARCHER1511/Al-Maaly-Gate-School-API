@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Al-Maaly-Gate-School")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+331f392199ba1711bf16aac02808c0c2a66cd82e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+55b7882b2556a8070ab35b42e46e5a1287f60964")]
 [assembly: System.Reflection.AssemblyProductAttribute("Al-Maaly-Gate-School")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Al-Maaly-Gate-School")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

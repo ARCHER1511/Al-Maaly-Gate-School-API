@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "KBJ5Sf6q0Mo=",
+  "dgSpecHash": "SEWEkvENR2o=",
   "success": true,
-  "projectFilePath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Tests\\Tests.csproj",
+  "projectFilePath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\tests\\Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Ramy Mahana\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\Ramy Mahana\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

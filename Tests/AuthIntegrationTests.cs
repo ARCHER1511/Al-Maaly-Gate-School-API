@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
+
 namespace Tests
 {
     public class AuthIntegrationTests : IClassFixture<WebApplicationFactory<Program>>

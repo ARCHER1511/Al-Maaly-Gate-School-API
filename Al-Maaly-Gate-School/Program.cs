@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 
+
 namespace Al_Maaly_Gate_School
 {
-    public static class Program
+    public class Program
     {
+        public void Main() { }
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
