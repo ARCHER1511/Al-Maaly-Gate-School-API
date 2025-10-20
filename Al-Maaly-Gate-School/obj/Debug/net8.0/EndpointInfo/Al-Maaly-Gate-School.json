@@ -225,6 +225,128 @@
         }
       }
     },
+    "/api/Appointment": {
+      "get": {
+        "tags": [
+          "Appointment"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Appointment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Appointment/{id}": {
+      "get": {
+        "tags": [
+          "Appointment"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Appointment"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Appointment"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Authentication/register": {
       "post": {
         "tags": [
@@ -442,6 +564,152 @@
         }
       }
     },
+    "/api/Class": {
+      "get": {
+        "tags": [
+          "Class"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Class"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClassDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClassDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClassDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Class/class/{id}": {
+      "get": {
+        "tags": [
+          "Class"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Class/{id}": {
+      "put": {
+        "tags": [
+          "Class"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClassDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClassDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClassDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Class"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Class/{ClassId}": {
+      "get": {
+        "tags": [
+          "Class"
+        ],
+        "parameters": [
+          {
+            "name": "ClassId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Notification/create": {
       "post": {
         "tags": [
@@ -541,6 +809,128 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Student": {
+      "get": {
+        "tags": [
+          "Student"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Student"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentViewDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentViewDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentViewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Student/{id}": {
+      "get": {
+        "tags": [
+          "Student"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Student"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentViewDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentViewDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentViewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Student"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -717,6 +1107,201 @@
         },
         "additionalProperties": false
       },
+      "Answer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "isCorrect": {
+            "type": "boolean"
+          },
+          "teacherId": {
+            "type": "string",
+            "nullable": true
+          },
+          "teacher": {
+            "$ref": "#/components/schemas/Teacher"
+          },
+          "questionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "question": {
+            "$ref": "#/components/schemas/Question"
+          },
+          "studentQuestionAnswerExam": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudentQuestionAnswerExam"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AppRole": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedName": {
+            "type": "string",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "userRoles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppUserRole"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AppUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailConfirmed": {
+            "type": "boolean"
+          },
+          "passwordHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "securityStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumberConfirmed": {
+            "type": "boolean"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean"
+          },
+          "lockoutEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lockoutEnabled": {
+            "type": "boolean"
+          },
+          "accessFailedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactInfo": {
+            "type": "string",
+            "nullable": true
+          },
+          "userRoles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppUserRole"
+            },
+            "nullable": true
+          },
+          "userNotifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserNotification"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AppUserRole": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "roleId": {
+            "type": "string",
+            "nullable": true
+          },
+          "user": {
+            "$ref": "#/components/schemas/AppUser"
+          },
+          "role": {
+            "$ref": "#/components/schemas/AppRole"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AppointmentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "appointment": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "classId": {
+            "type": "string",
+            "nullable": true
+          },
+          "link": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AssignRoleRequest": {
         "type": "object",
         "properties": {
@@ -741,6 +1326,149 @@
           "newPassword": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Class": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "classYear": {
+            "type": "string",
+            "nullable": true
+          },
+          "teacherId": {
+            "type": "string",
+            "nullable": true
+          },
+          "teacher": {
+            "$ref": "#/components/schemas/Teacher"
+          },
+          "students": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Student"
+            },
+            "nullable": true
+          },
+          "classSubjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClassSubject"
+            },
+            "nullable": true
+          },
+          "classAssets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClassAssets"
+            },
+            "nullable": true
+          },
+          "classAppointments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClassAppointment"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClassAppointment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "appointment": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "classId": {
+            "type": "string",
+            "nullable": true
+          },
+          "class": {
+            "$ref": "#/components/schemas/Class"
+          },
+          "link": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClassAssets": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "assetsPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "classId": {
+            "type": "string",
+            "nullable": true
+          },
+          "class": {
+            "$ref": "#/components/schemas/Class"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClassDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "classYear": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClassSubject": {
+        "type": "object",
+        "properties": {
+          "classId": {
+            "type": "string",
+            "nullable": true
+          },
+          "class": {
+            "$ref": "#/components/schemas/Class"
+          },
+          "subjectId": {
+            "type": "string",
+            "nullable": true
+          },
+          "subject": {
+            "$ref": "#/components/schemas/Subject"
           }
         },
         "additionalProperties": false
@@ -795,6 +1523,60 @@
         },
         "additionalProperties": false
       },
+      "Exam": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "minMark": {
+            "type": "number",
+            "format": "double"
+          },
+          "fullMark": {
+            "type": "number",
+            "format": "double"
+          },
+          "link": {
+            "type": "string",
+            "nullable": true
+          },
+          "teacherSubjectExams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeacherSubjectExam"
+            },
+            "nullable": true
+          },
+          "studentSubjectExams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudentSubjectExam"
+            },
+            "nullable": true
+          },
+          "questionExamTeachers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionExamTeacher"
+            },
+            "nullable": true
+          },
+          "studentQuestionAnswerExams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudentQuestionAnswerExam"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ForgotPasswordRequest": {
         "type": "object",
         "properties": {
@@ -843,6 +1625,204 @@
           "userId": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Notification": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "notificationType": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "creatorUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "creatorUser": {
+            "$ref": "#/components/schemas/AppUser"
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          },
+          "isBroadcast": {
+            "type": "boolean"
+          },
+          "userNotifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserNotification"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Parent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactInfo": {
+            "type": "string",
+            "nullable": true
+          },
+          "isApproved": {
+            "type": "boolean"
+          },
+          "appUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "appUser": {
+            "$ref": "#/components/schemas/AppUser"
+          },
+          "relation": {
+            "type": "string",
+            "nullable": true
+          },
+          "parentStudent": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParentStudent"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ParentStudent": {
+        "type": "object",
+        "properties": {
+          "parentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "parent": {
+            "$ref": "#/components/schemas/Parent"
+          },
+          "studentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "student": {
+            "$ref": "#/components/schemas/Student"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Question": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "correctAnswer": {
+            "type": "string",
+            "nullable": true
+          },
+          "degree": {
+            "type": "number",
+            "format": "double"
+          },
+          "isRequired": {
+            "type": "boolean"
+          },
+          "teacherId": {
+            "type": "string",
+            "nullable": true
+          },
+          "teacher": {
+            "$ref": "#/components/schemas/Teacher"
+          },
+          "questionExamTeachers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionExamTeacher"
+            },
+            "nullable": true
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Answer"
+            },
+            "nullable": true
+          },
+          "studentQuestionAnswerExam": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudentQuestionAnswerExam"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "QuestionExamTeacher": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "question": {
+            "$ref": "#/components/schemas/Question"
+          },
+          "teacherId": {
+            "type": "string",
+            "nullable": true
+          },
+          "teacher": {
+            "$ref": "#/components/schemas/Teacher"
+          },
+          "examId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "exam": {
+            "$ref": "#/components/schemas/Exam"
           }
         },
         "additionalProperties": false
@@ -905,6 +1885,318 @@
         },
         "additionalProperties": false
       },
+      "Student": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactInfo": {
+            "type": "string",
+            "nullable": true
+          },
+          "isApproved": {
+            "type": "boolean"
+          },
+          "appUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "appUser": {
+            "$ref": "#/components/schemas/AppUser"
+          },
+          "classYear": {
+            "type": "string",
+            "nullable": true
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "classId": {
+            "type": "string",
+            "nullable": true
+          },
+          "class": {
+            "$ref": "#/components/schemas/Class"
+          },
+          "parents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParentStudent"
+            },
+            "nullable": true
+          },
+          "subjectExams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudentSubjectExam"
+            },
+            "nullable": true
+          },
+          "questionAnswers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudentQuestionAnswerExam"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StudentQuestionAnswerExam": {
+        "type": "object",
+        "properties": {
+          "studentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "student": {
+            "$ref": "#/components/schemas/Student"
+          },
+          "examId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "exam": {
+            "$ref": "#/components/schemas/Exam"
+          },
+          "questionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "question": {
+            "$ref": "#/components/schemas/Question"
+          },
+          "answerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "answer": {
+            "$ref": "#/components/schemas/Answer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StudentSubjectExam": {
+        "type": "object",
+        "properties": {
+          "grade": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "studentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "subjectId": {
+            "type": "string",
+            "nullable": true
+          },
+          "examId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "student": {
+            "$ref": "#/components/schemas/Student"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/Subject"
+          },
+          "exam": {
+            "$ref": "#/components/schemas/Exam"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StudentViewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactInfo": {
+            "type": "string",
+            "nullable": true
+          },
+          "appUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "classYear": {
+            "type": "string",
+            "nullable": true
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "classId": {
+            "type": "string",
+            "nullable": true
+          },
+          "parents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParentStudent"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Subject": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "classYear": {
+            "type": "string",
+            "nullable": true
+          },
+          "classSubjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClassSubject"
+            },
+            "nullable": true
+          },
+          "teacherSubjectExams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeacherSubjectExam"
+            },
+            "nullable": true
+          },
+          "studentSubjectExams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudentSubjectExam"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Teacher": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactInfo": {
+            "type": "string",
+            "nullable": true
+          },
+          "isApproved": {
+            "type": "boolean"
+          },
+          "appUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "appUser": {
+            "$ref": "#/components/schemas/AppUser"
+          },
+          "classes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Class"
+            },
+            "nullable": true
+          },
+          "subjectExams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeacherSubjectExam"
+            },
+            "nullable": true
+          },
+          "questionExams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionExamTeacher"
+            },
+            "nullable": true
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Question"
+            },
+            "nullable": true
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Answer"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TeacherSubjectExam": {
+        "type": "object",
+        "properties": {
+          "teacherId": {
+            "type": "string",
+            "nullable": true
+          },
+          "teacher": {
+            "$ref": "#/components/schemas/Teacher"
+          },
+          "subjectId": {
+            "type": "string",
+            "nullable": true
+          },
+          "subject": {
+            "$ref": "#/components/schemas/Subject"
+          },
+          "examId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "exam": {
+            "$ref": "#/components/schemas/Exam"
+          }
+        },
+        "additionalProperties": false
+      },
       "UpdateProfileRequest": {
         "type": "object",
         "properties": {
@@ -914,6 +2206,46 @@
           },
           "contactInfo": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserNotification": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "notificationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "notification": {
+            "$ref": "#/components/schemas/Notification"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "user": {
+            "$ref": "#/components/schemas/AppUser"
+          },
+          "isRead": {
+            "type": "boolean"
+          },
+          "isDelivered": {
+            "type": "boolean"
+          },
+          "deliveredAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },

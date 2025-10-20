@@ -18,3 +18,23 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructu
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.pdb
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.genruntimeconfig.cache
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\ref\Infrastructure.dll
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Infrastructure.deps.json
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Infrastructure.runtimeconfig.json
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Infrastructure.dll
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Infrastructure.pdb
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Common.dll
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Domain.dll
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Common.pdb
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\bin\Debug\net8.0\Domain.pdb
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.csproj.AssemblyReference.cache
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.AssemblyInfoInputs.cache
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.AssemblyInfo.cs
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.sourcelink.json
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastr.15EFFBFE.Up2Date
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.dll
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\refint\Infrastructure.dll
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.pdb
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\Infrastructure.genruntimeconfig.cache
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Infrastructure\obj\Debug\net8.0\ref\Infrastructure.dll

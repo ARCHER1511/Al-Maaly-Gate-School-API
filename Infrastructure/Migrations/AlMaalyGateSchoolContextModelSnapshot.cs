@@ -225,7 +225,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("TeacherId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(36)");
 
                     b.HasKey("Id");
@@ -252,6 +251,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Link")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -882,8 +884,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Teacher", "Teacher")
                         .WithMany("Classes")
                         .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Teacher");
                 });
