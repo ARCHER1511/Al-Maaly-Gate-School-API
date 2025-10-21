@@ -20,4 +20,5 @@ Domain/obj
 Infrastructure/bin
 Infrastructure/obj
 
-Tests
+Tests/bin
+Tests/obj
