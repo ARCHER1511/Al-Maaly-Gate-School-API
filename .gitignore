@@ -1,0 +1,5 @@
+# Ignore Visual Studio settings
+.vs/
+
+# Ignore Entity Framework migrations (if you want to exclude them)
+Infrastructure/Migrations/

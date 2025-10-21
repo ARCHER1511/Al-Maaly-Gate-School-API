@@ -20,7 +20,7 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll() 
+        public async Task<IActionResult> GetAll()
         {
             var response = await _questionService.GetAllAsync();
             if(!response.Success)

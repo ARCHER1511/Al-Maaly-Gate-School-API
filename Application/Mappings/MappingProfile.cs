@@ -1,6 +1,9 @@
 ﻿using Application.DTOs.AdminDTOs;
+using Application.DTOs.AppointmentsDTOs;
 using Application.DTOs.AuthDTOs;
 using Application.DTOs.QuestionDTOs;
+using Application.DTOs.ClassDTOs;
+using Application.DTOs.StudentDTOs;
 using Application.DTOs.TeacherDTOs;
 using Application.Services;
 using AutoMapper;
@@ -20,7 +23,6 @@ namespace Application.Mappings
             //CreateMap<T,TDTO>().ReverseMap();
             //for view T mappings
             #endregion
-
 
             #region Admin Mappings
             //Create
@@ -92,6 +94,31 @@ namespace Application.Mappings
             #region Teacher Mappings
             //View
             CreateMap<Teacher, TeacherViewDto>();
+            #endregion
+
+            #region Teacher Mappings
+            CreateMap<Student, StudentViewDto>().IgnoreUnmapped();
+            #endregion
+
+            #region Classes Mappings
+            CreateMap<Class, ClassViewDto>().IgnoreUnmapped();
+
+            CreateMap<ClassDto, Class>()
+            .ForMember(dest => dest.Students, opt => opt.Ignore())
+            .ForMember(dest => dest.ClassSubjects, opt => opt.Ignore())
+            .ForMember(dest => dest.Teacher, opt => opt.Ignore())
+            .ForMember(dest => dest.ClassAssets, opt => opt.Ignore());
+
+            CreateMap<Class,ClassDto>();
+
+            CreateMap<ClassAppointment, ClassAppointmentsDTo>().IgnoreUnmapped();
+            #endregion
+
+            #region Appointments
+            CreateMap<ClassAppointment, AppointmentDto>().IgnoreUnmapped();
+            CreateMap<ClassAppointment, ViewAppointmentDto>().IgnoreUnmapped();
+            CreateMap<AppointmentDto, ClassAppointment>().IgnoreUnmapped()
+            .ForMember(dest => dest.Id, opt => opt.Ignore());
             #endregion
 
             #region Question Mappings
