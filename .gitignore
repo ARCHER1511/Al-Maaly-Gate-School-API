@@ -3,3 +3,22 @@
 
 # Ignore Entity Framework migrations (if you want to exclude them)
 Infrastructure/Migrations/
+
+
+Al-Maaly-Gate-School/bin
+Al-Maaly-Gate-School/obj
+
+Application/bin
+Application/obj
+
+Common/bin
+Common/obj
+
+Domain/bin
+Domain/obj
+
+Infrastructure/bin
+Infrastructure/obj
+
+Tests/bin
+Tests/obj
