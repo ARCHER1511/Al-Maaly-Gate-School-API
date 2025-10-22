@@ -20,15 +20,27 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll() 
+        public async Task<IActionResult> GetAll()
         {
-            var response = await _questionService.GetAllAsync();
-            if(!response.Success)
-                return NotFound(ApiResponse<IEnumerable<QuestionViewDto>>.Fail(response.Message!));
-            return Ok(ApiResponse<IEnumerable<QuestionViewDto>>.Ok(response.Data!,response.Message));
+            var result = await _questionService.GetAllAsync();
+            if (!result.Success) return NotFound(ApiResponse<IEnumerable<QuestionViewDto>>.Fail(result.Message!));
+            return Ok(ApiResponse<IEnumerable<QuestionViewDto>>.Ok(result.Data!, result.Message));
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var result = await _questionService.GetByIdAsync(id);
+            if (!result.Success) return NotFound(ApiResponse<QuestionViewDto>.Fail(result.Message!));
+            return Ok(ApiResponse<QuestionViewDto>.Ok(result.Data!, result.Message));
+        }
 
-
+        [HttpPost("{teacherId}")]
+        public async Task<IActionResult> Create(string teacherId, [FromBody] CreateQuestionDto dto)
+        {
+            var result = await _questionService.CreateQuestionAsync(teacherId, dto);
+            if (!result.Success) return BadRequest(ApiResponse<QuestionViewDto>.Fail(result.Message!));
+            return Ok(ApiResponse<QuestionViewDto>.Ok(result.Data!, result.Message));
+        }
     }
 }

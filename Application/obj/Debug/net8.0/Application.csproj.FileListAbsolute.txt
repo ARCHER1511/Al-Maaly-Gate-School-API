@@ -18,3 +18,23 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Application\
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\refint\Application.dll
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\Application.pdb
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\ref\Application.dll
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\bin\Debug\net8.0\Application.deps.json
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\bin\Debug\net8.0\Application.dll
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\bin\Debug\net8.0\Application.pdb
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\bin\Debug\net8.0\Common.dll
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\bin\Debug\net8.0\Domain.dll
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\bin\Debug\net8.0\Infrastructure.dll
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\bin\Debug\net8.0\Common.pdb
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\bin\Debug\net8.0\Domain.pdb
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\bin\Debug\net8.0\Infrastructure.pdb
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\Application.csproj.AssemblyReference.cache
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\Application.AssemblyInfoInputs.cache
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\Application.AssemblyInfo.cs
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\Application.csproj.CoreCompileInputs.cache
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\Application.sourcelink.json
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\Applicat.44B5EDA2.Up2Date
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\Application.dll
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\refint\Application.dll
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\Application.pdb
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Application\obj\Debug\net8.0\ref\Application.dll

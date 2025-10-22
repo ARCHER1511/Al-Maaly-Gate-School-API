@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj": {}
+    "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj": {}
   },
   "projects": {
-    "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj": {
+    "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj",
+        "projectUniqueName": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj",
         "projectName": "Al-Maaly-Gate-School",
-        "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj",
-        "packagesPath": "C:\\Users\\Ramy Mahana\\.nuget\\packages\\",
-        "outputPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\obj\\",
+        "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School.csproj",
+        "packagesPath": "C:\\Users\\METRO\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Al-Maaly-Gate-School\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Ramy Mahana\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\METRO\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -27,23 +27,23 @@
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
-          "https://www.nuget.org/api/v2/": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Application\\Application.csproj": {
-                "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Application\\Application.csproj"
+              "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Application\\Application.csproj": {
+                "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Application\\Application.csproj"
               },
-              "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\Common.csproj": {
-                "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\Common.csproj"
+              "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Common\\Common.csproj": {
+                "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Common\\Common.csproj"
               },
-              "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj": {
-                "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj"
+              "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj": {
+                "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj"
               },
-              "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj"
+              "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj"
               }
             }
           }
@@ -92,24 +92,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Application\\Application.csproj": {
+    "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Application\\Application.csproj",
+        "projectUniqueName": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Application\\Application.csproj",
         "projectName": "Application",
-        "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Application\\Application.csproj",
-        "packagesPath": "C:\\Users\\Ramy Mahana\\.nuget\\packages\\",
-        "outputPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Application\\obj\\",
+        "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Application\\Application.csproj",
+        "packagesPath": "C:\\Users\\METRO\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Ramy Mahana\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\METRO\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -119,20 +119,20 @@
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
-          "https://www.nuget.org/api/v2/": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\Common.csproj": {
-                "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\Common.csproj"
+              "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Common\\Common.csproj": {
+                "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Common\\Common.csproj"
               },
-              "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj": {
-                "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj"
+              "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj": {
+                "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj"
               },
-              "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj"
+              "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj"
               }
             }
           }
@@ -182,24 +182,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\Common.csproj": {
+    "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Common\\Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\Common.csproj",
+        "projectUniqueName": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Common\\Common.csproj",
         "projectName": "Common",
-        "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\Common.csproj",
-        "packagesPath": "C:\\Users\\Ramy Mahana\\.nuget\\packages\\",
-        "outputPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\obj\\",
+        "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Common\\Common.csproj",
+        "packagesPath": "C:\\Users\\METRO\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Common\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Ramy Mahana\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\METRO\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -209,7 +209,7 @@
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
-          "https://www.nuget.org/api/v2/": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
@@ -288,24 +288,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj": {
+    "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj",
+        "projectUniqueName": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj",
-        "packagesPath": "C:\\Users\\Ramy Mahana\\.nuget\\packages\\",
-        "outputPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\obj\\",
+        "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\METRO\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Ramy Mahana\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\METRO\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -315,7 +315,7 @@
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
-          "https://www.nuget.org/api/v2/": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
@@ -360,24 +360,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj": {
+    "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\Ramy Mahana\\.nuget\\packages\\",
-        "outputPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Infrastructure\\obj\\",
+        "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Infrastructure\\Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\METRO\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Ramy Mahana\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\METRO\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -387,17 +387,17 @@
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
-          "https://www.nuget.org/api/v2/": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\Common.csproj": {
-                "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Common\\Common.csproj"
+              "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Common\\Common.csproj": {
+                "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Common\\Common.csproj"
               },
-              "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj": {
-                "projectPath": "D:\\_Development Vault\\Al-Maaly-Gate-School\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj"
+              "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj": {
+                "projectPath": "D:\\Projects\\School-System\\Back\\Al-Maaly-Gate-School-API\\Domain\\Domain.csproj"
               }
             }
           }
@@ -464,7 +464,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

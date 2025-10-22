@@ -309,6 +309,12 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("FullMark")
                         .HasColumnType("decimal(18,2)");
 
@@ -319,6 +325,10 @@ namespace Infrastructure.Migrations
 
                     b.Property<decimal>("MinMark")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")
                         .IsRequired()

@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities
 {
-    public class StudentQuestionAnswerExam
+    public class    StudentQuestionAnswerExam
     {
         public string StudentId { get; set; } = string.Empty;
         public Student? Student { get; set; }

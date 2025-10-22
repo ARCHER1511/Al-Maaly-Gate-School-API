@@ -13,3 +13,18 @@ D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Common\obj\D
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\Common.pdb
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\Common.genruntimeconfig.cache
 D:\_Development Vault\Al-Maaly-Gate-School\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\ref\Common.dll
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\bin\Debug\net8.0\Common.deps.json
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\bin\Debug\net8.0\Common.runtimeconfig.json
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\bin\Debug\net8.0\Common.dll
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\bin\Debug\net8.0\Common.pdb
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\Common.csproj.AssemblyReference.cache
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\Common.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\Common.AssemblyInfoInputs.cache
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\Common.AssemblyInfo.cs
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\Common.csproj.CoreCompileInputs.cache
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\Common.sourcelink.json
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\Common.dll
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\refint\Common.dll
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\Common.pdb
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\Common.genruntimeconfig.cache
+D:\Projects\School-System\Back\Al-Maaly-Gate-School-API\Common\obj\Debug\net8.0\ref\Common.dll

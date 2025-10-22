@@ -269,6 +269,85 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.ExamController",
+    "Method": "Delete",
+    "RelativePath": "api/Exam/{examId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "examId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.ExamController",
+    "Method": "Get",
+    "RelativePath": "api/Exam/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.ExamController",
+    "Method": "Create",
+    "RelativePath": "api/Exam/{teacherId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "teacherId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "Application.DTOs.ExamDTOS.CreateExamDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.ExamController",
+    "Method": "AssignQuestions",
+    "RelativePath": "api/Exam/{teacherId}/{examId}/assign",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "teacherId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "examId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "questionIds",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Al_Maaly_Gate_School.Controllers.FileController",
     "Method": "GetById",
     "RelativePath": "api/File/{id}",
@@ -559,6 +638,43 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.QuestionController",
+    "Method": "Get",
+    "RelativePath": "api/Question/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.QuestionController",
+    "Method": "Create",
+    "RelativePath": "api/Question/{teacherId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "teacherId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "Application.DTOs.QuestionDTOs.CreateQuestionDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Al_Maaly_Gate_School.Controllers.TeacherController",
     "Method": "GetAll",
     "RelativePath": "api/Teacher",
@@ -566,6 +682,69 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.TeacherController",
+    "Method": "CreateExam",
+    "RelativePath": "api/Teacher/{teacherId}/exams",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "teacherId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "Application.DTOs.ExamDTOS.CreateExamDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.TeacherController",
+    "Method": "GetTeacherExams",
+    "RelativePath": "api/Teacher/{teacherId}/exams",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "teacherId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Al_Maaly_Gate_School.Controllers.TeacherController",
+    "Method": "AssignQuestions",
+    "RelativePath": "api/Teacher/{teacherId}/exams/{examId}/questions",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "teacherId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "examId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "questionIds",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {
