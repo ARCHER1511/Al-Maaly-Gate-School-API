@@ -946,3 +946,7 @@ C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maa
 C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Tests\obj\Debug\net8.0\Tests.pdb
 C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Tests\obj\Debug\net8.0\Tests.genruntimeconfig.cache
 C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Tests\obj\Debug\net8.0\ref\Tests.dll
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Al-Maaly-Gate-School.staticwebassets.runtime.json
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Scrutor.dll
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Swashbuckle.AspNetCore.Filters.dll
+C:\Users\muham\OneDrive\Desktop\Team-Project\Al-Maaly-Gate-School-Backend\Al-Maaly-Gate-School-API\Tests\bin\Debug\net8.0\Swashbuckle.AspNetCore.Filters.Abstractions.dll

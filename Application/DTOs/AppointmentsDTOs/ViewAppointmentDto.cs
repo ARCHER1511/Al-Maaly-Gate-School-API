@@ -1,10 +1,15 @@
-﻿namespace Application.DTOs.AppointmentsDTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Application.DTOs.AppointmentsDTOs
 {
     public class ViewAppointmentDto
     {
         public string? Id { get; set; }
-        public DateTime? Appointment { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
         public string ClassId { get; set; } = string.Empty;
+        [Url]
         public string? Link { get; set; }
+        public string Status { get; set; } = "Upcoming";
     }
 }

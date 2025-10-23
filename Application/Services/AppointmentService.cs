@@ -1,6 +1,4 @@
-﻿
-
-using Application.DTOs.AppointmentsDTOs;
+﻿using Application.DTOs.AppointmentsDTOs;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
@@ -20,19 +18,55 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+        private string GetStatus(DateTime start, DateTime end)
+        {
+            var now = DateTime.Now;
 
+            if (now < start)
+                return "Upcoming";
+            else if (now >= start && now <= end)
+                return "Running";
+            else
+                return "Finished";
+        }
         public async Task<ServiceResult<IEnumerable<ViewAppointmentDto>>> GetAllAsync()
         {
             var result = await _classAppointmentRepository.GetAllAsync();
             if (result == null) return ServiceResult<IEnumerable<ViewAppointmentDto>>.Fail("Appointment not found");
 
+            bool isChanged = false;
+            foreach (var appointment in result)
+            {
+                var newStatus = GetStatus(appointment.StartTime, appointment.EndTime);
+                if (appointment.Status != newStatus)
+                {
+                    appointment.Status = newStatus;
+                    _classAppointmentRepository.Update(appointment);
+                    isChanged = true;
+                }
+            }
+            if (isChanged)
+                await _unitOfWork.SaveChangesAsync();
+
             var resultDto = _mapper.Map<IEnumerable<ViewAppointmentDto>>(result);
+
             return ServiceResult<IEnumerable<ViewAppointmentDto>>.Ok(resultDto, "Appointment retrieved successfully");
         }
         public async Task<ServiceResult<ViewAppointmentDto>> GetByIdAsync(object id)
         {
             var result = await _classAppointmentRepository.GetByIdAsync(id);
             if (result == null) return ServiceResult<ViewAppointmentDto>.Fail("Appointment not found");
+
+            bool isChanged = false;
+            var newStatus = GetStatus(result.StartTime, result.EndTime);
+            if (result.Status != newStatus)
+            {
+                result.Status = newStatus;
+                _classAppointmentRepository.Update(result);
+                isChanged = true;
+            }
+            if (isChanged)
+                await _unitOfWork.SaveChangesAsync();
 
             var resultDto = _mapper.Map<ViewAppointmentDto>(result);
             return ServiceResult<ViewAppointmentDto>.Ok(resultDto, "Appointment retrieved successfully");

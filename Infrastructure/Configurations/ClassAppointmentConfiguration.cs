@@ -10,8 +10,14 @@ namespace Infrastructure.Configurations
         {
             new BaseEntityConfiguration<ClassAppointment>().Configure(builder);
 
-            builder.Property(ca => ca.Appointment)
-                   .IsRequired(false);
+            builder.Property(ca => ca.StartTime)
+                   .IsRequired(true);
+
+            builder.Property(ca => ca.EndTime)
+                   .IsRequired(true);
+
+            builder.Property(ca => ca.Link)
+                   .IsRequired(true);
 
             builder.HasOne(ca => ca.Class)
                    .WithMany(c => c.ClassAppointments)
