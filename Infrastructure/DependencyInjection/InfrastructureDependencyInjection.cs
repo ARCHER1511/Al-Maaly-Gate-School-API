@@ -19,33 +19,27 @@ namespace Infrastructure.DependencyInjection
             // Repositories DbContextFactory
             services.AddScoped<IDbContextFactory<AlMaalyGateSchoolContext>, DbContextFactory>();
             services.AddScoped<IAdminRepository, AdminRepository>();
-            services.AddScoped<IAnswerRepository, AnswerRepository>();
+            services.AddScoped<ITextAnswersRepository, TextAnswersRepository>();
             services.AddScoped<IAppRoleRepository, AppRoleRepository>();
             services.AddScoped<IAppUserRepository, AppUserRepository>();
             services.AddScoped<IAppUserRoleRepository, AppUserRoleRepository>();
             services.AddScoped<IClassAppointmentRepository, ClassAppointmentRepository>();
             services.AddScoped<IClassAssetsRepository, ClassAssetsRepository>();
             services.AddScoped<IClassRepository, ClassRepository>();
-            services.AddScoped<IClassSubjectRepository, ClassSubjectRepository>();
             services.AddScoped<IExamRepository, ExamRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IParentRepository, ParentRepository>();
             services.AddScoped<IParentStudentRepository, ParentStudentRepository>();
-            services.AddScoped<IQuestionExamTeacherRepository, QuestionExamTeacherRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
-            services.AddScoped<
-                IStudentQuestionAnswerExamRepository,
-                StudentQuestionAnswerExamRepository
-            >();
             services.AddScoped<IStudentRepository, StudentRepository>();
-            services.AddScoped<IStudentSubjectExamRepository, StudentSubjectExamRepository>();
             services.AddScoped<ISubjectRepository, SubjectRepository>();
             services.AddScoped<ITeacherRepository, TeacherRepository>();
-            services.AddScoped<ITeacherSubjectExamRepository, TeacherSubjectExamRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
             services.AddScoped<IFileRecordRepository, FileRecordRepository>();
+            services.AddScoped<IChoicesRepository, ChoicesRepository>();
+            services.AddScoped<ITrueAndFalsesRepository, TrueAndFalsesRepository>();
 
             return services;
         }

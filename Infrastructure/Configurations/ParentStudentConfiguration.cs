@@ -11,15 +11,16 @@ namespace Infrastructure.Configurations
             builder.HasKey(ps => new { ps.ParentId, ps.StudentId });
 
             builder.HasOne(ps => ps.Parent)
-                   .WithMany(p => p.ParentStudent)
-                   .HasForeignKey(ps => ps.ParentId);
+                .WithMany(p => p.ParentStudent)
+                .HasForeignKey(ps => ps.ParentId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(ps => ps.Student)
-                   .WithMany(s => s.Parents)
-                   .HasForeignKey(ps => ps.StudentId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                .WithMany(s => s.Parents)
+                .HasForeignKey(ps => ps.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.ToTable("ParentStudents", "Academics");
+            builder.ToTable("ParentStudent", "Academics");
         }
     }
 }

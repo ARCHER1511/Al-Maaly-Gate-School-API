@@ -1,19 +1,15 @@
 ﻿namespace Domain.Entities
 {
-    public class Question
+    public class Question: BaseEntity
     {
-        public int Id { get; set; }
-        public string? Type { get; set; }
-        public string? Content { get; set; }
-        public string? CorrectAnswer { get; set; }
+        public string Content { get; set; } = string.Empty;
         public decimal Degree { get; set; }
-        public bool IsRequired { get; set; }
+        public string ExamId { get; set; } = string.Empty;
+        public Exam? Exam { get; set; } = null!;
         public string TeacherId { get; set; } = string.Empty;
-        public Teacher? Teacher { get; set; }
-        public List<QuestionExamTeacher> QuestionExamTeachers { get; set; } = new List<QuestionExamTeacher>();
-        public List<Answer> Answers { get; set; } = new List<Answer>();
-        public List<StudentQuestionAnswerExam> StudentQuestionAnswerExam { get; set; } = new List<StudentQuestionAnswerExam>();
-
-
+        public Teacher Teacher { get; set; } = null!;
+        public TextAnswers? TextAnswer { get; set; }
+        public TrueAndFalses? TrueAndFalses { get; set; } 
+        public List<Choices>? Choices { get; set; } = new ();
     }
 }

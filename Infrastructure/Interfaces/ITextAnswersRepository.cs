@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Interfaces
 {
-    public interface IClassSubjectRepository : IGenericRepository<ClassSubject>
+    public interface ITextAnswersRepository : IGenericRepository<TextAnswers>
     {
 
     }

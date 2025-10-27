@@ -76,7 +76,7 @@ namespace Application.Services
             var classAppointments = await _classRepository.AsQueryable()
                 .Where(c => c.Id == (string)classId)
                 .Include(c => c.ClassAppointments)
-                .SelectMany(c => c.ClassAppointments)
+                .SelectMany(c => c.ClassAppointments!)
                 .ToListAsync();
 
             if (classAppointments == null || classAppointments.Count == 0)

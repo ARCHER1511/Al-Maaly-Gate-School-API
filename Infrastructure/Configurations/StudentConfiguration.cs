@@ -10,6 +10,8 @@ namespace Infrastructure.Configurations
         {
             new UserBaseConfiguration<Student>().Configure(builder);
 
+            builder.HasKey(s => s.Id);
+
             builder.Property(s => s.ClassYear)
                    .IsRequired()
                    .HasMaxLength(50);
@@ -17,10 +19,15 @@ namespace Infrastructure.Configurations
             builder.Property(s => s.Age)
                    .IsRequired();
 
+            builder.Property(s => s.ClassId)
+                   .IsRequired()
+                   .HasMaxLength(450);
+
             builder.HasOne(s => s.Class)
                    .WithMany(c => c.Students)
                    .HasForeignKey(s => s.ClassId)
                    .OnDelete(DeleteBehavior.Restrict);
+
             builder.ToTable("Students", "Identity");
         }
     }

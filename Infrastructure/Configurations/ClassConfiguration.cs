@@ -8,23 +8,28 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Class> builder)
         {
-            new BaseEntityConfiguration<Class>().Configure(builder);
+            builder.ToTable("Classes", "Academics");
+
+            builder.HasKey(c => c.Id);
 
             builder.Property(c => c.ClassYear)
                    .IsRequired()
                    .HasMaxLength(50);
-
-            builder.HasOne(c => c.Teacher)
-                   .WithMany(t => t.Classes)
-                   .HasForeignKey(c => c.TeacherId)
-                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(c => c.Students)
                    .WithOne(s => s.Class)
                    .HasForeignKey(s => s.ClassId)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.ToTable("Classes", "Academics");
+                       builder.HasMany(c => c.ClassAssets)
+                   .WithOne(ca => ca.Class)
+                   .HasForeignKey(ca => ca.ClassId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(c => c.ClassAppointments)
+                   .WithOne(ca => ca.Class)
+                   .HasForeignKey(ca => ca.ClassId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

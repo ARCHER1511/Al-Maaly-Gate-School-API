@@ -2,8 +2,7 @@
 
 namespace Infrastructure.Interfaces
 {
-    public interface IAnswerRepository : IGenericRepository<Answer>
+    public interface IChoicesRepository : IGenericRepository<Choices>
     {
-
     }
 }

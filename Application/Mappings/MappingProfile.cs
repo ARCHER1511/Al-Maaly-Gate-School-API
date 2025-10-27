@@ -105,8 +105,6 @@ namespace Application.Mappings
 
             CreateMap<ClassDto, Class>()
             .ForMember(dest => dest.Students, opt => opt.Ignore())
-            .ForMember(dest => dest.ClassSubjects, opt => opt.Ignore())
-            .ForMember(dest => dest.Teacher, opt => opt.Ignore())
             .ForMember(dest => dest.ClassAssets, opt => opt.Ignore());
 
             CreateMap<Class,ClassDto>();

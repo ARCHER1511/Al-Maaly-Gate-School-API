@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class ClassSubjectRepository : GenericRepository<ClassSubject>,IClassSubjectRepository
+    public class TextAnswersRepository : GenericRepository<TextAnswers>, ITextAnswersRepository
     {
         private new readonly AlMaalyGateSchoolContext _context;
-        private new readonly DbSet<ClassSubject> _dbSet;
+        private new readonly DbSet<TextAnswers> _dbSet;
 
-        public ClassSubjectRepository(AlMaalyGateSchoolContext context) : base(context)
+        public TextAnswersRepository(AlMaalyGateSchoolContext context) : base(context)
         {
             _context = context;
-            _dbSet = context.Set<ClassSubject>();
+            _dbSet = context.Set<TextAnswers>();
         }
     }
 }

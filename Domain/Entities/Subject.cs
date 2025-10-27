@@ -3,8 +3,14 @@
     public class Subject : BaseEntity
     {
         public string ClassYear { get; set; } = string.Empty;
-        public List<ClassSubject> ClassSubjects { get; set; } = new List<ClassSubject>();
-        public List<TeacherSubjectExam> TeacherSubjectExams { get; set; } = new List<TeacherSubjectExam>();
-        public List<StudentSubjectExam> StudentSubjectExams { get; set; } = new List<StudentSubjectExam>();
+
+        public string ClassId { get; set; } = string.Empty;
+        public Class Class { get; set; } = null!;
+
+        public string TeacherId { get; set; } = string.Empty;
+        public Teacher? Teacher { get; set; } = new();
+
+        public List<Exam> Exams { get; set; } = new();
+        public List<ClassAppointment> ClassAppointments { get; set; } = new();
     }
 }

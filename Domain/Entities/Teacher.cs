@@ -2,10 +2,9 @@
 {
     public class Teacher : UserBase
     {
-        public List<Class> Classes { get; set; } = new();
-        public List<TeacherSubjectExam> SubjectExams { get; set; } = new();
-        public List<QuestionExamTeacher> QuestionExams { get; set; } = new();
-        public List<Question> Questions { get; set; } = new();
-        public List<Answer> Answers { get; set; } = new();
+        public List<Subject>? Subjects { get; set; } = new List<Subject>();
+        public List<Exam>? Exams { get; set; } = new List<Exam>();
+        public List<Question> Questions { get; set; } = new List<Question>();
+        public List<ClassAppointment> ClassAppointments { get; set; } = new();
     }
 }

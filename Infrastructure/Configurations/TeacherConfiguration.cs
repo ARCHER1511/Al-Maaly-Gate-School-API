@@ -10,7 +10,27 @@ namespace Infrastructure.Configurations
         {
             new UserBaseConfiguration<Teacher>().Configure(builder);
 
-            // Relationships are configured in related entities
+            builder.HasKey(t => t.Id);
+
+            builder.HasMany(t => t.Subjects)
+                   .WithOne(s => s.Teacher)
+                   .HasForeignKey(s => s.TeacherId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(t => t.Questions)
+                .WithOne(s => s.Teacher)
+                .HasForeignKey(s => s.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(t => t.ClassAppointments)
+                .WithOne(s => s.Teacher)
+                .HasForeignKey(s => s.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(t => t.Exams)
+                 .WithOne(s => s.Teacher)
+                 .HasForeignKey(s => s.TeacherId)
+                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.ToTable("Teachers", "Academics");
         }

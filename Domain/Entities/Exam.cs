@@ -1,16 +1,17 @@
 ﻿namespace Domain.Entities
 {
-    public class Exam
+    public class Exam : BaseEntity
     {
-        public int Id { get; set; }
-        public string Type { get; set; } = string.Empty;
+        public string SubjectId { get; set; } = string.Empty;
+        public Subject Subject { get; set; } = null!;
+        public string ClassId { get; set; } = string.Empty;
+        public Class Class { get; set; } = null!;
+        public string TeacherId { get; set; } = string.Empty;
+        public Teacher Teacher { get; set; } = null!;
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
         public decimal MinMark { get; set; } = 0;
         public decimal FullMark { get; set; } = 0;
-        public string Link { get; set; } = string.Empty;
-        public List<TeacherSubjectExam> TeacherSubjectExams { get; set; } = new List<TeacherSubjectExam>();
-        public List<StudentSubjectExam> StudentSubjectExams { get; set; } = new List<StudentSubjectExam>();
-        public List<QuestionExamTeacher> QuestionExamTeachers { get; set; } = new List<QuestionExamTeacher>();
-        public List<StudentQuestionAnswerExam> StudentQuestionAnswerExams { get; set; } = new List<StudentQuestionAnswerExam>();
-
+        public List<Question> Questions { get; set; } = new List<Question>();
     }
 }

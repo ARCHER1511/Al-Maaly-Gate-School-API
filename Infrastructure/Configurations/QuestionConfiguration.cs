@@ -8,18 +8,32 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Question> builder)
         {
-            builder.HasKey(q => q.Id);
+            builder.ToTable("Questions", "Academics");
 
-            builder.Property(q => q.Type).HasMaxLength(100);
-            builder.Property(q => q.Content).HasMaxLength(1000);
-            builder.Property(q => q.CorrectAnswer).HasMaxLength(500);
+            builder.HasOne(q => q.Exam)
+                   .WithMany(e => e.Questions)
+                   .HasForeignKey(q => q.ExamId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(q => q.Teacher)
-                   .WithMany(t => t.Questions)
-                   .HasForeignKey(q => q.TeacherId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                  .WithMany(e => e.Questions)
+                  .HasForeignKey(q => q.TeacherId)
+                  .OnDelete(DeleteBehavior.Cascade);
 
-            builder.ToTable("Questions", "Academics");
+            builder.HasMany(q => q.Choices)
+                   .WithOne(c => c.Question)
+                   .HasForeignKey(c => c.QuestionId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(q => q.TrueAndFalses)
+                   .WithOne(tf => tf.Question)
+                   .HasForeignKey<TrueAndFalses>(tf => tf.QuestionId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(q => q.TextAnswer)
+                   .WithOne(ta => ta.Question)
+                   .HasForeignKey<TextAnswers>(ta => ta.QuestionId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
