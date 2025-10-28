@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\Al-Maaly-Gate-School.props" />
-</Project>
