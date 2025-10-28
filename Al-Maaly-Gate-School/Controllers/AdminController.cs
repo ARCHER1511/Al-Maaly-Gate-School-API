@@ -1,9 +1,11 @@
 ﻿using Application.DTOs.AdminDTOs;
+using Application.DTOs.TeacherDTOs;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Wrappers;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
@@ -24,8 +26,8 @@ namespace Al_Maaly_Gate_School.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _adminService.GetAllAsync();
-            if(!result.Success)
-               return NotFound(ApiResponse<IEnumerable<AdminViewDto>>.Fail(result.Message!));
+            if (!result.Success)
+                return NotFound(ApiResponse<IEnumerable<AdminViewDto>>.Fail(result.Message!));
             return Ok(ApiResponse<IEnumerable<AdminViewDto>>.Ok(result.Data!, result.Message));
         }
 
@@ -85,6 +87,24 @@ namespace Al_Maaly_Gate_School.Controllers
                 return NotFound(ApiResponse<string>.Fail(result.Message!));
 
             return Ok(ApiResponse<string>.Ok("Admin deleted successfully."));
+        }
+
+        // Teachers
+
+        [HttpGet("TeacherCount")]
+        public async Task<IActionResult> TeacherCount() 
+        {
+            var result = await _adminService.GetTeacherCount();
+            if (!result.Success) { ApiResponse<int>.Fail(result.Message!); }
+            return Ok(ApiResponse<int>.Ok(result.Data,result.Message));
+        }
+        [HttpGet("TeacherBySubject")]
+        public async Task<IActionResult> TeacherbySubject([FromQuery] string subjectName) 
+        {
+            var result = await _adminService.GetTeahcerInfo(subjectName);
+            if(!result.Success)
+                return NotFound(ApiResponse<IEnumerable<TeacherAdminViewDto>>.Fail(result.Message!));
+            return Ok(ApiResponse<IEnumerable<TeacherAdminViewDto>>.Ok(result.Data!, result.Message) );
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using System.Linq.Expressions;
+﻿using Application.DTOs.AdminDTOs;
+using Application.DTOs.TeacherDTOs;
 using Domain.Entities;
 using Domain.Wrappers;
 using Microsoft.EntityFrameworkCore.Query;
-using Application.DTOs.AdminDTOs;
+using System.Linq.Expressions;
 namespace Application.Interfaces
 {
     public interface IAdminService
@@ -23,5 +24,7 @@ namespace Application.Interfaces
         Task<ServiceResult<AdminViewDto>> CreateAsync(AdminCreateDto dto);
         Task<ServiceResult<AdminViewDto>> UpdateAsync(AdminUpdateDto admin);
         Task<ServiceResult<bool>> DeleteAsync(object id);
+        Task<ServiceResult<int>> GetTeacherCount();
+        Task<ServiceResult<IEnumerable<TeacherAdminViewDto>>> GetTeahcerInfo(string subjectName);
     }
 }
