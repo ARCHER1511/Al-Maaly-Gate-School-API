@@ -9,6 +9,7 @@ using Application.Services;
 using AutoMapper;
 using Common.Extensions;
 using Domain.Entities;
+using Application.DTOs.SubjectDTOs;
 
 namespace Application.Mappings
 {
@@ -30,7 +31,7 @@ namespace Application.Mappings
             //Edit
             CreateMap<AdminUpdateDto, Admin>().IgnoreUnmapped().ReverseMap();
             //View
-            CreateMap<Admin, AdminViewDto>();
+            CreateMap<Admin, AdminViewDto>().IgnoreUnmapped();
             #endregion
 
             #region Auth Mappings
@@ -93,7 +94,7 @@ namespace Application.Mappings
 
             #region Teacher Mappings
             //View
-            CreateMap<Teacher, TeacherViewDto>();
+            CreateMap<Teacher, TeacherViewDto>().IgnoreUnmapped();
             #endregion
 
             #region Teacher Mappings
@@ -103,11 +104,9 @@ namespace Application.Mappings
             #region Classes Mappings
             CreateMap<Class, ClassViewDto>().IgnoreUnmapped();
 
-            CreateMap<ClassDto, Class>()
-            .ForMember(dest => dest.Students, opt => opt.Ignore())
-            .ForMember(dest => dest.ClassAssets, opt => opt.Ignore());
+            CreateMap<ClassDto, Class>().IgnoreUnmapped();
 
-            CreateMap<Class,ClassDto>();
+            CreateMap<Class,ClassDto>().IgnoreUnmapped();
 
             CreateMap<ClassAppointment, ClassAppointmentsDTo>().IgnoreUnmapped();
             #endregion
@@ -122,7 +121,16 @@ namespace Application.Mappings
             #region Question Mappings
 
             //View
-            CreateMap<Question, QuestionViewDto>();
+            CreateMap<Question, QuestionViewDto>().IgnoreUnmapped();
+            #endregion
+
+            #region Subject Mappings
+            //Create
+            CreateMap<SubjectCreateDto, Subject>().IgnoreUnmapped();
+            //Edit
+            CreateMap<SubjectUpdateDto, Subject>().IgnoreUnmapped().ReverseMap();
+            //View
+            CreateMap<Subject, SubjectViewDto>().IgnoreUnmapped();
             #endregion
         }
     }

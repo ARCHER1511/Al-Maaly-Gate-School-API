@@ -47,7 +47,7 @@ namespace Tests
             using var scope = _factory.Services.CreateScope();
             var userRepo = scope.ServiceProvider.GetRequiredService<IAppUserRepository>();
 
-            var user = await userRepo.GetByEmailAsync("mohamed@test.com");
+            var user = await userRepo.GetByEmailAsync("ramy@test.com");
             var roles = await userRepo.GetRolesAsync(user!);
             return JwtExtensions.GenerateJwtToken(user!, roles, _config);
         }
