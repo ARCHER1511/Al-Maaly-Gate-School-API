@@ -12,7 +12,7 @@ namespace Infrastructure.Repositories
         {
             _context = context;
         }
-
+        // Dynamic generic repository factory
         public IGenericRepository<T> Repository<T>() where T : BaseEntity 
         {
             if(_repositories.ContainsKey(typeof(T)))
@@ -22,6 +22,17 @@ namespace Infrastructure.Repositories
             _repositories.Add(typeof(T), repoInstance);
             return repoInstance;
         }
+
+        // Separate for Identity entities
+        public IGenericRepository<AppUser> AppUsers
+            => new GenericRepository<AppUser>(_context);
+        
+        public IGenericRepository<Teacher> Teachers => Repository<Teacher>();
+        public IGenericRepository<Student> Students => Repository<Student>();
+        public IGenericRepository<Class> Classes => Repository<Class>();
+        public IGenericRepository<Subject> Subjects => Repository<Subject>();
+        public IGenericRepository<ClassAppointment> ClassAppointments => Repository<ClassAppointment>();
+        public IGenericRepository<StudentExamAnswer> StudentExamAnswers => Repository<StudentExamAnswer>();
 
         public async Task<int> SaveChangesAsync()
         {

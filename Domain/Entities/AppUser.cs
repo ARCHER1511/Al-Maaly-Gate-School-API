@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities
 {
@@ -7,7 +8,8 @@ namespace Domain.Entities
         public AppUser() { }
         public string FullName { get; set; } = string.Empty;
         public string ContactInfo { get; set; } = string.Empty;
-        public List<AppUserRole> UserRoles { get; set; } = new List<AppUserRole>();
+        public AccountStatus AccountStatus { get; set; } = AccountStatus.PendingApproval;
+        public List<AppUserRole> UserRoles { get; set; } = new();
         public List<UserNotification> UserNotifications { get; set; } = new();
     }
 }

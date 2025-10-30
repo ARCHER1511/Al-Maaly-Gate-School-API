@@ -2,6 +2,7 @@
 {
     public class Exam : BaseEntity
     {
+        public string ExamName { get; set; } = string.Empty;
         public string SubjectId { get; set; } = string.Empty;
         public Subject Subject { get; set; } = null!;
         public string ClassId { get; set; } = string.Empty;

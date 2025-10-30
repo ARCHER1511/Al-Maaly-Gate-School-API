@@ -5,6 +5,7 @@ using Application.DTOs.AuthDTOs;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -184,7 +185,7 @@ namespace Application.Services
                         FullName = fullName,
                         Email = email,
                         ContactInfo = contactInfo,
-                        IsApproved = false
+                        ProfileStatus = ProfileStatus.Pending
                     });
                     break;
 
@@ -195,7 +196,7 @@ namespace Application.Services
                         FullName = fullName,
                         Email = email,
                         ContactInfo = contactInfo,
-                        IsApproved = false
+                        ProfileStatus = ProfileStatus.Pending
                     });
                     break;
 
@@ -206,7 +207,7 @@ namespace Application.Services
                         FullName = fullName,
                         Email = email,
                         ContactInfo = contactInfo,
-                        IsApproved = false
+                        ProfileStatus = ProfileStatus.Pending
                     });
                     break;
 
@@ -217,7 +218,7 @@ namespace Application.Services
                         FullName = fullName,
                         Email = email,
                         ContactInfo = contactInfo,
-                        IsApproved = false
+                        ProfileStatus = ProfileStatus.Pending
                     });
                     break;
 
