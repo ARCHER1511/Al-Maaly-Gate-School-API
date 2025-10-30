@@ -18,8 +18,7 @@ namespace Infrastructure.Configurations
             builder.Property(a => a.Mark)
                    .HasColumnType("decimal(18,2)");
 
-            builder.Property(a => a.FullName)
-                   .IsRequired();
+            
 
             builder.HasOne(a => a.Student)
                    .WithMany()

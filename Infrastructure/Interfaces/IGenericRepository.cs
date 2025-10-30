@@ -23,5 +23,6 @@ namespace Infrastructure.Interfaces
                                          int? take = null);
 
         IQueryable<T> AsQueryable(Expression<Func<T, bool>>? predicate = null);
+        IQueryable<T> AsQueryable();
     }
 }

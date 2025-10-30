@@ -1,8 +1,7 @@
 ﻿namespace Domain.Entities
 {
-    public class UserNotification
+    public class UserNotification : BaseEntity
     {
-        public string Id { get; set; } = Guid.NewGuid().ToString();
         public string NotificationId { get; set; } = string.Empty;
         public Notification Notification { get; set; } = null!;
         public string UserId { get; set; } = string.Empty;
