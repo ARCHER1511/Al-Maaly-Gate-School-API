@@ -177,6 +177,33 @@ namespace Infrastructure.Migrations
                     b.ToTable("AppUserRoles", "Identity");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ChoiceAnswer", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ChoiceId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuestionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChoiceId");
+
+                    b.HasIndex("QuestionId")
+                        .IsUnique();
+
+                    b.ToTable("ChoiceAnswers", "Academics");
+                });
+
             modelBuilder.Entity("Domain.Entities.Choices", b =>
                 {
                     b.Property<string>("Id")
@@ -494,7 +521,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ExamId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FullName")
@@ -504,6 +530,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("TeacherId")
                         .IsRequired()
                         .HasColumnType("nvarchar(36)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -929,6 +958,25 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ChoiceAnswer", b =>
+                {
+                    b.HasOne("Domain.Entities.Choices", "Choice")
+                        .WithMany()
+                        .HasForeignKey("ChoiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Question", "Question")
+                        .WithOne("ChoiceAnswer")
+                        .HasForeignKey("Domain.Entities.ChoiceAnswer", "QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Choice");
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("Domain.Entities.Choices", b =>
                 {
                     b.HasOne("Domain.Entities.Question", "Question")
@@ -1049,8 +1097,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Exam", "Exam")
                         .WithMany("Questions")
                         .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Entities.Teacher", "Teacher")
                         .WithMany("Questions")
@@ -1290,6 +1337,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Question", b =>
                 {
+                    b.Navigation("ChoiceAnswer");
+
                     b.Navigation("Choices");
 
                     b.Navigation("TextAnswer");

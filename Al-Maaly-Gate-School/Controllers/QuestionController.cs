@@ -20,27 +20,18 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var result = await _questionService.GetAllAsync();
-            if (!result.Success) return NotFound(ApiResponse<IEnumerable<QuestionViewDto>>.Fail(result.Message!));
-            return Ok(ApiResponse<IEnumerable<QuestionViewDto>>.Ok(result.Data!, result.Message));
-        }
+        public async Task<IActionResult> GetAll() => Ok(await _questionService.GetAllAsync());
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
-        {
-            var result = await _questionService.GetByIdAsync(id);
-            if (!result.Success) return NotFound(ApiResponse<QuestionViewDto>.Fail(result.Message!));
-            return Ok(ApiResponse<QuestionViewDto>.Ok(result.Data!, result.Message));
-        }
+        public async Task<IActionResult> GetById(string id) => Ok(await _questionService.GetByIdAsync(id));
 
-        [HttpPost("{teacherId}")]
-        public async Task<IActionResult> Create(string teacherId, [FromBody] CreateQuestionDto dto)
-        {
-            var result = await _questionService.CreateQuestionAsync(teacherId, dto);
-            if (!result.Success) return BadRequest(ApiResponse<QuestionViewDto>.Fail(result.Message!));
-            return Ok(ApiResponse<QuestionViewDto>.Ok(result.Data!, result.Message));
-        }
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateQuestionDto dto) => Ok(await _questionService.CreateAsync(dto));
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateQuestionDto dto) => Ok(await _questionService.UpdateAsync(id, dto));
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id) => Ok(await _questionService.DeleteAsync(id));
     }
 }

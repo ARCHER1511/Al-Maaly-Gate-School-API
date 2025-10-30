@@ -6,9 +6,10 @@ namespace Application.Interfaces
 {
     public interface IQuestionService
     {
-        Task<ServiceResult<QuestionViewDto>> CreateQuestionAsync(string teacherId, CreateQuestionDto dto);
         Task<ServiceResult<IEnumerable<QuestionViewDto>>> GetAllAsync();
-        Task<ServiceResult<QuestionViewDto>> GetByIdAsync(int id);
-        Task<ServiceResult<bool>> DeleteAsync(int id);
+        Task<ServiceResult<QuestionViewDto>> GetByIdAsync(string id);
+        Task<ServiceResult<QuestionViewDto>> CreateAsync(CreateQuestionDto dto);
+        Task<ServiceResult<QuestionViewDto>> UpdateAsync(string id, UpdateQuestionDto dto);
+        Task<ServiceResult<bool>> DeleteAsync(string id);
     }
 }
