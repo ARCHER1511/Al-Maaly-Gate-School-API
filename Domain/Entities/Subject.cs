@@ -2,6 +2,7 @@
 {
     public class Subject : BaseEntity
     {
+        public string SubjectName { get; set; } = string.Empty;
         public string ClassYear { get; set; } = string.Empty;
 
         public string ClassId { get; set; } = string.Empty;

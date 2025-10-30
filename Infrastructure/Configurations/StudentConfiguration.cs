@@ -28,7 +28,7 @@ namespace Infrastructure.Configurations
                    .HasForeignKey(s => s.ClassId)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.ToTable("Students", "Identity");
+            builder.ToTable("Students", "Academics");
         }
     }
 }

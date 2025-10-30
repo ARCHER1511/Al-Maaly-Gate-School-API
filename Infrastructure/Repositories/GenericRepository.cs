@@ -54,5 +54,6 @@ namespace Infrastructure.Repositories
         {
             return predicate != null ? _dbSet.Where(predicate) : _dbSet;
         }
+        public IQueryable<T> AsQueryable() => _dbSet.AsQueryable();
     }
 }

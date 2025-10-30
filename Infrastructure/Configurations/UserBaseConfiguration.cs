@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,11 +19,20 @@ namespace Infrastructure.Configurations
             builder.Property(e => e.ContactInfo)
                    .HasMaxLength(500);
 
-            builder.Property(e => e.IsApproved)
-                   .IsRequired();
+            builder.Property(e => e.ProfileStatus)
+                     .HasConversion(v => v.ToString(),
+                                    v => (ProfileStatus)Enum.Parse(typeof(ProfileStatus), v))
+                        .HasMaxLength(50)
+                        .HasDefaultValue(ProfileStatus.Pending);
 
-            builder.Property(e => e.AppUserId)
-                   .IsRequired();
+            builder.HasOne(u => u.AppUser)
+                   .WithMany()
+                   .HasForeignKey(u => u.AppUserId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(e => e.FullName)
+                   .IsRequired()
+                   .HasMaxLength(255);
         }
     }
 }

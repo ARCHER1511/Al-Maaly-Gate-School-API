@@ -34,6 +34,9 @@ namespace Infrastructure.Configurations
                    .WithOne(ta => ta.Question)
                    .HasForeignKey<TextAnswers>(ta => ta.QuestionId)
                    .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Property(q => q.Degree).HasPrecision(5, 2);
+
         }
     }
 }

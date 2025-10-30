@@ -2,9 +2,8 @@
 
 namespace Domain.Entities
 {
-    public class FileRecord
+    public class FileRecord : BaseEntity
     {
-        public string Id { get; set; } = Guid.NewGuid().ToString();
         public string FileName { get; set; } = string.Empty;
         public string RelativePath { get; set; } = string.Empty;
         public string ControllerName { get; set; } = string.Empty;
