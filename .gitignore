@@ -1,12 +1,5 @@
-# Ignore Visual Studio settings
-.vs/
-
 # Ignore Entity Framework migrations (if you want to exclude them)
 Infrastructure/Migrations/
-
-# Ignore build artifacts
-bin/
-obj/
 
 Al-Maaly-Gate-School/bin
 Al-Maaly-Gate-School/obj
@@ -25,3 +18,119 @@ Infrastructure/obj
 
 Tests/bin
 Tests/obj
+
+## Ignore Visual Studio temporary files, build results, and user-specific files
+
+# Build results
+bin/
+obj/
+[Bb]uild/
+[Ll]ogs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]64/
+[Aa][Rr][Mm]/
+
+# VS user files
+*.user
+*.userosscache
+*.suo
+*.sdf
+*.cache
+*.dbmdl
+*.jfm
+*.tlog
+*.rsuser
+*.VC.db
+*.VC.VC.opendb
+*.VC.opendb
+*.vspscc
+
+# IDE folders
+.vs/
+.idea/
+.vscode/
+
+# Test results
+TestResult*/
+[Tt]est[Rr]esult*
+*.coverage
+*.coveragexml
+
+# Build logs
+*.log
+*.tlog
+*.wrn
+*.err
+
+# NuGet packages
+*.nupkg
+*.snupkg
+*.nuspec
+*.nuget.props
+*.nuget.targets
+*.lock.json
+packages/
+!**/packages/build/
+!**/packages/repositories.config
+
+# Dotnet CLI
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.deps.json
+
+# Entity Framework
+Migrations/obj/
+Migrations/bin/
+
+# ASP.NET publish files
+wwwroot/
+publish/
+out/
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+*.rej
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Other environment folders
+node_modules/
+bower_components/
+typings/
+dist/
+coverage/
+
+# OS generated files
+ehthumbs.db
+Icon?
+Thumbs.db
+Desktop.ini
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Others
+*.swp
+*.lock
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Launch settings (optional to ignore if you don’t share dev configs)
+Properties/launchSettings.json
