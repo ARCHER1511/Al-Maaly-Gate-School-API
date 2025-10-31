@@ -4,6 +4,9 @@
 # Ignore Entity Framework migrations (if you want to exclude them)
 Infrastructure/Migrations/
 
+# Ignore build artifacts
+bin/
+obj/
 
 Al-Maaly-Gate-School/bin
 Al-Maaly-Gate-School/obj
