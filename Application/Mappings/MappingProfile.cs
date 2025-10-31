@@ -108,7 +108,7 @@ namespace Application.Mappings
             CreateMap<Class,ClassDto>().IgnoreUnmapped();
             #endregion
 
-            #region Appointments
+            #region Class Appointments
             CreateMap<ClassAppointment, ClassAppointmentDto>().IgnoreUnmapped();
             CreateMap<ClassAppointmentDto, ClassAppointment>().IgnoreUnmapped()
             .ForMember(dest => dest.Id, opt => opt.Ignore());

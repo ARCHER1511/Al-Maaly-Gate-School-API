@@ -7,7 +7,7 @@ using Infrastructure.Interfaces;
 
 namespace Application.Services
 {
-    public class ClassAppointmentService : IAppointmentService
+    public class ClassAppointmentService : IClassAppointmentService
     {
         private readonly IClassAppointmentRepository _classAppointmentRepository;
         private readonly IUnitOfWork _unitOfWork;

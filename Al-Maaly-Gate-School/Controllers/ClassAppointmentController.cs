@@ -15,9 +15,9 @@ namespace Al_Maaly_Gate_School.Controllers
     [AllowAnonymous]
     public class ClassAppointmentController : ControllerBase
     {
-        private readonly IAppointmentService _appointmentService;
+        private readonly IClassAppointmentService _appointmentService;
 
-        public ClassAppointmentController(IAppointmentService appointmentService)
+        public ClassAppointmentController(IClassAppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
         }

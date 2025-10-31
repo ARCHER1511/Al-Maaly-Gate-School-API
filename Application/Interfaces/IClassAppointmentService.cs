@@ -5,7 +5,7 @@ using Domain.Wrappers;
 
 namespace Application.Interfaces
 {
-    public interface IAppointmentService
+    public interface IClassAppointmentService
     {
         Task<ServiceResult<ClassAppointmentDto>> GetByIdAsync(object id);
         Task<ServiceResult<IEnumerable<ClassAppointmentDto>>> GetAllAsync();
