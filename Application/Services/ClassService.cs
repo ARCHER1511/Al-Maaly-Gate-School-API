@@ -70,21 +70,5 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true, "class deleted successfully");
         }
-
-        public async Task<ServiceResult<List<ClassAppointmentsDTo>>> GetClassAppointmentsByClassIdAsync(object classId)
-        {
-            var classAppointments = await _classRepository.AsQueryable()
-                .Where(c => c.Id == (string)classId)
-                .Include(c => c.ClassAppointments)
-                .SelectMany(c => c.ClassAppointments!)
-                .ToListAsync();
-
-            if (classAppointments == null || classAppointments.Count == 0)
-                return ServiceResult<List<ClassAppointmentsDTo>>.Fail("Class appointments not found");
-
-            var resultDtos = _mapper.Map<List<ClassAppointmentsDTo>>(classAppointments);
-
-            return ServiceResult<List<ClassAppointmentsDTo>>.Ok(resultDtos, "Class appointments retrieved successfully");
-        }
     }
 }

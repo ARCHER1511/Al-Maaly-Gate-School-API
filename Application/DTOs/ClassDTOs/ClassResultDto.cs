@@ -1,4 +1,5 @@
-﻿namespace Application.DTOs.ClassDTOs
+﻿
+namespace Application.DTOs.ClassDTOs
 {
     public class ClassResultDto
     {

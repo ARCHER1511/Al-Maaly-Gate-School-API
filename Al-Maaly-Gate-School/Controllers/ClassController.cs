@@ -76,16 +76,5 @@ namespace Al_Maaly_Gate_School.Controllers
 
             return Ok(ApiResponse<string>.Ok("class deleted successfully."));
         }
-
-        [HttpGet("{ClassId}")]
-        public async Task<IActionResult> GetClassAppointmentsByClassIdAsync(string ClassId)
-        {
-            var result = await _classService.GetClassAppointmentsByClassIdAsync(ClassId);
-
-            if (!result.Success)
-                return NotFound(ApiResponse<string>.Fail(result.Message!));
-
-            return Ok(ApiResponse<string>.Ok("class Appointments successfully"));
-        }
     }
 }

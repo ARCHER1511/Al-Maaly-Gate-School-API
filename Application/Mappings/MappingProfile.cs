@@ -102,19 +102,15 @@ namespace Application.Mappings
             #endregion
 
             #region Classes Mappings
+            CreateMap<ClassViewDto, Class>().IgnoreUnmapped();
             CreateMap<Class, ClassViewDto>().IgnoreUnmapped();
-
-            CreateMap<ClassDto, Class>().IgnoreUnmapped();
-
+            CreateMap<ClassDto, Class>().ForMember(dest => dest.Id, opt => opt.Ignore()).IgnoreUnmapped();
             CreateMap<Class,ClassDto>().IgnoreUnmapped();
-
-            CreateMap<ClassAppointment, ClassAppointmentsDTo>().IgnoreUnmapped();
             #endregion
 
             #region Appointments
-            CreateMap<ClassAppointment, AppointmentDto>().IgnoreUnmapped();
-            CreateMap<ClassAppointment, ViewAppointmentDto>().IgnoreUnmapped();
-            CreateMap<AppointmentDto, ClassAppointment>().IgnoreUnmapped()
+            CreateMap<ClassAppointment, ClassAppointmentDto>().IgnoreUnmapped();
+            CreateMap<ClassAppointmentDto, ClassAppointment>().IgnoreUnmapped()
             .ForMember(dest => dest.Id, opt => opt.Ignore());
             #endregion
 

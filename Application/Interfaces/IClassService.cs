@@ -10,6 +10,5 @@ namespace Application.Interfaces
         Task<ServiceResult<ClassDto>> CreateAsync(ClassDto dto);
         Task<ServiceResult<ClassDto>> UpdateAsync(ClassDto dto);
         Task<ServiceResult<bool>> DeleteAsync(object id);
-        Task<ServiceResult<List<ClassAppointmentsDTo>>> GetClassAppointmentsByClassIdAsync(object ClassId);
     }
 }

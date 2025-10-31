@@ -13,11 +13,11 @@ namespace Al_Maaly_Gate_School.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [AllowAnonymous]
-    public class AppointmentController : ControllerBase
+    public class ClassAppointmentController : ControllerBase
     {
         private readonly IAppointmentService _appointmentService;
 
-        public AppointmentController(IAppointmentService appointmentService)
+        public ClassAppointmentController(IAppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
         }
@@ -27,8 +27,8 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var result = await _appointmentService.GetAllAsync();
             if (!result.Success)
-                return NotFound(ApiResponse<IEnumerable<ViewAppointmentDto>>.Fail(result.Message!));
-            return Ok(ApiResponse<IEnumerable<ViewAppointmentDto>>.Ok(result.Data!, result.Message));
+                return NotFound(ApiResponse<IEnumerable<ClassAppointmentDto>>.Fail(result.Message!));
+            return Ok(ApiResponse<IEnumerable<ClassAppointmentDto>>.Ok(result.Data!, result.Message));
         }
 
         [HttpGet("{id}")]
@@ -36,41 +36,41 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var result = await _appointmentService.GetByIdAsync(id);
             if (!result.Success)
-                return NotFound(ApiResponse<ViewAppointmentDto>.Fail(result.Message!));
+                return NotFound(ApiResponse<ClassAppointmentDto>.Fail(result.Message!));
 
-            return Ok(ApiResponse<ViewAppointmentDto>.Ok(result.Data!, result.Message));
+            return Ok(ApiResponse<ClassAppointmentDto>.Ok(result.Data!, result.Message));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] AppointmentDto dto)
+        public async Task<IActionResult> Create([FromBody] ClassAppointmentDto dto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ApiResponse<AppointmentDto>.Fail("Invalid Appointment data."));
+                return BadRequest(ApiResponse<ClassAppointmentDto>.Fail("Invalid Appointment data."));
 
             var result = await _appointmentService.CreateAsync(dto);
 
             if (!result.Success)
                 return BadRequest(ApiResponse<ClassAppointment>.Fail(result.Message!));
 
-            return Ok(ApiResponse<AppointmentDto>.Ok(result.Data!, result.Message));
+            return Ok(ApiResponse<ClassAppointmentDto>.Ok(result.Data!, result.Message));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] AppointmentDto dto)
+        public async Task<IActionResult> Update(string id, [FromBody] ClassAppointmentDto dto)
         {
             if (id != dto.Id)
-                return BadRequest(ApiResponse<AppointmentDto>.Fail("ID in URL does not match ID in body."));
+                return BadRequest(ApiResponse<ClassAppointmentDto>.Fail("ID in URL does not match ID in body."));
 
             var exists = await _appointmentService.GetByIdAsync(id);
             if (!exists.Success)
-                return NotFound(ApiResponse<AppointmentDto>.Fail(exists.Message!));
+                return NotFound(ApiResponse<ClassAppointmentDto>.Fail(exists.Message!));
 
             var result = await _appointmentService.UpdateAsync(dto);
 
             if (!result.Success)
-                return BadRequest(ApiResponse<AppointmentDto>.Fail(result.Message!));
+                return BadRequest(ApiResponse<ClassAppointmentDto>.Fail(result.Message!));
 
-            return Ok(ApiResponse<AppointmentDto>.Ok(result.Data!, result.Message));
+            return Ok(ApiResponse<ClassAppointmentDto>.Ok(result.Data!, result.Message));
         }
 
         [HttpDelete("{id}")]

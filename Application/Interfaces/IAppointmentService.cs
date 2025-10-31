@@ -7,10 +7,10 @@ namespace Application.Interfaces
 {
     public interface IAppointmentService
     {
-        Task<ServiceResult<ViewAppointmentDto>> GetByIdAsync(object id);
-        Task<ServiceResult<IEnumerable<ViewAppointmentDto>>> GetAllAsync();
-        Task<ServiceResult<AppointmentDto>> CreateAsync(AppointmentDto dto);
-        Task<ServiceResult<AppointmentDto>> UpdateAsync(AppointmentDto admin);
+        Task<ServiceResult<ClassAppointmentDto>> GetByIdAsync(object id);
+        Task<ServiceResult<IEnumerable<ClassAppointmentDto>>> GetAllAsync();
+        Task<ServiceResult<ClassAppointmentDto>> CreateAsync(ClassAppointmentDto dto);
+        Task<ServiceResult<ClassAppointmentDto>> UpdateAsync(ClassAppointmentDto admin);
         Task<ServiceResult<bool>> DeleteAsync(object id);
     }
 }
