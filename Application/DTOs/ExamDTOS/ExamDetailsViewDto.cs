@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Application.DTOs.QuestionDTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.ExamDTOS
 {
-    public class ExamViewDto
+    public class ExamDetailsViewDto
     {
         public string Id { get; set; } = string.Empty;
         public string SubjectId { get; set; } = string.Empty;
@@ -16,5 +17,7 @@ namespace Application.DTOs.ExamDTOS
         public DateTime End { get; set; }
         public decimal MinMark { get; set; }
         public decimal FullMark { get; set; }
+
+        public List<QuestionViewDto> Questions { get; set; } = new();
     }
 }

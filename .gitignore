@@ -1,5 +1,6 @@
 # Ignore Visual Studio settings
 .vs/
+.vscode/
 
 # Ignore Entity Framework migrations (if you want to exclude them)
 Infrastructure/Migrations/
@@ -24,5 +25,10 @@ Tests/bin
 Tests/obj
 
 
+# Other temporary files
+*.user
+*.suo
+*.cache
+*.log
 **/bin/
 **/obj/

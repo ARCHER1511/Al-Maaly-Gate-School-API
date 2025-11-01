@@ -1,22 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Application.DTOs.ClassAppointmentDTOs
 {
-    public class ClassAppointment : BaseEntity
+    public class ClassAppointmentViewDto
     {
+        public string Id { get; set; } = string.Empty;
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        [Url]
         public string? Link { get; set; }
-        public string Status { get; set; } = "Upcoming";
-
+        public string Status { get; set; } = string.Empty;
         public string ClassId { get; set; } = string.Empty;
-        public Class Class { get; set; }
-
         public string TeacherId { get; set; } = string.Empty;
-        public Teacher Teacher { get; set; }
-
         public string SubjectId { get; set; } = string.Empty;
-        public Subject Subject { get; set; }
     }
 }

@@ -16,6 +16,19 @@ namespace Infrastructure.Repositories
             _dbSet = context.Set<Exam>();
         }
 
+        public async Task<IEnumerable<Exam>> GetByTeacherIdAsync(string teacherId)
+        {
+            return await _dbSet
+                .Include(e => e.Questions)
+                .Where(e => e.TeacherId == teacherId)
+                .ToListAsync();
+        }
 
+        public async Task<Exam?> GetByIdWithQuestionsAsync(string examId)
+        {
+            return await _dbSet
+                .Include(e => e.Questions)
+                .FirstOrDefaultAsync(e => e.Id == examId);
+        }
     }
 }

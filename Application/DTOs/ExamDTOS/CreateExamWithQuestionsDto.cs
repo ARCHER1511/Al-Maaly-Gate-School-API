@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.ExamDTOS
 {
-    public class ExamViewDto
+    public class CreateExamWithQuestionsDto
     {
-        public string Id { get; set; } = string.Empty;
         public string SubjectId { get; set; } = string.Empty;
         public string ClassId { get; set; } = string.Empty;
         public string TeacherId { get; set; } = string.Empty;
@@ -16,5 +15,8 @@ namespace Application.DTOs.ExamDTOS
         public DateTime End { get; set; }
         public decimal MinMark { get; set; }
         public decimal FullMark { get; set; }
+
+        // List of existing Question IDs to assign
+        public List<string> QuestionIds { get; set; } = new();
     }
 }

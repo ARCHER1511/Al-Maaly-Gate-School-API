@@ -13,7 +13,7 @@ namespace Infrastructure.Configurations
             builder.HasOne(q => q.Exam)
                    .WithMany(e => e.Questions)
                    .HasForeignKey(q => q.ExamId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(q => q.Teacher)
                   .WithMany(e => e.Questions)
@@ -33,6 +33,10 @@ namespace Infrastructure.Configurations
             builder.HasOne(q => q.TextAnswer)
                    .WithOne(ta => ta.Question)
                    .HasForeignKey<TextAnswers>(ta => ta.QuestionId)
+                   .OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(q => q.ChoiceAnswer)
+                   .WithOne(ca => ca.Question)
+                   .HasForeignKey<ChoiceAnswer>(ca => ca.QuestionId)
                    .OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(q => q.Degree).HasPrecision(5, 2);
