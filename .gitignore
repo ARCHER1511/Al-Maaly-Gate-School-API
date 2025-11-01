@@ -22,3 +22,7 @@ Infrastructure/obj
 
 Tests/bin
 Tests/obj
+
+
+**/bin/
+**/obj/
