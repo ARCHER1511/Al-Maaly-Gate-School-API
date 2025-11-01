@@ -30,3 +30,5 @@ Tests/obj
 *.suo
 *.cache
 *.log
+**/bin/
+**/obj/
