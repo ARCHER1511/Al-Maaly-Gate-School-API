@@ -12,5 +12,6 @@ namespace Application.Interfaces
         Task<ServiceResult<ClassAppointmentDto>> CreateAsync(ClassAppointmentDto dto);
         Task<ServiceResult<ClassAppointmentDto>> UpdateAsync(ClassAppointmentDto admin);
         Task<ServiceResult<bool>> DeleteAsync(object id);
+        Task<ServiceResult<IEnumerable<ClassAppointmentDto>>> GetAppointmentsByTeacherAsync(string teacherId);
     }
 }

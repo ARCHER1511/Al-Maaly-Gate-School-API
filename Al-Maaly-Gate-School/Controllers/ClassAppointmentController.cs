@@ -21,7 +21,14 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             _appointmentService = appointmentService;
         }
-
+        [HttpGet("teacher/{teacherId}")]
+        public async Task<IActionResult> GetAppointmentsByTeacher(string teacherId)
+        {
+            var result = await _appointmentService.GetAppointmentsByTeacherAsync(teacherId);
+            if (!result.Success)
+                return NotFound(ApiResponse<IEnumerable<ClassAppointmentDto>>.Fail(result.Message!));
+            return Ok(ApiResponse<IEnumerable<ClassAppointmentDto>>.Ok(result.Data!, result.Message));
+        }
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
 {
@@ -28,6 +29,29 @@ namespace Application.Services
                 return "Running";
             else
                 return "Finished";
+        }
+        public async Task<ServiceResult<IEnumerable<ClassAppointmentDto>>> GetAppointmentsByTeacherAsync(string teacherId)
+        {
+            var result = await _classAppointmentRepository.AsQueryable().Where(a => a.TeacherId == teacherId).ToListAsync();
+            if (result == null) return ServiceResult<IEnumerable<ClassAppointmentDto>>.Fail("Appointment not found");
+
+            bool isChanged = false;
+            foreach (var appointment in result)
+            {
+                var newStatus = GetStatus(appointment.StartTime, appointment.EndTime);
+                if (appointment.Status != newStatus)
+                {
+                    appointment.Status = newStatus;
+                    _classAppointmentRepository.Update(appointment);
+                    isChanged = true;
+                }
+            }
+            if (isChanged)
+                await _unitOfWork.SaveChangesAsync();
+
+            var resultDto = _mapper.Map<IEnumerable<ClassAppointmentDto>>(result);
+
+            return ServiceResult<IEnumerable<ClassAppointmentDto>>.Ok(resultDto, "Appointment retrieved successfully");
         }
         public async Task<ServiceResult<IEnumerable<ClassAppointmentDto>>> GetAllAsync()
         {

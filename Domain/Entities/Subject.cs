@@ -9,9 +9,9 @@
         public Class Class { get; set; } = null!;
 
         public string TeacherId { get; set; } = string.Empty;
-        public Teacher? Teacher { get; set; } = new();
+        public Teacher? Teacher { get; set; }
 
-        public List<Exam> Exams { get; set; } = new();
-        public List<ClassAppointment> ClassAppointments { get; set; } = new();
+        public List<Exam>? Exams { get; set; }
+        public List<ClassAppointment>? ClassAppointments { get; set; } 
     }
 }
