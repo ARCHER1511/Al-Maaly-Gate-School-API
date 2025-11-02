@@ -10,6 +10,7 @@ using AutoMapper;
 using Common.Extensions;
 using Domain.Entities;
 using Application.DTOs.SubjectDTOs;
+using Application.DTOs.StudentExamAnswerDTOs;
 
 namespace Application.Mappings
 {
@@ -127,6 +128,12 @@ namespace Application.Mappings
             CreateMap<SubjectUpdateDto, Subject>().IgnoreUnmapped().ReverseMap();
             //View
             CreateMap<Subject, SubjectViewDto>().IgnoreUnmapped();
+            #endregion
+
+            #region StudentExamAnswer
+            CreateMap<StudentExamAnswerDto, StudentExamAnswer>().ForMember(dest => dest.Id, opt => opt.Ignore()).IgnoreUnmapped();
+            CreateMap<StudentExamAnswer, StudentExamAnswerDto>().IgnoreUnmapped();
+            CreateMap<Exam, GetStudentExamsDto>().IgnoreUnmapped();
             #endregion
         }
     }
