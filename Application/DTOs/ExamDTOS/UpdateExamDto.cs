@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.ExamDTOS
 {
-    public class CreateExamDto
+    public class UpdateExamDto
     {
         public string ExamName { get; set; } = string.Empty;
-        public string SubjectId { get; set; } = string.Empty;
-        public string ClassId { get; set; } = string.Empty;
-        public string TeacherId { get; set; } = string.Empty;
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public decimal MinMark { get; set; }

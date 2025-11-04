@@ -8,8 +8,6 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<StudentExamAnswer> builder)
         {
-            builder.ToTable("StudentExamAnswers", "Academics");
-
 
             builder.ToTable("StudentExamAnswers", "Academics");
 
@@ -34,21 +32,6 @@ namespace Infrastructure.Configurations
                    .WithMany()
                    .HasForeignKey(a => a.QuestionId)
                    .OnDelete(DeleteBehavior.NoAction);
-
-            builder.HasOne(a => a.Choice)
-                   .WithMany()
-                   .HasForeignKey(a => a.ChoiceId)
-                   .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(a => a.TrueAndFalse)
-                   .WithMany()
-                   .HasForeignKey(a => a.TrueAndFalseId)
-                   .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(a => a.TextAnswer)
-                   .WithMany()
-                   .HasForeignKey(a => a.TextAnswerId)
-                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasIndex(a => new { a.StudentId, a.ExamId, a.QuestionId })
                    .IsUnique();

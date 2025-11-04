@@ -30,7 +30,7 @@ namespace Infrastructure.Configurations
             builder.HasMany(e => e.Questions)
                    .WithOne(q => q.Exam)
                    .HasForeignKey(q => q.ExamId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.NoAction);
 
             builder.Property(e => e.MinMark)
                    .HasPrecision(5, 2);

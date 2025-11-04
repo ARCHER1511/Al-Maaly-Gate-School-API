@@ -4,12 +4,21 @@
     {
         public string Content { get; set; } = string.Empty;
         public decimal Degree { get; set; }
-        public string ExamId { get; set; } = string.Empty;
-        public Exam? Exam { get; set; } = null!;
+        public string? ExamId { get; set; }
+        public Exam? Exam { get; set; }
         public string TeacherId { get; set; } = string.Empty;
         public Teacher Teacher { get; set; } = null!;
-        public TextAnswers? TextAnswer { get; set; }
-        public TrueAndFalses? TrueAndFalses { get; set; } 
+        public QuestionTypes Type { get; set; }
+        public bool? TrueAndFalses { get; set; }
+        public ChoiceAnswer? ChoiceAnswer { get; set; }
         public List<Choices>? Choices { get; set; } = new ();
+    }
+
+    public enum QuestionTypes
+    {
+        None,
+        Text,
+        TrueOrFalse,
+        Choices
     }
 }

@@ -5,6 +5,7 @@ using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,127 +16,148 @@ namespace Application.Services
 {
     public class ExamService : IExamService
     {
-        private readonly IExamRepository _examRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ExamService(
-            IExamRepository examRepo,
-            IQuestionRepository questionRepo,
-            IUnitOfWork unitOfWork,
-            IMapper mapper)
+        public ExamService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _examRepo = examRepo;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        public Task<ServiceResult<bool>> AssignQuestionsAsync(string teacherId, int examId, IEnumerable<int> questionIds)
+        public async Task<ServiceResult<ExamDetailsViewDto>> CreateExamWithQuestionsAsync(CreateExamWithQuestionsDto dto)
         {
-            throw new NotImplementedException();
+            var examRepo = _unitOfWork.Repository<Exam>();
+            var questionRepo = _unitOfWork.Repository<Question>();
+
+            // Fetch existing questions by IDs
+            var questions = await questionRepo.FindAllAsync(q => dto.QuestionIds.Contains(q.Id));
+
+            if (!questions.Any())
+                return ServiceResult<ExamDetailsViewDto>.Fail("No valid questions found for this exam.");
+
+            // Create exam and assign questions
+            var exam = new Exam
+            {
+                SubjectId = dto.SubjectId,
+                ClassId = dto.ClassId,
+                TeacherId = dto.TeacherId,
+                Start = dto.Start,
+                End = dto.End,
+                MinMark = dto.MinMark,
+                FullMark = dto.FullMark,
+                Questions = questions.ToList()
+            };
+
+            await examRepo.AddAsync(exam);
+            await _unitOfWork.SaveChangesAsync();
+
+            // Reload exam with full related data
+            var loadedExam = await examRepo.AsQueryable(e => e.Id == exam.Id)
+                .Include(e => e.Questions)
+                    .ThenInclude(q => q.Choices)
+                .Include(e => e.Questions)
+                //    .ThenInclude(q => q.TextAnswer)
+                //.Include(e => e.Questions)
+                //    .ThenInclude(q => q.TrueAndFalses)
+                .FirstOrDefaultAsync();
+
+            var result = _mapper.Map<ExamDetailsViewDto>(loadedExam);
+            return ServiceResult<ExamDetailsViewDto>.Ok(result, "Exam created successfully with questions.");
+
         }
 
-        public Task<ServiceResult<ExamViewDto>> CreateExamForTeacherAsync(string teacherId, CreateExamDto dto)
+        public async Task<ServiceResult<ExamDetailsViewDto>> GetExamWithQuestionsAsync(string examId)
         {
-            throw new NotImplementedException();
+            var examRepo = _unitOfWork.Repository<Exam>();
+
+            var exam = await examRepo.AsQueryable(e => e.Id == examId)
+                .Include(e => e.Questions)
+                    .ThenInclude(q => q.Choices)
+                //.Include(e => e.Questions)
+                //    .ThenInclude(q => q.TextAnswer)
+                //.Include(e => e.Questions)
+                //    .ThenInclude(q => q.TrueAndFalses)
+                .FirstOrDefaultAsync();
+
+            if (exam == null)
+                return ServiceResult<ExamDetailsViewDto>.Fail("Exam not found.");
+
+            var result = _mapper.Map<ExamDetailsViewDto>(exam);
+            return ServiceResult<ExamDetailsViewDto>.Ok(result);
         }
 
-        public Task<ServiceResult<bool>> DeleteAsync(int examId)
+        public async Task<ServiceResult<IEnumerable<ExamViewDto>>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var repo = _unitOfWork.Repository<Exam>();
+            var exams = await repo.GetAllAsync();
+            var result = exams.Select(_mapper.Map<ExamViewDto>);
+            return ServiceResult<IEnumerable<ExamViewDto>>.Ok(result);
         }
 
-        public Task<ServiceResult<ExamViewDto>> GetByIdAsync(int examId)
+        public async Task<ServiceResult<ExamDetailsViewDto>> GetByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var repo = _unitOfWork.Repository<Exam>();
+            var exam = await repo.AsQueryable(e => e.Id == id)
+                .Include(e => e.Questions)
+                    .ThenInclude(q => q.Choices)
+                //.Include(e => e.Questions)
+                //    .ThenInclude(q => q.TextAnswer)
+                //.Include(e => e.Questions)
+                    //.ThenInclude(q => q.TrueAndFalses)
+                .FirstOrDefaultAsync();
+
+            if (exam == null)
+                return ServiceResult<ExamDetailsViewDto>.Fail("Exam not found");
+
+            var mapped = _mapper.Map<ExamDetailsViewDto>(exam);
+            return ServiceResult<ExamDetailsViewDto>.Ok(mapped);
         }
 
-        public Task<ServiceResult<IEnumerable<ExamViewDto>>> GetByTeacherAsync(string teacherId)
+        public async Task<ServiceResult<IEnumerable<ExamViewDto>>> GetByTeacherAsync(string teacherId)
         {
-            throw new NotImplementedException();
+            var repo = _unitOfWork.Repository<Exam>();
+            var exams = await repo.FindAllAsync(e => e.TeacherId == teacherId);
+            var result = exams.Select(_mapper.Map<ExamViewDto>);
+            return ServiceResult<IEnumerable<ExamViewDto>>.Ok(result);
         }
 
-        //    public async Task<ServiceResult<IEnumerable<ExamViewDto>>> GetByTeacherAsync(string teacherId)
-        //    {
-        //        var exams = await _examRepo.GetByTeacherIdAsync(teacherId);
-        //        var data = exams.Select(_mapper.Map<ExamViewDto>);
-        //        return ServiceResult<IEnumerable<ExamViewDto>>.Ok(data);
-        //    }
+        public async Task<ServiceResult<ExamViewDto>> CreateExamForTeacherAsync(string teacherId, CreateExamDto dto)
+        {
+            var repo = _unitOfWork.Repository<Exam>();
+            var exam = _mapper.Map<Exam>(dto);
+            exam.TeacherId = teacherId;
 
-        //    public async Task<ServiceResult<ExamViewDto>> CreateExamForTeacherAsync(string teacherId, CreateExamDto dto)
-        //    {
-        //        var exam = _mapper.Map<Exam>(dto);
-        //        //exam.TeacherId = teacherId;
+            await repo.AddAsync(exam);
+            await _unitOfWork.SaveChangesAsync();
 
-        //        await _examRepo.AddAsync(exam);
-        //        await _unitOfWork.SaveChangesAsync();
+            return ServiceResult<ExamViewDto>.Ok(_mapper.Map<ExamViewDto>(exam));
+        }
 
-        //        foreach (var qid in dto.QuestionIds)
-        //        {
-        //            var question = await _questionRepo.GetByIdAsync(qid);
-        //            if (question == null) continue;
+        public async Task<ServiceResult<ExamViewDto>> UpdateAsync(string id, UpdateExamDto dto)
+        {
+            var repo = _unitOfWork.Repository<Exam>();
+            var exam = await repo.GetByIdAsync(id);
+            if (exam == null)
+                return ServiceResult<ExamViewDto>.Fail("Exam not found");
 
-        //            var qet = new QuestionExamTeacher
-        //            {
-        //                ExamId = exam.Id,
-        //                QuestionId = qid,
-        //                TeacherId = teacherId
-        //            };
-        //            await _qetRepo.AddAsync(qet);
-        //        }
+            _mapper.Map(dto, exam);
+            repo.Update(exam);
+            await _unitOfWork.SaveChangesAsync();
 
-        //        await _unitOfWork.SaveChangesAsync();
+            return ServiceResult<ExamViewDto>.Ok(_mapper.Map<ExamViewDto>(exam));
+        }
 
-        //        var createdExam = await _examRepo.GetByIdWithQuestionsAsync(exam.Id);
-        //        return ServiceResult<ExamViewDto>.Ok(_mapper.Map<ExamViewDto>(createdExam!), "Exam created successfully");
-        //    }
+        public async Task<ServiceResult<bool>> DeleteAsync(string id)
+        {
+            var repo = _unitOfWork.Repository<Exam>();
+            var exam = await repo.GetByIdAsync(id);
+            if (exam == null)
+                return ServiceResult<bool>.Fail("Exam not found");
 
-        //    public async Task<ServiceResult<bool>> AssignQuestionsAsync(string teacherId, int examId, IEnumerable<int> questionIds)
-        //    {
-        //        var exam = await _examRepo.GetByIdWithQuestionsAsync(examId);
-        //        if (exam == null)
-        //            return ServiceResult<bool>.Fail("Exam not found");
-
-        //        foreach (var qid in questionIds)
-        //        {
-        //            if (exam.QuestionExamTeachers.Any(x => x.QuestionId == qid && x.TeacherId == teacherId))
-        //                continue;
-
-        //            var question = await _questionRepo.GetByIdAsync(qid);
-        //            if (question == null) continue;
-
-        //            var qet = new QuestionExamTeacher
-        //            {
-        //                ExamId = exam.Id,
-        //                QuestionId = qid,
-        //                TeacherId = teacherId
-        //            };
-
-        //            await _qetRepo.AddAsync(qet);
-        //        }
-
-        //        await _unitOfWork.SaveChangesAsync();
-        //        return ServiceResult<bool>.Ok(true, "Questions assigned successfully");
-        //    }
-
-        //    public async Task<ServiceResult<ExamViewDto>> GetByIdAsync(int examId)
-        //    {
-        //        var exam = await _examRepo.GetByIdWithQuestionsAsync(examId);
-        //        if (exam == null)
-        //            return ServiceResult<ExamViewDto>.Fail("Exam not found");
-
-        //        return ServiceResult<ExamViewDto>.Ok(_mapper.Map<ExamViewDto>(exam));
-        //    }
-
-        //    public async Task<ServiceResult<bool>> DeleteAsync(int examId)
-        //    {
-        //        var exam = await _examRepo.GetByIdAsync(examId);
-        //        if (exam == null)
-        //            return ServiceResult<bool>.Fail("Exam not found");
-
-        //        _examRepo.Delete(exam);
-        //        await _unitOfWork.SaveChangesAsync();
-        //        return ServiceResult<bool>.Ok(true, "Exam deleted successfully");
-        //    }
+            repo.Delete(exam);
+            await _unitOfWork.SaveChangesAsync();
+            return ServiceResult<bool>.Ok(true);
+        }
     }
 }

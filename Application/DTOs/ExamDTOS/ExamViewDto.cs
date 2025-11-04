@@ -8,10 +8,14 @@ namespace Application.DTOs.ExamDTOS
 {
     public class ExamViewDto
     {
-        public int Id { get; init; }
-        public string Title { get; init; } = string.Empty;
-        public DateTime? Date { get; init; }
-        public int DurationMinutes { get; init; }
-        public IEnumerable<int> QuestionIds { get; init; } = Enumerable.Empty<int>();
+        public string Id { get; set; } = string.Empty;
+        public string ExamName { get; set; } = string.Empty;
+        public string SubjectId { get; set; } = string.Empty;
+        public string ClassId { get; set; } = string.Empty;
+        public string TeacherId { get; set; } = string.Empty;
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+        public decimal MinMark { get; set; }
+        public decimal FullMark { get; set; }
     }
 }

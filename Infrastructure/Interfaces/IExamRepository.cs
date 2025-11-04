@@ -4,7 +4,7 @@ namespace Infrastructure.Interfaces
 {
     public interface IExamRepository : IGenericRepository<Exam>
     {
-        //Task<Exam?> GetByIdWithQuestionsAsync(int examId);
-        //Task<IEnumerable<Exam>> GetByTeacherIdAsync(string teacherId);
+        Task<IEnumerable<Exam>> GetByTeacherIdAsync(string teacherId);
+        Task<Exam?> GetByIdWithQuestionsAsync(string examId);
     }
 }

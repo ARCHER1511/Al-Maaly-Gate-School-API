@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+# Ignore Visual Studio settings
+.vs/
+.vscode/
+
+>>>>>>> 2ebf73c093144c12075465abbd025510ee8d9bc1
 # Ignore Entity Framework migrations (if you want to exclude them)
 Infrastructure/Migrations/
 
@@ -19,6 +26,7 @@ Infrastructure/obj
 Tests/bin
 Tests/obj
 
+<<<<<<< HEAD
 ## Ignore Visual Studio temporary files, build results, and user-specific files
 
 # Build results
@@ -134,3 +142,13 @@ Desktop.ini
 
 # Launch settings (optional to ignore if you don’t share dev configs)
 Properties/launchSettings.json
+=======
+
+# Other temporary files
+*.user
+*.suo
+*.cache
+*.log
+**/bin/
+**/obj/
+>>>>>>> 2ebf73c093144c12075465abbd025510ee8d9bc1

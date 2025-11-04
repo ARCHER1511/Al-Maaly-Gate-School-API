@@ -4,6 +4,6 @@ namespace Infrastructure.Interfaces
 {
     public interface IClassAppointmentRepository: IGenericRepository<ClassAppointment>
     {
-
+       
     }
 }

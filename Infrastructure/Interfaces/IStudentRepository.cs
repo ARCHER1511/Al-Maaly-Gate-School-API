@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Domain.Entities;
+﻿using Domain.Entities;
 
 namespace Infrastructure.Interfaces
 {

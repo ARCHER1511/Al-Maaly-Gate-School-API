@@ -8,17 +8,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
 {
-    public class ClassAppointmentService : IClassAppointmentService
-    {
+public class ClassAppointmentService : IClassAppointmentService
+{
         private readonly IClassAppointmentRepository _classAppointmentRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
         public ClassAppointmentService(IClassAppointmentRepository classAppointmentRepository, IUnitOfWork unitOfWork, IMapper mapper)
-        {
+    {
             _classAppointmentRepository = classAppointmentRepository;
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-        }
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
+    }
         private string GetStatus(DateTime start, DateTime end)
         {
             var now = DateTime.Now;
@@ -31,7 +31,7 @@ namespace Application.Services
                 return "Finished";
         }
         public async Task<ServiceResult<IEnumerable<ClassAppointmentDto>>> GetAppointmentsByTeacherAsync(string teacherId)
-        {
+    {
             var result = await _classAppointmentRepository.AsQueryable().Where(a => a.TeacherId == teacherId).ToListAsync();
             if (result == null) return ServiceResult<IEnumerable<ClassAppointmentDto>>.Fail("Appointment not found");
 
@@ -44,7 +44,7 @@ namespace Application.Services
                     appointment.Status = newStatus;
                     _classAppointmentRepository.Update(appointment);
                     isChanged = true;
-                }
+    }
             }
             if (isChanged)
                 await _unitOfWork.SaveChangesAsync();
@@ -54,7 +54,7 @@ namespace Application.Services
             return ServiceResult<IEnumerable<ClassAppointmentDto>>.Ok(resultDto, "Appointment retrieved successfully");
         }
         public async Task<ServiceResult<IEnumerable<ClassAppointmentDto>>> GetAllAsync()
-        {
+    {
             var result = await _classAppointmentRepository.GetAllAsync();
             if (result == null) return ServiceResult<IEnumerable<ClassAppointmentDto>>.Fail("Appointment not found");
 
@@ -75,7 +75,7 @@ namespace Application.Services
             var resultDto = _mapper.Map<IEnumerable<ClassAppointmentDto>>(result);
 
             return ServiceResult<IEnumerable<ClassAppointmentDto>>.Ok(resultDto, "Appointment retrieved successfully");
-        }
+    }
         public async Task<ServiceResult<ClassAppointmentDto>> GetByIdAsync(object id)
         {
             var result = await _classAppointmentRepository.GetByIdAsync(id);
@@ -84,11 +84,11 @@ namespace Application.Services
             bool isChanged = false;
             var newStatus = GetStatus(result.StartTime, result.EndTime);
             if (result.Status != newStatus)
-            {
+    {
                 result.Status = newStatus;
                 _classAppointmentRepository.Update(result);
                 isChanged = true;
-            }
+    }
             if (isChanged)
                 await _unitOfWork.SaveChangesAsync();
 
@@ -96,15 +96,15 @@ namespace Application.Services
             return ServiceResult<ClassAppointmentDto>.Ok(resultDto, "Appointment retrieved successfully");
         }
         public async Task<ServiceResult<ClassAppointmentDto>> CreateAsync(ClassAppointmentDto dto)
-        {
+    {
             var result = _mapper.Map<ClassAppointment>(dto);
 
             await _classAppointmentRepository.AddAsync(result);
-            await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
             var viewDto = _mapper.Map<ClassAppointmentDto>(result);
             return ServiceResult<ClassAppointmentDto>.Ok(viewDto, "Appointment created successfully");
-        }
+    }
         public async Task<ServiceResult<ClassAppointmentDto>> UpdateAsync(ClassAppointmentDto dto)
         {
             var existingresult = await _classAppointmentRepository.GetByIdAsync(dto.Id!);
@@ -114,19 +114,19 @@ namespace Application.Services
             _mapper.Map(dto, existingresult);
 
             _classAppointmentRepository.Update(existingresult);
-            await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
             var viewDto = _mapper.Map<ClassAppointmentDto>(existingresult);
             return ServiceResult<ClassAppointmentDto>.Ok(viewDto, "Appointment updated successfully");
-        }
+    }
         public async Task<ServiceResult<bool>> DeleteAsync(object id)
-        {
+    {
             var result = await _classAppointmentRepository.GetByIdAsync(id);
             if (result == null)
-                return ServiceResult<bool>.Fail("Appointment not found");
+            return ServiceResult<bool>.Fail("Appointment not found");
 
             _classAppointmentRepository.Delete(result);
-            await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true, "Appointment deleted successfully");
         }
     }

@@ -4,8 +4,8 @@
     {
         public string ClassYear { get; set; } = string.Empty;
         public int Age { get; set; }
-        public string ClassId { get; set; } = string.Empty;
+        public string? ClassId { get; set; }
         public Class? Class { get; set; }
-        public ICollection<ParentStudent> Parents { get; set; } = new List<ParentStudent>();
+        public List<ParentStudent> Parents { get; set; } = new ();
     }
 }

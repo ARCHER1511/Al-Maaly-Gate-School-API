@@ -13,13 +13,8 @@ namespace Domain.Entities
         public Question Question { get; set; } = null!;
 
         public string? ChoiceId { get; set; }
-        public Choices? Choice { get; set; }
-
-        public string? TrueAndFalseId { get; set; }
-        public TrueAndFalses? TrueAndFalse { get; set; }
-
-        public string? TextAnswerId { get; set; }
-        public TextAnswers? TextAnswer { get; set; }
+        public bool? TrueAndFalseAnswer { get; set; }
+        public string? TextAnswer { get; set; }
         public decimal? Mark { get; set; }
     }
 }

@@ -18,7 +18,6 @@ namespace Infrastructure.Data
             : base(options) { }
 
         public DbSet<Admin> Admins { get; set; }
-        public DbSet<TextAnswers> Answers { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<AppUserRole> AppUserRoles { get; set; }
         public DbSet<ClassAppointment> ClassAppointments { get; set; }
@@ -34,9 +33,8 @@ namespace Infrastructure.Data
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<UserNotification> UserNotifications { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
-        public DbSet<TextAnswers> TextAnswers { get; set; }
         public DbSet<Choices> Choices { get; set; }
-        public DbSet<TrueAndFalses> TrueAndFalses { get; set; }
+        public DbSet<StudentExamAnswer> StudentExamAnswer { get; set; }
 
         //On model creating with configuration and Factory On using onion architecture
         protected override void OnModelCreating(ModelBuilder builder)
