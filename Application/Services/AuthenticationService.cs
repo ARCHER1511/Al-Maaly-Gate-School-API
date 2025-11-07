@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Data;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Application.Authentication;
 using Application.DTOs.AuthDTOs;
@@ -8,6 +9,7 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace Application.Services
@@ -23,6 +25,7 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
+        private readonly IFileService _fileService;
 
         public AuthenticationService(
             IAppUserRepository userRepo,
@@ -33,7 +36,8 @@ namespace Application.Services
             IParentRepository parentRepo,
             IUnitOfWork unitOfWork,
             IConfiguration config,
-            IMapper mapper
+            IMapper mapper,
+            IFileService fileService
         )
         {
             _userRepo = userRepo;
@@ -45,66 +49,97 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _config = config;
             _mapper = mapper;
+            _fileService = fileService;
         }
 
         public async Task<ServiceResult<AuthResponse>> RegisterAsync(RegisterRequest request)
         {
+            // 1️⃣ Password confirmation
+            if (request.Password != request.ConfirmPassword)
+                return ServiceResult<AuthResponse>.Fail("Passwords do not match.");
+
+            // 2️⃣ Check for existing user
             var existingUser = await _userRepo.GetByEmailAsync(request.Email);
             if (existingUser != null)
-                return ServiceResult<AuthResponse>.Fail("Email already registered");
+                return ServiceResult<AuthResponse>.Fail("Email already registered.");
 
+            // 3️⃣ Validate role
+            if (string.IsNullOrWhiteSpace(request.Role))
+                return ServiceResult<AuthResponse>.Fail("Role is required.");
+
+            string normalizedRole = request.Role.Trim().ToLowerInvariant();
+            var validRoles = new[] { "admin", "teacher", "student", "parent" };
+            if (!validRoles.Contains(normalizedRole))
+                return ServiceResult<AuthResponse>.Fail($"Invalid role '{request.Role}'.");
+
+            // 4️⃣ Create AppUser
             var user = _mapper.Map<AppUser>(request);
-            //Ensure Id is set
             if (string.IsNullOrEmpty(user.Id))
                 user.Id = Guid.NewGuid().ToString();
 
-            var result = await _userRepo.CreateAsync(user, request.Password);
-
-            if (!result.Succeeded)
+            var createResult = await _userRepo.CreateAsync(user, request.Password);
+            if (!createResult.Succeeded)
             {
-                var errorMessages = string.Join(", ", result.Errors.Select(e => e.Description));
-                return ServiceResult<AuthResponse>.Fail($"User creation failed: {errorMessages}");
+                var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+                return ServiceResult<AuthResponse>.Fail($"User creation failed: {errors}");
             }
 
-            if (!string.IsNullOrEmpty(request.Role))
-                await _userRepo.AddToRoleAsync(user, request.Role);
-            switch (request.Role.ToLower())
+            // 5️⃣ Assign role
+            await _userRepo.AddToRoleAsync(user, normalizedRole);
+
+            // 6️⃣ Create role-specific entity
+            string roleEntityId = string.Empty;
+
+            switch (normalizedRole)
             {
                 case "admin":
                     var admin = _mapper.Map<Admin>(request);
                     admin.AppUserId = user.Id;
                     await _adminRepo.AddAsync(admin);
-                    await _unitOfWork.SaveChangesAsync();
+                    roleEntityId = admin.Id;
                     break;
 
                 case "teacher":
                     var teacher = _mapper.Map<Teacher>(request);
                     teacher.AppUserId = user.Id;
                     await _teacherRepo.AddAsync(teacher);
-                    await _unitOfWork.SaveChangesAsync();
+                    roleEntityId = teacher.Id;
                     break;
 
                 case "student":
                     var student = _mapper.Map<Student>(request);
                     student.AppUserId = user.Id;
                     await _studentRepo.AddAsync(student);
-                    await _unitOfWork.SaveChangesAsync();
+                    roleEntityId = student.Id;
                     break;
 
                 case "parent":
                     var parent = _mapper.Map<Parent>(request);
                     parent.AppUserId = user.Id;
                     await _parentRepo.AddAsync(parent);
-                    await _unitOfWork.SaveChangesAsync();
+                    roleEntityId = parent.Id;
                     break;
             }
+
+            // 7️⃣ Commit all changes once
+            await _unitOfWork.SaveChangesAsync();
+
+            // 8️⃣ Prepare response data
             var roles = await _userRepo.GetRolesAsync(user);
             var response = _mapper.Map<AuthResponse>(user);
+            response.UserId = user.Id;
             response.Roles = roles;
             response.Token = JwtExtensions.GenerateJwtToken(user, roles, _config);
-            response.UserId = user.Id;
+            response.ProfileImageUrl = user.ProfileImagePath ?? "/uploads/users/default.png";
+            response.RoleEntityIds = new Dictionary<string, string?>
+            {
+                { normalizedRole, roleEntityId },
+            }!;
 
-            return ServiceResult<AuthResponse>.Ok(response);
+            await _userRepo.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            return ServiceResult<AuthResponse>.Ok(response, "Registration successful.");
         }
 
         public async Task<ServiceResult<AuthResponse>> LoginAsync(LoginRequest request)
@@ -116,6 +151,9 @@ namespace Application.Services
             var roles = await _userRepo.GetRolesAsync(user);
             var response = _mapper.Map<AuthResponse>(user);
             response.Roles = roles;
+            response.UserId = user.Id;
+            response.ProfileImageUrl = user.ProfileImagePath;
+            response.RoleEntityIds = await BuildRoleEntityIdMap(user);
             response.Token = JwtExtensions.GenerateJwtToken(user, roles, _config);
 
             var refreshToken = new RefreshToken
@@ -164,7 +202,9 @@ namespace Application.Services
             // Check if user already has this role
             var userRoles = await _userRepo.GetUserRolesAsync(user);
             if (userRoles.Any(r => r.Equals(request.RoleName, StringComparison.OrdinalIgnoreCase)))
-                return ServiceResult<string>.Fail($"User '{user.Email}' already has role '{request.RoleName}'.");
+                return ServiceResult<string>.Fail(
+                    $"User '{user.Email}' already has role '{request.RoleName}'."
+                );
 
             // Assign role
             var added = await _userRepo.AddToRoleAsync(user, request.RoleName);
@@ -179,47 +219,55 @@ namespace Application.Services
             switch (request.RoleName.ToLower())
             {
                 case "admin":
-                    await _adminRepo.AddAsync(new Admin
-                    {
-                        AppUserId = user.Id,
-                        FullName = fullName,
-                        Email = email,
-                        ContactInfo = contactInfo,
-                        ProfileStatus = ProfileStatus.Pending
-                    });
+                    await _adminRepo.AddAsync(
+                        new Admin
+                        {
+                            AppUserId = user.Id,
+                            FullName = fullName,
+                            Email = email,
+                            ContactInfo = contactInfo,
+                            ProfileStatus = ProfileStatus.Pending,
+                        }
+                    );
                     break;
 
                 case "teacher":
-                    await _teacherRepo.AddAsync(new Teacher
-                    {
-                        AppUserId = user.Id,
-                        FullName = fullName,
-                        Email = email,
-                        ContactInfo = contactInfo,
-                        ProfileStatus = ProfileStatus.Pending
-                    });
+                    await _teacherRepo.AddAsync(
+                        new Teacher
+                        {
+                            AppUserId = user.Id,
+                            FullName = fullName,
+                            Email = email,
+                            ContactInfo = contactInfo,
+                            ProfileStatus = ProfileStatus.Pending,
+                        }
+                    );
                     break;
 
                 case "student":
-                    await _studentRepo.AddAsync(new Student
-                    {
-                        AppUserId = user.Id,
-                        FullName = fullName,
-                        Email = email,
-                        ContactInfo = contactInfo,
-                        ProfileStatus = ProfileStatus.Pending
-                    });
+                    await _studentRepo.AddAsync(
+                        new Student
+                        {
+                            AppUserId = user.Id,
+                            FullName = fullName,
+                            Email = email,
+                            ContactInfo = contactInfo,
+                            ProfileStatus = ProfileStatus.Pending,
+                        }
+                    );
                     break;
 
                 case "parent":
-                    await _parentRepo.AddAsync(new Parent
-                    {
-                        AppUserId = user.Id,
-                        FullName = fullName,
-                        Email = email,
-                        ContactInfo = contactInfo,
-                        ProfileStatus = ProfileStatus.Pending
-                    });
+                    await _parentRepo.AddAsync(
+                        new Parent
+                        {
+                            AppUserId = user.Id,
+                            FullName = fullName,
+                            Email = email,
+                            ContactInfo = contactInfo,
+                            ProfileStatus = ProfileStatus.Pending,
+                        }
+                    );
                     break;
 
                 default:
@@ -228,7 +276,9 @@ namespace Application.Services
 
             await _unitOfWork.SaveChangesAsync();
 
-            return ServiceResult<string>.Ok($"Role '{request.RoleName}' assigned successfully to '{user.Email}'.");
+            return ServiceResult<string>.Ok(
+                $"Role '{request.RoleName}' assigned successfully to '{user.Email}'."
+            );
         }
 
         public async Task<ServiceResult<string>> UnassignRoleAsync(AssignRoleRequest request)
@@ -244,12 +294,16 @@ namespace Application.Services
             // Check if user actually has this role
             var userRoles = await _userRepo.GetUserRolesAsync(user);
             if (!userRoles.Any(r => r.Equals(request.RoleName, StringComparison.OrdinalIgnoreCase)))
-                return ServiceResult<string>.Fail($"User '{user.Email}' does not have role '{request.RoleName}'.");
+                return ServiceResult<string>.Fail(
+                    $"User '{user.Email}' does not have role '{request.RoleName}'."
+                );
 
             // Remove from Identity role
             var removed = await _userRepo.RemoveFromRoleAsync(user, request.RoleName);
             if (!removed)
-                return ServiceResult<string>.Fail($"Failed to remove role '{request.RoleName}' from user '{user.Email}'.");
+                return ServiceResult<string>.Fail(
+                    $"Failed to remove role '{request.RoleName}' from user '{user.Email}'."
+                );
 
             // Remove from domain entities
             switch (request.RoleName.ToLower())
@@ -284,7 +338,9 @@ namespace Application.Services
 
             await _unitOfWork.SaveChangesAsync();
 
-            return ServiceResult<string>.Ok($"Role '{request.RoleName}' unassigned successfully from '{user.Email}'.");
+            return ServiceResult<string>.Ok(
+                $"Role '{request.RoleName}' unassigned successfully from '{user.Email}'."
+            );
         }
 
         public async Task<ServiceResult<AuthResponse>> RefreshTokenAsync(
@@ -356,6 +412,8 @@ namespace Application.Services
             var response = _mapper.Map<AuthResponse>(user);
             response.Roles = roles;
             response.UserId = user!.Id;
+            response.ProfileImageUrl = user.ProfileImagePath;
+            response.RoleEntityIds = await BuildRoleEntityIdMap(user);
 
             return ServiceResult<AuthResponse>.Ok(response, "Token is valid");
         }
@@ -427,13 +485,85 @@ namespace Application.Services
 
             user.FullName = request.FullName;
             user.ContactInfo = request.ContactInfo;
-
             await _userRepo.UpdateAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
             var response = _mapper.Map<AuthResponse>(user);
             response.UserId = user.Id;
+            response.ProfileImageUrl = user.ProfileImagePath;
+            response.RoleEntityIds = await BuildRoleEntityIdMap(user);
             return ServiceResult<AuthResponse>.Ok(response, "Profile updated");
+        }
+
+        public async Task<ServiceResult<AuthResponse>> UploadProfilePhotoAsync(
+            string userId,
+            IFormFile file
+        )
+        {
+            var user = await _userRepo.GetByIdAsync(userId);
+            if (user == null)
+                return ServiceResult<AuthResponse>.Fail("User not found");
+
+            var upload = await _fileService.UploadFileAsync(file, "users"); // controllerName "users"
+            if (!upload.Success)
+                return ServiceResult<AuthResponse>.Fail(upload.Message);
+
+            // optional: remove old physical file via fileService.DeleteFileAsync(user.ProfileImagePath) if exists
+            user.ProfileImagePath = upload.Data!; // store relative path
+
+            await _userRepo.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            var roles = await _userRepo.GetRolesAsync(user);
+            var response = _mapper.Map<AuthResponse>(user);
+            response.Roles = roles;
+            response.ProfileImageUrl = user.ProfileImagePath;
+            response.RoleEntityIds = await BuildRoleEntityIdMap(user);
+
+            return ServiceResult<AuthResponse>.Ok(response, "Profile photo uploaded");
+        }
+
+        private async Task<Dictionary<string, string>> BuildRoleEntityIdMap(AppUser user)
+        {
+            var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var roles = await _userRepo.GetRolesAsync(user);
+
+            foreach (var role in roles)
+            {
+                switch (role.ToLower())
+                {
+                    case "admin":
+                    {
+                        var admin = await _adminRepo.GetByAppUserIdAsync(user.Id);
+                        if (admin != null)
+                            map["admin"] = admin.Id;
+                        break;
+                    }
+                    case "teacher":
+                    {
+                        var t = await _teacherRepo.GetByAppUserIdAsync(user.Id);
+                        if (t != null)
+                            map["teacher"] = t.Id;
+                        break;
+                    }
+                    case "student":
+                    {
+                        var s = await _studentRepo.GetByAppUserIdAsync(user.Id);
+                        if (s != null)
+                            map["student"] = s.Id;
+                        break;
+                    }
+                    case "parent":
+                    {
+                        var p = await _parentRepo.GetByAppUserIdAsync(user.Id);
+                        if (p != null)
+                            map["parent"] = p.Id;
+                        break;
+                    }
+                }
+            }
+
+            return map;
         }
     }
 }

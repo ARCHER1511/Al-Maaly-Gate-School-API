@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.AuthDTOs;
 using Domain.Wrappers;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Interfaces
 {
@@ -18,5 +19,6 @@ namespace Application.Interfaces
         Task<ServiceResult<string>> ResetPasswordAsync(ResetPasswordRequest request);
         Task<ServiceResult<string>> DeleteAccountAsync(string userId);
         Task<ServiceResult<AuthResponse>> UpdateProfileAsync(string userId, UpdateProfileRequest request);
+        Task<ServiceResult<AuthResponse>> UploadProfilePhotoAsync(string userId, IFormFile file);
     }   
 }
