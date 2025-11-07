@@ -16,12 +16,7 @@ namespace Infrastructure.Configurations
                    .IsRequired()
                    .HasMaxLength(50);
 
-            builder.HasMany(c => c.Students)
-                   .WithOne(s => s.Class)
-                   .HasForeignKey(s => s.ClassId)
-                   .OnDelete(DeleteBehavior.Restrict);
-
-                       builder.HasMany(c => c.ClassAssets)
+            builder.HasMany(c => c.ClassAssets)
                    .WithOne(ca => ca.Class)
                    .HasForeignKey(ca => ca.ClassId)
                    .OnDelete(DeleteBehavior.Cascade);

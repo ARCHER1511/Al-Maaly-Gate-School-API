@@ -25,15 +25,6 @@ namespace Infrastructure.Configurations
                    .HasForeignKey(c => c.QuestionId)
                    .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(q => q.TrueAndFalses)
-                   .WithOne(tf => tf.Question)
-                   .HasForeignKey<TrueAndFalses>(tf => tf.QuestionId)
-                   .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(q => q.TextAnswer)
-                   .WithOne(ta => ta.Question)
-                   .HasForeignKey<TextAnswers>(ta => ta.QuestionId)
-                   .OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(q => q.ChoiceAnswer)
                    .WithOne(ca => ca.Question)
                    .HasForeignKey<ChoiceAnswer>(ca => ca.QuestionId)

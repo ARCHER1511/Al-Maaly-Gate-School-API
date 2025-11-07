@@ -4,10 +4,10 @@
     {
         public string ClassName { get; set; } = string.Empty;
         public string ClassYear { get; set; } = string.Empty;
-        public List<Student>? Students { get; set; } = new();
-        public List<ClassAssets>? ClassAssets { get; set; } = new();
-        public List<ClassAppointment>? ClassAppointments { get; set; } = new();
-        public List<Subject>? Subjects { get; set; } = new();
-        public List<Exam>? Exams { get; set; } = new();
+        public List<Student>? Students { get; set; }
+        public List<ClassAssets>? ClassAssets { get; set; }
+        public List<ClassAppointment>? ClassAppointments { get; set; }
+        public List<Subject>? Subjects { get; set; }
+        public List<Exam>? Exams { get; set; }
     }
 }

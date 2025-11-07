@@ -16,6 +16,8 @@ namespace Application.DTOs.QuestionDTOs
         // For choice questions, which choice is correct
         public string? CorrectChoiceId { get; set; }
 
+        public bool? TrueAndFalses { get; set; }
+
         // For text questions
         public string? TextAnswer { get; set; }
     }

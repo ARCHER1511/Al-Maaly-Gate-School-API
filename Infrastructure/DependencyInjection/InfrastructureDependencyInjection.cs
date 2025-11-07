@@ -19,7 +19,6 @@ namespace Infrastructure.DependencyInjection
             // Repositories DbContextFactory
             services.AddScoped<IDbContextFactory<AlMaalyGateSchoolContext>, DbContextFactory>();
             services.AddScoped<IAdminRepository, AdminRepository>();
-            services.AddScoped<ITextAnswersRepository, TextAnswersRepository>();
             services.AddScoped<IAppRoleRepository, AppRoleRepository>();
             services.AddScoped<IAppUserRepository, AppUserRepository>();
             services.AddScoped<IAppUserRoleRepository, AppUserRoleRepository>();
@@ -39,8 +38,8 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
             services.AddScoped<IFileRecordRepository, FileRecordRepository>();
             services.AddScoped<IChoicesRepository, ChoicesRepository>();
-            services.AddScoped<ITrueAndFalsesRepository, TrueAndFalsesRepository>();
-
+            services.AddScoped<IStudentExamAnswerRepository, StudentExamAnswerRepository>();
+            services.AddScoped<IStudentExamResultRepository, StudentExamResultRepository>();
             return services;
         }
 

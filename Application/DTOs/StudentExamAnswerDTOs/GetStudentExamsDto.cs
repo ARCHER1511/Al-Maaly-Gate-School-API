@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Entities;
 
-namespace Application.DTOs.ExamDTOS
+namespace Application.DTOs.StudentExamAnswerDTOs
 {
-    public class CreateExamDto
+    public class GetStudentExamsDto
     {
-        public string ExamName { get; set; } = string.Empty;
         public string SubjectId { get; set; } = string.Empty;
+        public Subject Subject { get; set; } = null!;
         public string ClassId { get; set; } = string.Empty;
+        public Class Class { get; set; } = null!;
         public string TeacherId { get; set; } = string.Empty;
+        public Teacher Teacher { get; set; } = null!;
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public decimal MinMark { get; set; }
         public decimal FullMark { get; set; }
+        public List<Question> Questions { get; set; } = new List<Question>();
     }
 }

@@ -535,6 +535,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(36)");
 
+                    b.Property<bool?>("TrueAndFalses")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -600,7 +603,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ClassId")
-                        .IsRequired()
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
@@ -646,7 +648,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ChoiceId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExamId")
                         .IsRequired()
@@ -663,28 +665,76 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(36)");
 
-                    b.Property<string>("TextAnswerId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("TextAnswer")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TrueAndFalseId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<bool?>("TrueAndFalseAnswer")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ChoiceId");
 
                     b.HasIndex("ExamId");
 
                     b.HasIndex("QuestionId");
 
-                    b.HasIndex("TextAnswerId");
-
-                    b.HasIndex("TrueAndFalseId");
-
                     b.HasIndex("StudentId", "ExamId", "QuestionId")
                         .IsUnique();
 
                     b.ToTable("StudentExamAnswers", "Academics");
+                });
+
+            modelBuilder.Entity("Domain.Entities.StudentExamResult", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ExamId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ExamName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("FullMark")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("MinMark")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("Percentage")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("StudentName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("TotalMark")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId", "ExamId")
+                        .IsUnique();
+
+                    b.ToTable("StudentExamResults", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Subject", b =>
@@ -755,47 +805,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AppUserId");
 
                     b.ToTable("Teachers", "Academics");
-                });
-
-            modelBuilder.Entity("Domain.Entities.TextAnswers", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Content")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("QuestionId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuestionId")
-                        .IsUnique();
-
-                    b.ToTable("TextAnswers", "Academics");
-                });
-
-            modelBuilder.Entity("Domain.Entities.TrueAndFalses", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsTrue")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("QuestionId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuestionId")
-                        .IsUnique();
-
-                    b.ToTable("TrueAndFalses", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserNotification", b =>
@@ -1127,8 +1136,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Class", "Class")
                         .WithMany("Students")
                         .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("AppUser");
 
@@ -1137,11 +1145,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.StudentExamAnswer", b =>
                 {
-                    b.HasOne("Domain.Entities.Choices", "Choice")
-                        .WithMany()
-                        .HasForeignKey("ChoiceId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Entities.Exam", "Exam")
                         .WithMany()
                         .HasForeignKey("ExamId")
@@ -1160,27 +1163,11 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.TextAnswers", "TextAnswer")
-                        .WithMany()
-                        .HasForeignKey("TextAnswerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.TrueAndFalses", "TrueAndFalse")
-                        .WithMany()
-                        .HasForeignKey("TrueAndFalseId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Choice");
-
                     b.Navigation("Exam");
 
                     b.Navigation("Question");
 
                     b.Navigation("Student");
-
-                    b.Navigation("TextAnswer");
-
-                    b.Navigation("TrueAndFalse");
                 });
 
             modelBuilder.Entity("Domain.Entities.Subject", b =>
@@ -1211,28 +1198,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
-                });
-
-            modelBuilder.Entity("Domain.Entities.TextAnswers", b =>
-                {
-                    b.HasOne("Domain.Entities.Question", "Question")
-                        .WithOne("TextAnswer")
-                        .HasForeignKey("Domain.Entities.TextAnswers", "QuestionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-                });
-
-            modelBuilder.Entity("Domain.Entities.TrueAndFalses", b =>
-                {
-                    b.HasOne("Domain.Entities.Question", "Question")
-                        .WithOne("TrueAndFalses")
-                        .HasForeignKey("Domain.Entities.TrueAndFalses", "QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserNotification", b =>
@@ -1335,10 +1300,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("ChoiceAnswer");
 
                     b.Navigation("Choices");
-
-                    b.Navigation("TextAnswer");
-
-                    b.Navigation("TrueAndFalses");
                 });
 
             modelBuilder.Entity("Domain.Entities.Student", b =>

@@ -9,8 +9,7 @@
         public string TeacherId { get; set; } = string.Empty;
         public Teacher Teacher { get; set; } = null!;
         public QuestionTypes Type { get; set; }
-        public TextAnswers? TextAnswer { get; set; }
-        public TrueAndFalses? TrueAndFalses { get; set; }
+        public bool? TrueAndFalses { get; set; }
         public ChoiceAnswer? ChoiceAnswer { get; set; }
         public List<Choices>? Choices { get; set; } = new ();
     }

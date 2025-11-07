@@ -1,79 +1,133 @@
-﻿using Application.DTOs.ClassAppointmentDTOs;
+﻿using Application.DTOs.AppointmentsDTOs;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
+namespace Application.Services
+{
 public class ClassAppointmentService : IClassAppointmentService
 {
+        private readonly IClassAppointmentRepository _classAppointmentRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-
-    public ClassAppointmentService(IUnitOfWork unitOfWork, IMapper mapper)
+        public ClassAppointmentService(IClassAppointmentRepository classAppointmentRepository, IUnitOfWork unitOfWork, IMapper mapper)
     {
+            _classAppointmentRepository = classAppointmentRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
+        private string GetStatus(DateTime start, DateTime end)
+        {
+            var now = DateTime.Now;
 
-    public async Task<ServiceResult<IEnumerable<ClassAppointmentViewDto>>> GetAllAsync()
+            if (now < start)
+                return "Upcoming";
+            else if (now >= start && now <= end)
+                return "Running";
+            else
+                return "Finished";
+        }
+        public async Task<ServiceResult<IEnumerable<ClassAppointmentDto>>> GetAppointmentsByTeacherAsync(string teacherId)
     {
-        var repo = _unitOfWork.Repository<ClassAppointment>();
-        var appointments = await repo.GetAllAsync();
-        var result = appointments.Select(_mapper.Map<ClassAppointmentViewDto>);
-        return ServiceResult<IEnumerable<ClassAppointmentViewDto>>.Ok(result);
+            var result = await _classAppointmentRepository.AsQueryable().Where(a => a.TeacherId == teacherId).ToListAsync();
+            if (result == null) return ServiceResult<IEnumerable<ClassAppointmentDto>>.Fail("Appointment not found");
+
+            bool isChanged = false;
+            foreach (var appointment in result)
+            {
+                var newStatus = GetStatus(appointment.StartTime, appointment.EndTime);
+                if (appointment.Status != newStatus)
+                {
+                    appointment.Status = newStatus;
+                    _classAppointmentRepository.Update(appointment);
+                    isChanged = true;
     }
+            }
+            if (isChanged)
+                await _unitOfWork.SaveChangesAsync();
 
-    public async Task<ServiceResult<ClassAppointmentViewDto>> GetByIdAsync(string id)
+            var resultDto = _mapper.Map<IEnumerable<ClassAppointmentDto>>(result);
+
+            return ServiceResult<IEnumerable<ClassAppointmentDto>>.Ok(resultDto, "Appointment retrieved successfully");
+        }
+        public async Task<ServiceResult<IEnumerable<ClassAppointmentDto>>> GetAllAsync()
     {
-        var repo = _unitOfWork.Repository<ClassAppointment>();
-        var appointment = await repo.GetByIdAsync(id);
-        if (appointment == null)
-            return ServiceResult<ClassAppointmentViewDto>.Fail("Appointment not found");
+            var result = await _classAppointmentRepository.GetAllAsync();
+            if (result == null) return ServiceResult<IEnumerable<ClassAppointmentDto>>.Fail("Appointment not found");
 
-        return ServiceResult<ClassAppointmentViewDto>.Ok(_mapper.Map<ClassAppointmentViewDto>(appointment));
+            bool isChanged = false;
+            foreach (var appointment in result)
+            {
+                var newStatus = GetStatus(appointment.StartTime, appointment.EndTime);
+                if (appointment.Status != newStatus)
+                {
+                    appointment.Status = newStatus;
+                    _classAppointmentRepository.Update(appointment);
+                    isChanged = true;
+                }
+            }
+            if (isChanged)
+                await _unitOfWork.SaveChangesAsync();
+
+            var resultDto = _mapper.Map<IEnumerable<ClassAppointmentDto>>(result);
+
+            return ServiceResult<IEnumerable<ClassAppointmentDto>>.Ok(resultDto, "Appointment retrieved successfully");
     }
+        public async Task<ServiceResult<ClassAppointmentDto>> GetByIdAsync(object id)
+        {
+            var result = await _classAppointmentRepository.GetByIdAsync(id);
+            if (result == null) return ServiceResult<ClassAppointmentDto>.Fail("Appointment not found");
 
-    public async Task<ServiceResult<IEnumerable<ClassAppointmentViewDto>>> GetByTeacherAsync(string teacherId)
+            bool isChanged = false;
+            var newStatus = GetStatus(result.StartTime, result.EndTime);
+            if (result.Status != newStatus)
     {
-        var repo = _unitOfWork.Repository<ClassAppointment>();
-        var appointments = await repo.FindAllAsync(a => a.TeacherId == teacherId);
-        var result = appointments.Select(_mapper.Map<ClassAppointmentViewDto>);
-        return ServiceResult<IEnumerable<ClassAppointmentViewDto>>.Ok(result);
+                result.Status = newStatus;
+                _classAppointmentRepository.Update(result);
+                isChanged = true;
     }
+            if (isChanged)
+                await _unitOfWork.SaveChangesAsync();
 
-    public async Task<ServiceResult<ClassAppointmentViewDto>> CreateAsync(CreateClassAppointmentDto dto)
+            var resultDto = _mapper.Map<ClassAppointmentDto>(result);
+            return ServiceResult<ClassAppointmentDto>.Ok(resultDto, "Appointment retrieved successfully");
+        }
+        public async Task<ServiceResult<ClassAppointmentDto>> CreateAsync(ClassAppointmentDto dto)
     {
-        var repo = _unitOfWork.Repository<ClassAppointment>();
-        var appointment = _mapper.Map<ClassAppointment>(dto);
-        await repo.AddAsync(appointment);
+            var result = _mapper.Map<ClassAppointment>(dto);
+
+            await _classAppointmentRepository.AddAsync(result);
         await _unitOfWork.SaveChangesAsync();
-        return ServiceResult<ClassAppointmentViewDto>.Ok(_mapper.Map<ClassAppointmentViewDto>(appointment));
+
+            var viewDto = _mapper.Map<ClassAppointmentDto>(result);
+            return ServiceResult<ClassAppointmentDto>.Ok(viewDto, "Appointment created successfully");
     }
+        public async Task<ServiceResult<ClassAppointmentDto>> UpdateAsync(ClassAppointmentDto dto)
+        {
+            var existingresult = await _classAppointmentRepository.GetByIdAsync(dto.Id!);
+            if (existingresult == null)
+                return ServiceResult<ClassAppointmentDto>.Fail("Appointment not found");
 
-    public async Task<ServiceResult<ClassAppointmentViewDto>> UpdateAsync(string id, UpdateClassAppointmentDto dto)
-    {
-        var repo = _unitOfWork.Repository<ClassAppointment>();
-        var appointment = await repo.GetByIdAsync(id);
-        if (appointment == null)
-            return ServiceResult<ClassAppointmentViewDto>.Fail("Appointment not found");
+            _mapper.Map(dto, existingresult);
 
-        _mapper.Map(dto, appointment);
-        repo.Update(appointment);
+            _classAppointmentRepository.Update(existingresult);
         await _unitOfWork.SaveChangesAsync();
 
-        return ServiceResult<ClassAppointmentViewDto>.Ok(_mapper.Map<ClassAppointmentViewDto>(appointment));
+            var viewDto = _mapper.Map<ClassAppointmentDto>(existingresult);
+            return ServiceResult<ClassAppointmentDto>.Ok(viewDto, "Appointment updated successfully");
     }
-
-    public async Task<ServiceResult<bool>> DeleteAsync(string id)
+        public async Task<ServiceResult<bool>> DeleteAsync(object id)
     {
-        var repo = _unitOfWork.Repository<ClassAppointment>();
-        var appointment = await repo.GetByIdAsync(id);
-        if (appointment == null)
+            var result = await _classAppointmentRepository.GetByIdAsync(id);
+            if (result == null)
             return ServiceResult<bool>.Fail("Appointment not found");
 
-        repo.Delete(appointment);
+            _classAppointmentRepository.Delete(result);
         await _unitOfWork.SaveChangesAsync();
-        return ServiceResult<bool>.Ok(true);
+            return ServiceResult<bool>.Ok(true, "Appointment deleted successfully");
+        }
     }
 }

@@ -4,6 +4,6 @@
     {
         public string? Relation { get; set; }
 
-        public ICollection<ParentStudent> ParentStudent { get; set; } = new List<ParentStudent>();
+        public List<ParentStudent> ParentStudent { get; set; } = new List<ParentStudent>();
     }
 }

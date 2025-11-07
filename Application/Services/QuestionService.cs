@@ -45,56 +45,9 @@ namespace Application.Services
             switch (dto.Type)
             {
                 case QuestionTypes.Text:
-                    if (string.IsNullOrWhiteSpace(dto.TextAnswer))
-                        return ServiceResult<QuestionViewDto>.Fail("Text answer is required for text questions.");
-
-                    question.TextAnswer = new TextAnswers
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Content = dto.TextAnswer.Trim(),
-                        QuestionId = question.Id
-                    };
                     break;
 
                 case QuestionTypes.TrueOrFalse:
-                    // Always create True and False choices
-                    var trueChoice = new Choices
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Text = "True",
-                        IsCorrect = false, // default
-                        QuestionId = question.Id
-                    };
-                    var falseChoice = new Choices
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Text = "False",
-                        IsCorrect = false, // default
-                        QuestionId = question.Id
-                    };
-
-                    question.Choices = new List<Choices> { trueChoice, falseChoice };
-
-                    // Normalize dto.CorrectChoiceId (it can be "true", "false", "True", "False", etc.)
-                    var normalized = dto.CorrectChoiceId?.Trim().ToLower();
-
-                    Choices correctChoice;
-                    if (normalized == "true")
-                        correctChoice = trueChoice;
-                    else if (normalized == "false")
-                        correctChoice = falseChoice;
-                    else
-                        return ServiceResult<QuestionViewDto>.Fail("CorrectChoiceId must be 'true' or 'false'.");
-
-                    // Mark correct one
-                    correctChoice.IsCorrect = true;
-
-                    question.ChoiceAnswer = new ChoiceAnswer
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        QuestionId = question.Id,
-                        ChoiceId = correctChoice.Id
-                    };
                     break;
 
                 case QuestionTypes.Choices:

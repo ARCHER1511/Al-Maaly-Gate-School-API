@@ -22,7 +22,7 @@ namespace Infrastructure.Repositories
                 .Where(q => q.TeacherId == teacherId)
                 .Include(q => q.Choices)
                 .Include(q => q.ChoiceAnswer)
-                .Include(q => q.TextAnswer)
+                //.Include(q => q.TextAnswer)
                 .Include(q => q.Exam)
                 .ToListAsync();
         }
@@ -32,8 +32,8 @@ namespace Infrastructure.Repositories
             return await _dbSet
                 .Include(q => q.Choices)
                 .Include(q => q.ChoiceAnswer)
-                .Include(q => q.TextAnswer)
-                .Include(q => q.TrueAndFalses)
+                //.Include(q => q.TextAnswer)
+                //.Include(q => q.TrueAndFalses)
                 .ToListAsync();
         }
 
@@ -42,8 +42,8 @@ namespace Infrastructure.Repositories
             return await _dbSet
                 .Include(q => q.Choices)
                 .Include(q => q.ChoiceAnswer)
-                .Include(q => q.TextAnswer)
-                .Include(q => q.TrueAndFalses)
+                //.Include(q => q.TextAnswer)
+                //.Include(q => q.TrueAndFalses)
                 .FirstOrDefaultAsync(q => q.Id == id);
         }
     }

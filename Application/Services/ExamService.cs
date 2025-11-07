@@ -57,9 +57,9 @@ namespace Application.Services
                 .Include(e => e.Questions)
                     .ThenInclude(q => q.Choices)
                 .Include(e => e.Questions)
-                    .ThenInclude(q => q.TextAnswer)
-                .Include(e => e.Questions)
-                    .ThenInclude(q => q.TrueAndFalses)
+                //    .ThenInclude(q => q.TextAnswer)
+                //.Include(e => e.Questions)
+                //    .ThenInclude(q => q.TrueAndFalses)
                 .FirstOrDefaultAsync();
 
             var result = _mapper.Map<ExamDetailsViewDto>(loadedExam);
@@ -74,10 +74,10 @@ namespace Application.Services
             var exam = await examRepo.AsQueryable(e => e.Id == examId)
                 .Include(e => e.Questions)
                     .ThenInclude(q => q.Choices)
-                .Include(e => e.Questions)
-                    .ThenInclude(q => q.TextAnswer)
-                .Include(e => e.Questions)
-                    .ThenInclude(q => q.TrueAndFalses)
+                //.Include(e => e.Questions)
+                //    .ThenInclude(q => q.TextAnswer)
+                //.Include(e => e.Questions)
+                //    .ThenInclude(q => q.TrueAndFalses)
                 .FirstOrDefaultAsync();
 
             if (exam == null)
@@ -101,10 +101,10 @@ namespace Application.Services
             var exam = await repo.AsQueryable(e => e.Id == id)
                 .Include(e => e.Questions)
                     .ThenInclude(q => q.Choices)
-                .Include(e => e.Questions)
-                    .ThenInclude(q => q.TextAnswer)
-                .Include(e => e.Questions)
-                    .ThenInclude(q => q.TrueAndFalses)
+                //.Include(e => e.Questions)
+                //    .ThenInclude(q => q.TextAnswer)
+                //.Include(e => e.Questions)
+                    //.ThenInclude(q => q.TrueAndFalses)
                 .FirstOrDefaultAsync();
 
             if (exam == null)

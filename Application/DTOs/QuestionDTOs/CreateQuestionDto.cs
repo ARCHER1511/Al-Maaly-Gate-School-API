@@ -13,13 +13,9 @@ namespace Application.DTOs.QuestionDTOs
         public decimal Degree { get; set; }
         public QuestionTypes Type { get; set; }
         public string TeacherId { get; set; } = string.Empty;
-
-        // Only required for Choices or TrueOrFalse types
         public List<ChoiceDto>? Choices { get; set; }
         public string? CorrectChoiceId { get; set; }
-
-        // For text question
-        public string? TextAnswer { get; set; }
+        public bool? TrueAndFalses { get; set; }
     }
 
     public class ChoiceDto

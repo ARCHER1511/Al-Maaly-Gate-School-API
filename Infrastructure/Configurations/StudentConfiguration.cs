@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
 
 namespace Infrastructure.Configurations
 {
@@ -20,13 +21,13 @@ namespace Infrastructure.Configurations
                    .IsRequired();
 
             builder.Property(s => s.ClassId)
-                   .IsRequired()
                    .HasMaxLength(450);
 
             builder.HasOne(s => s.Class)
                    .WithMany(c => c.Students)
                    .HasForeignKey(s => s.ClassId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
 
             builder.ToTable("Students", "Academics");
         }

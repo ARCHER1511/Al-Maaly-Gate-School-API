@@ -1,5 +1,5 @@
-﻿using Application.DTOs.ClassAppointmentDTOs;
-using Domain.Entities;
+﻿
+using Application.DTOs.AppointmentsDTOs;
 using Domain.Wrappers;
 using System;
 using System.Collections.Generic;
@@ -7,15 +7,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Application.Interfaces
 {
     public interface IClassAppointmentService
     {
-        Task<ServiceResult<IEnumerable<ClassAppointmentViewDto>>> GetAllAsync();
-        Task<ServiceResult<ClassAppointmentViewDto>> GetByIdAsync(string id);
-        Task<ServiceResult<IEnumerable<ClassAppointmentViewDto>>> GetByTeacherAsync(string teacherId);
-        Task<ServiceResult<ClassAppointmentViewDto>> CreateAsync(CreateClassAppointmentDto dto);
-        Task<ServiceResult<ClassAppointmentViewDto>> UpdateAsync(string id, UpdateClassAppointmentDto dto);
-        Task<ServiceResult<bool>> DeleteAsync(string id);
+        Task<ServiceResult<ClassAppointmentDto>> GetByIdAsync(object id);
+        Task<ServiceResult<IEnumerable<ClassAppointmentDto>>> GetAllAsync();
+        Task<ServiceResult<ClassAppointmentDto>> CreateAsync(ClassAppointmentDto dto);
+        Task<ServiceResult<ClassAppointmentDto>> UpdateAsync(ClassAppointmentDto admin);
+        Task<ServiceResult<bool>> DeleteAsync(object id);
+        Task<ServiceResult<IEnumerable<ClassAppointmentDto>>> GetAppointmentsByTeacherAsync(string teacherId);
     }
 }

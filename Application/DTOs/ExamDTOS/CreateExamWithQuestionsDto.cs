@@ -8,6 +8,7 @@ namespace Application.DTOs.ExamDTOS
 {
     public class CreateExamWithQuestionsDto
     {
+        public string ExamName { get; set; } = string.Empty;
         public string SubjectId { get; set; } = string.Empty;
         public string ClassId { get; set; } = string.Empty;
         public string TeacherId { get; set; } = string.Empty;
