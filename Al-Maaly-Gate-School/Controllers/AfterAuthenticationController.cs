@@ -1,10 +1,11 @@
-﻿using System.Security.Claims;
-using Application.DTOs.AuthDTOs;
+﻿using Application.DTOs.AuthDTOs;
+using Application.DTOs.FileRequestDTOs;
 using Application.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System.IdentityModel.Tokens.Jwt;
 using Domain.Wrappers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
@@ -95,6 +96,14 @@ namespace Al_Maaly_Gate_School.Controllers
             return result.Success
                 ? Ok(ApiResponse<AuthResponse>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<AuthResponse>.Fail(result.Message!));
+        }
+        [HttpPost("profile/photo")]
+        public async Task<IActionResult> UploadProfilePhoto([FromForm] FileUploadRequest request)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _authService.UploadProfilePhotoAsync(userId!, request.File);
+            if (!result.Success) return BadRequest(result.Message);
+            return Ok(result.Data); // could return path or full updated profile DTO
         }
     }
 }

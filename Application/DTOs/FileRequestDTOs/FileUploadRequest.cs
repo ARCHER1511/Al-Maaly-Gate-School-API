@@ -5,7 +5,7 @@ namespace Application.DTOs.FileRequestDTOs
 {
     public class FileUploadRequest
     {
-        [FromForm]
+        [FromForm(Name = "File")]
         public IFormFile File { get; set; } = default!;
     }
 }
