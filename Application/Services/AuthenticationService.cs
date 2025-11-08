@@ -504,7 +504,7 @@ namespace Application.Services
             if (user == null)
                 return ServiceResult<AuthResponse>.Fail("User not found");
 
-            var upload = await _fileService.UploadFileAsync(file, "users"); // controllerName "users"
+            var upload = await _fileService.UploadFileAsync(file, "AfterAuthentication"); // controllerName "users"
             if (!upload.Success)
                 return ServiceResult<AuthResponse>.Fail(upload.Message);
 
@@ -536,28 +536,28 @@ namespace Application.Services
                     {
                         var admin = await _adminRepo.GetByAppUserIdAsync(user.Id);
                         if (admin != null)
-                            map["admin"] = admin.Id;
+                            map["adminId"] = admin.Id;
                         break;
                     }
                     case "teacher":
                     {
                         var t = await _teacherRepo.GetByAppUserIdAsync(user.Id);
                         if (t != null)
-                            map["teacher"] = t.Id;
+                            map["teacherId"] = t.Id;
                         break;
                     }
                     case "student":
                     {
                         var s = await _studentRepo.GetByAppUserIdAsync(user.Id);
                         if (s != null)
-                            map["student"] = s.Id;
+                            map["studentId"] = s.Id;
                         break;
                     }
                     case "parent":
                     {
                         var p = await _parentRepo.GetByAppUserIdAsync(user.Id);
                         if (p != null)
-                            map["parent"] = p.Id;
+                            map["parentId"] = p.Id;
                         break;
                     }
                 }

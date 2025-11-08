@@ -216,7 +216,7 @@ namespace Application.Services
                 .ToListAsync();
 
             decimal totalMark = allAnswers.Sum(a => a.Mark ?? 0);
-            decimal percentage = exam.FullMark == 0 ? 0 : Math.Round((totalMark / (decimal)exam.FullMark) * 100, 2);
+            decimal percentage = exam!.FullMark == 0 ? 0 : Math.Round((totalMark / (decimal)exam.FullMark) * 100, 2);
             string status = totalMark >= exam.MinMark ? "Success" : "Fail";
 
             var existingResult = await _studentExamResultRepository.AsQueryable()
