@@ -11,12 +11,12 @@ namespace Domain.Entities
         public string Status { get; set; } = "Upcoming";
 
         public string ClassId { get; set; } = string.Empty;
-        public Class Class { get; set; }
+        public Class Class { get; set; } = null!;
 
         public string TeacherId { get; set; } = string.Empty;
-        public Teacher Teacher { get; set; }
+        public Teacher Teacher { get; set; } = null!;
 
         public string SubjectId { get; set; } = string.Empty;
-        public Subject Subject { get; set; }
+        public Subject Subject { get; set; } = null!;
     }
 }

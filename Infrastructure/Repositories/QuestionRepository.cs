@@ -37,7 +37,7 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public new async Task<Question?> GetByIdAsync(string id)
+        public async Task<Question?> GetByIdAsync(string id)
         {
             return await _dbSet
                 .Include(q => q.Choices)
