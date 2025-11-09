@@ -38,6 +38,10 @@ namespace Infrastructure.Configurations
             builder.Property(e => e.FullMark)
                    .HasPrecision(5, 2);
 
+            builder.Property(e => e.Status)
+                   .HasMaxLength(20)
+                   .HasDefaultValue("Upcoming");
+
             builder.Property(e => e.Start)
                    .HasColumnType("datetime2");
 

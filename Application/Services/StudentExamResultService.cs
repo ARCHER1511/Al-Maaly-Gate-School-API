@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Application.Services
@@ -20,21 +21,30 @@ namespace Application.Services
             _mapper = mapper;
         }
 
+        public async Task<ServiceResult<IEnumerable<StudentExamResultDto>>> GetAllResultsByStudentIdAsync(object Id)
+        {
+            var result = await _StudentExamResultRepository.AsQueryable().Where(s => s.StudentId == (string)Id).ToListAsync();
+            if (result == null) return ServiceResult<IEnumerable<StudentExamResultDto>>.Fail("Student Exams Results not found");
+
+            var resultDto = _mapper.Map<IEnumerable<StudentExamResultDto>>(result);
+            return ServiceResult<IEnumerable<StudentExamResultDto>>.Ok(resultDto, "Student Exams Results retrieved successfully");
+        }
+
         public async Task<ServiceResult<IEnumerable<StudentExamResultDto>>> GetAllAsync()
         {
             var result = await  _StudentExamResultRepository.GetAllAsync();
-            if (result == null) return ServiceResult<IEnumerable<StudentExamResultDto>>.Fail("StudentExamResult not found");
+            if (result == null) return ServiceResult<IEnumerable<StudentExamResultDto>>.Fail("Student Exams Results not found");
 
             var resultDto = _mapper.Map<IEnumerable<StudentExamResultDto>>(result);
-            return ServiceResult<IEnumerable<StudentExamResultDto>>.Ok(resultDto, "StudentExamResult retrieved successfully");
+            return ServiceResult<IEnumerable<StudentExamResultDto>>.Ok(resultDto, "Student Exams Results retrieved successfully");
         }
         public async Task<ServiceResult<StudentExamResultDto>> GetByIdAsync(object id)
         {
             var result = await  _StudentExamResultRepository.GetByIdAsync(id);
-            if (result == null) return ServiceResult<StudentExamResultDto>.Fail("claStudentExamResultss not found");
+            if (result == null) return ServiceResult<StudentExamResultDto>.Fail("Student Exam Result not found");
 
             var resultDto = _mapper.Map<StudentExamResultDto>(result);
-            return ServiceResult<StudentExamResultDto>.Ok(resultDto, "StudentExamResult retrieved successfully");
+            return ServiceResult<StudentExamResultDto>.Ok(resultDto, "Student Exam Result retrieved successfully");
         }
         public async Task<ServiceResult<StudentExamResultDto>> CreateAsync(StudentExamResultDto dto)
         {
@@ -44,13 +54,13 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
 
             var viewDto = _mapper.Map<StudentExamResultDto>(result);
-            return ServiceResult<StudentExamResultDto>.Ok(viewDto, "StudentExamResult created successfully");
+            return ServiceResult<StudentExamResultDto>.Ok(viewDto, "Student Exam Result created successfully");
         }
         public async Task<ServiceResult<StudentExamResultDto>> UpdateAsync(StudentExamResultDto dto)
         {
             var existingresult = await  _StudentExamResultRepository.GetByIdAsync(dto.Id);
             if (existingresult == null)
-                return ServiceResult<StudentExamResultDto>.Fail("StudentExamResult not found");
+                return ServiceResult<StudentExamResultDto>.Fail("Student Exam Result not found");
 
             _mapper.Map(dto, existingresult);
 
@@ -58,17 +68,17 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
 
             var viewDto = _mapper.Map<StudentExamResultDto>(existingresult);
-            return ServiceResult<StudentExamResultDto>.Ok(viewDto, "StudentExamResult updated successfully");
+            return ServiceResult<StudentExamResultDto>.Ok(viewDto, "Student Exam Result updated successfully");
         }
         public async Task<ServiceResult<bool>> DeleteAsync(object id)
         {
             var result = await  _StudentExamResultRepository.GetByIdAsync(id);
             if (result == null)
-                return ServiceResult<bool>.Fail("StudentExamResult not found");
+                return ServiceResult<bool>.Fail("Student Exam Result not found");
 
              _StudentExamResultRepository.Delete(result);
             await _unitOfWork.SaveChangesAsync();
-            return ServiceResult<bool>.Ok(true, "StudentExamResult deleted successfully");
+            return ServiceResult<bool>.Ok(true, "Student Exam Result deleted successfully");
         }
     }
 }

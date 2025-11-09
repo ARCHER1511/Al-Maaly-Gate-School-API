@@ -1,12 +1,7 @@
 ﻿
 using Application.DTOs.AppointmentsDTOs;
+using Application.DTOs.ClassAppointmentsDTOs;
 using Domain.Wrappers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace Application.Interfaces
 {
@@ -18,5 +13,6 @@ namespace Application.Interfaces
         Task<ServiceResult<ClassAppointmentDto>> UpdateAsync(ClassAppointmentDto admin);
         Task<ServiceResult<bool>> DeleteAsync(object id);
         Task<ServiceResult<IEnumerable<ClassAppointmentDto>>> GetAppointmentsByTeacherAsync(string teacherId);
+        Task<ServiceResult<IEnumerable<StudentClassAppointmentDto>>> GetAppointmentsForStudentByClassIdAsync(string ClassId);
     }
 }

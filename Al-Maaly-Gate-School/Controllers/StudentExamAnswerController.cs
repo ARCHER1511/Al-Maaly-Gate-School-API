@@ -47,7 +47,7 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpGet("studentExams/{classId}")]
         public async Task<IActionResult> GetExams(string classId)
         {
-            var result = await _studentExamAnswerService.GetExams(classId);
+            var result = await _studentExamAnswerService.GetExamsForStudentByClassId(classId);
             if (!result.Success)
                 return NotFound(ApiResponse<GetStudentExamsDto>.Fail(result.Message!));
 

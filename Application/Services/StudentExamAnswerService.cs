@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -13,12 +14,13 @@ namespace Application.Services
     {
         private readonly IStudentExamAnswerRepository _studentExamAnswerRepository;
         private readonly IStudentExamResultRepository _studentExamResultRepository;
+        private readonly IStudentRepository _studentRepository;
         private readonly ISubjectRepository _subjectRepository;
         private readonly IExamRepository _ExamRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public StudentExamAnswerService(IStudentExamAnswerRepository studentExamAnswerRepository, IStudentExamResultRepository studentExamResultRepository, ISubjectRepository subjectRepository, IExamRepository examRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public StudentExamAnswerService(IStudentExamAnswerRepository studentExamAnswerRepository, IStudentRepository studentRepository, IStudentExamResultRepository studentExamResultRepository, ISubjectRepository subjectRepository, IExamRepository examRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _studentExamAnswerRepository = studentExamAnswerRepository;
             _studentExamResultRepository = studentExamResultRepository;
@@ -26,8 +28,19 @@ namespace Application.Services
             _mapper = mapper;
             _ExamRepository = examRepository;
             _subjectRepository = subjectRepository;
+            _studentRepository = studentRepository;
         }
+        private string GetStatus(DateTime start, DateTime end)
+        {
+            var now = DateTime.Now;
 
+            if (now < start)
+                return "Upcoming";
+            else if (now >= start && now <= end)
+                return "Running";
+            else
+                return "Finished";
+        }
         public async Task<ServiceResult<IEnumerable<StudentExamAnswerDto>>> GetExamsTextQuestions(
             string examId, string subjectId, string classId)
         {
@@ -210,7 +223,18 @@ namespace Application.Services
                 await _studentExamAnswerRepository.AddAsync(studentAnswer);
             }
 
-            var exam = await _ExamRepository.FirstOrDefaultAsync(e => e.Id == dto.ExamId);
+            var exam = await _ExamRepository.AsQueryable()
+                     .Include(e => e.Subject)
+                     .ThenInclude(s => s.Teacher)
+                     .FirstOrDefaultAsync(e => e.Id == dto.ExamId);
+
+            if (exam == null)
+                return ServiceResult<StudentExamAnswerDto>.Fail("Exam not found.");
+
+            var student = await _studentRepository.FirstOrDefaultAsync(s => s.Id == dto.StudentId);
+            if (student == null)
+                return ServiceResult<StudentExamAnswerDto>.Fail("Student not found.");
+
             var allAnswers = await _studentExamAnswerRepository.AsQueryable()
                 .Where(a => a.StudentId == dto.StudentId && a.ExamId == dto.ExamId)
                 .ToListAsync();
@@ -229,6 +253,11 @@ namespace Application.Services
                 existingResult.Status = status;
                 existingResult.FullMark = exam.FullMark;
                 existingResult.MinMark = exam.MinMark;
+                existingResult.StudentName = student.FullName;
+                existingResult.SubjectName = exam.Subject.SubjectName;
+                existingResult.TeacherName = exam.Subject.Teacher!.FullName;
+                existingResult.ExamName = exam.ExamName;
+                existingResult.Date = DateOnly.FromDateTime(exam.Start);
                 _studentExamResultRepository.Update(existingResult);
             }
             else
@@ -241,7 +270,12 @@ namespace Application.Services
                     FullMark = exam.FullMark,
                     MinMark = exam.MinMark,
                     Percentage = percentage,
-                    Status = status
+                    Status = status,
+                    StudentName = student.FullName,
+                    SubjectName = exam.Subject.SubjectName,
+                    TeacherName = exam.Subject.Teacher!.FullName,
+                    ExamName = exam.ExamName,
+                    Date = DateOnly.FromDateTime(exam.Start)
                 };
 
                 await _studentExamResultRepository.AddAsync(result);
@@ -279,16 +313,31 @@ namespace Application.Services
             return ServiceResult<bool>.Ok(true, "Student Answer deleted successfully");
         }
 
-        public async Task<ServiceResult<IEnumerable<GetStudentExamsDto>>> GetExams(string classId)
+        public async Task<ServiceResult<IEnumerable<GetStudentExamsDto>>> GetExamsForStudentByClassId(string classId)
         {
             var exams = await _subjectRepository.AsQueryable()
-                .Where(s => s.ClassId == classId)
-                .Include(s => s.Exams)
-                .SelectMany(s => s.Exams!) 
-                .ToListAsync();
+                 .Where(s => s.ClassId == classId)
+                 .SelectMany(s => s.Exams!)
+                 .Include(e => e.Teacher)
+                 .Include(e => e.Subject)
+                 .ToListAsync();
 
             if (exams == null || exams.Count == 0)
                 return ServiceResult<IEnumerable<GetStudentExamsDto>>.Fail("Couldn't find any exams");
+
+            bool isChanged = false;
+            foreach (var exam in exams)
+            {
+                var newStatus = GetStatus(exam.Start, exam.End);
+                if (exam.Status != newStatus)
+                {
+                    exam.Status = newStatus;
+                    _ExamRepository.Update(exam);
+                    isChanged = true;
+                }
+            }
+            if (isChanged)
+                await _unitOfWork.SaveChangesAsync();
 
             var examsDto = _mapper.Map<IEnumerable<GetStudentExamsDto>>(exams);
 
