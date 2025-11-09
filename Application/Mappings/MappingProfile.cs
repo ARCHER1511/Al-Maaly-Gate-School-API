@@ -95,8 +95,12 @@ namespace Application.Mappings
             #endregion
 
             #region Teacher Mappings
-            //View
+            // View mappings
             CreateMap<Teacher, TeacherViewDto>().IgnoreUnmapped();
+            CreateMap<Teacher, TeacherAdminViewDto>().IgnoreUnmapped();
+
+            // Reverse if needed
+            CreateMap<TeacherAdminViewDto, Teacher>().IgnoreUnmapped();
             #endregion
 
             #region Student
@@ -106,10 +110,6 @@ namespace Application.Mappings
             .ForMember(dest => dest.ClassId,
                        opt => opt.MapFrom(src =>
                    string.IsNullOrWhiteSpace(src.ClassId) ? null : src.ClassId));
-            #endregion
-
-            #region Teacher Mappings
-            CreateMap<Student, StudentViewDto>().IgnoreUnmapped();
             #endregion
 
             #region Classes Mappings
@@ -167,14 +167,32 @@ namespace Application.Mappings
             #endregion
 
             #region Exam Mappings
+            // From Exam entity to detail view
             CreateMap<Exam, ExamDetailsViewDto>()
-    .               ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions));
+                .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions));
 
+            // Basic bidirectional views
             CreateMap<Exam, ExamViewDto>().ReverseMap();
-            CreateMap<CreateExamDto, Exam>().ReverseMap();
-            CreateMap<UpdateExamDto, Exam>().ReverseMap();
 
-            CreateMap<Question, QuestionViewDto>().IgnoreUnmapped();
+            // Create mapping
+            CreateMap<CreateExamDto, Exam>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore()) // ID generated automatically
+                .ForMember(dest => dest.Subject, opt => opt.Ignore()) // loaded later
+                .ForMember(dest => dest.Class, opt => opt.Ignore())
+                .ForMember(dest => dest.Teacher, opt => opt.Ignore())
+                .ForMember(dest => dest.Questions, opt => opt.Ignore()) // or .MapFrom(src => src.Questions) if you create them here
+                .IgnoreUnmapped(); // your custom extension
+
+            // Update mapping
+            CreateMap<UpdateExamDto, Exam>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Subject, opt => opt.Ignore())
+                .ForMember(dest => dest.Class, opt => opt.Ignore())
+                .ForMember(dest => dest.Teacher, opt => opt.Ignore())
+                .ForMember(dest => dest.Questions, opt => opt.Ignore())
+                .IgnoreUnmapped();
+
+            
             #endregion
 
             #region Subject Mappings

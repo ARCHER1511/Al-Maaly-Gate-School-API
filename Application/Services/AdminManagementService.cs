@@ -456,11 +456,10 @@ namespace Application.Services
                     "No pending teachers found."
                 );
             }
-            var result = pendingTeachers.Select(teachers =>
-                _mapper.Map<IEnumerable<TeacherAdminViewDto>>(teachers)
-            );
+            var result = _mapper.Map<IEnumerable<TeacherAdminViewDto>>(pendingTeachers);
+
             return ServiceResult<IEnumerable<TeacherAdminViewDto>>.Ok(
-                result.SelectMany(r => r),
+                result,
                 "Pending teachers retrieved successfully."
             );
         }
