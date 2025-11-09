@@ -21,7 +21,7 @@ namespace Application.Authentication
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!),
                 new Claim(JwtRegisteredClaimNames.Name, user.FullName),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!), // Optional: for display
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!) // Optional: for display
             };
 
             // Use ClaimTypes.Role for role mapping consistency

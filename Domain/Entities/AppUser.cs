@@ -8,6 +8,7 @@ namespace Domain.Entities
         public AppUser() { }
         public string FullName { get; set; } = string.Empty;
         public string ContactInfo { get; set; } = string.Empty;
+        public string ProfileImagePath { get; set; } = string.Empty;
         public AccountStatus AccountStatus { get; set; } = AccountStatus.PendingApproval;
         public List<AppUserRole> UserRoles { get; set; } = new();
         public List<UserNotification> UserNotifications { get; set; } = new();

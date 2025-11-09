@@ -1,4 +1,7 @@
-﻿namespace Application.DTOs.AuthDTOs
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Application.DTOs.AuthDTOs
 {
     public class UpdateProfileRequest
     {

@@ -17,6 +17,7 @@ namespace Application.DependencyInjection
             services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddScoped<IAdminService, AdminService>();
+            services.AddScoped<IAdminManagementService, AdminManagementService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ITeacherService, TeacherService>();
             services.AddScoped<INotificationService, NotificationService>();
