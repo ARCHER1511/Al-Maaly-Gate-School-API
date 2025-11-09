@@ -755,15 +755,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TeacherId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(36)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClassId");
-
-                    b.HasIndex("TeacherId");
 
                     b.ToTable("Subjects", "Academics");
                 });
@@ -805,6 +799,52 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AppUserId");
 
                     b.ToTable("Teachers", "Academics");
+                });
+
+            modelBuilder.Entity("Domain.Entities.TeacherClass", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ClassId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("TeacherId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
+
+                    b.HasIndex("TeacherId", "ClassId")
+                        .IsUnique();
+
+                    b.ToTable("TeacherClasses", "Academics");
+                });
+
+            modelBuilder.Entity("Domain.Entities.TeacherSubject", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SubjectId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("TeacherId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("TeacherId", "SubjectId")
+                        .IsUnique();
+
+                    b.ToTable("TeacherSubjects", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserNotification", b =>
@@ -1178,15 +1218,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Teacher", "Teacher")
-                        .WithMany("Subjects")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Class");
-
-                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("Domain.Entities.Teacher", b =>
@@ -1198,6 +1230,44 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("Domain.Entities.TeacherClass", b =>
+                {
+                    b.HasOne("Domain.Entities.Class", "Class")
+                        .WithMany("TeacherClasses")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Teacher", "Teacher")
+                        .WithMany("TeacherClasses")
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("Domain.Entities.TeacherSubject", b =>
+                {
+                    b.HasOne("Domain.Entities.Subject", "Subject")
+                        .WithMany("TeacherSubjects")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Teacher", "Teacher")
+                        .WithMany("TeacherSubjects")
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserNotification", b =>
@@ -1278,6 +1348,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Students");
 
                     b.Navigation("Subjects");
+
+                    b.Navigation("TeacherClasses");
                 });
 
             modelBuilder.Entity("Domain.Entities.Exam", b =>
@@ -1312,6 +1384,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("ClassAppointments");
 
                     b.Navigation("Exams");
+
+                    b.Navigation("TeacherSubjects");
                 });
 
             modelBuilder.Entity("Domain.Entities.Teacher", b =>
@@ -1322,7 +1396,9 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Questions");
 
-                    b.Navigation("Subjects");
+                    b.Navigation("TeacherClasses");
+
+                    b.Navigation("TeacherSubjects");
                 });
 #pragma warning restore 612, 618
         }

@@ -35,6 +35,8 @@ namespace Infrastructure.Data
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Choices> Choices { get; set; }
         public DbSet<StudentExamAnswer> StudentExamAnswer { get; set; }
+        public DbSet<TeacherClass> TeacherClasses { get; set; }
+        public DbSet<TeacherSubject> TeacherSubjects { get; set; }
 
         //On model creating with configuration and Factory On using onion architecture
         protected override void OnModelCreating(ModelBuilder builder)

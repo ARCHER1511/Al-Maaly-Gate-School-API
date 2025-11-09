@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
 {
@@ -22,19 +23,64 @@ namespace Application.Services
 
         public async Task<ServiceResult<IEnumerable<TeacherViewDto>>> GetAllAsync()
         {
-            var teachers = await _teacherRepo.GetAllAsync();
-            var data = _mapper.Map<IEnumerable<TeacherViewDto>>(teachers);
+            var teachers = await _teacherRepo.FindAllAsync(
+                predicate: null,
+                include: q => q
+                    .Include(t => t.AppUser) // Include AppUser
+                    .Include(t => t.TeacherSubjects!)
+                        .ThenInclude(ts => ts.Subject)
+                    .Include(t => t.TeacherClasses)
+                        .ThenInclude(tc => tc.Class)
+            );
+
+            var data = teachers.Select(t => new TeacherViewDto
+            {
+                Id = t.Id,
+                FullName = t.AppUser?.FullName ?? "[No Name]",
+                Email = t.Email ?? string.Empty,
+                ContactInfo = t.ContactInfo ?? string.Empty,
+                AppUserId = t.AppUserId ?? string.Empty,
+                Subjects = t.TeacherSubjects?.Select(ts => ts.Subject?.SubjectName ?? "[Unknown]").ToList()
+                           ?? new List<string>(),
+                ClassNames = t.TeacherClasses?.Select(tc => tc.Class?.ClassName ?? "[Unknown]").ToList()
+                             ?? new List<string>()
+            });
+
             return ServiceResult<IEnumerable<TeacherViewDto>>.Ok(data);
         }
 
         public async Task<ServiceResult<TeacherViewDto>> GetByIdAsync(string id)
         {
-            var teacher = await _teacherRepo.GetByIdAsync(id);
+            var teacher = await _teacherRepo.FirstOrDefaultAsync(
+                t => t.Id == id,
+                include: q => q
+                    .Include(t => t.AppUser) // Include AppUser
+                    .Include(t => t.TeacherSubjects!)
+                        .ThenInclude(ts => ts.Subject)
+                    .Include(t => t.TeacherClasses)
+                        .ThenInclude(tc => tc.Class)
+            );
+
             if (teacher == null)
                 return ServiceResult<TeacherViewDto>.Fail("Teacher not found");
 
-            return ServiceResult<TeacherViewDto>.Ok(_mapper.Map<TeacherViewDto>(teacher));
+            var dto = new TeacherViewDto
+            {
+                Id = teacher.Id,
+                FullName = teacher.AppUser?.FullName ?? "[No Name]",
+                Email = teacher.Email ?? string.Empty,
+                ContactInfo = teacher.ContactInfo ?? string.Empty,
+                AppUserId = teacher.AppUserId ?? string.Empty,
+                Subjects = teacher.TeacherSubjects?.Select(ts => ts.Subject?.SubjectName ?? "[Unknown]").ToList()
+                           ?? new List<string>(),
+                ClassNames = teacher.TeacherClasses?.Select(tc => tc.Class?.ClassName ?? "[Unknown]").ToList()
+                             ?? new List<string>()
+            };
+
+            return ServiceResult<TeacherViewDto>.Ok(dto);
         }
+
+
 
         public async Task<ServiceResult<TeacherViewDto>> CreateAsync(CreateTeacherDto dto)
         {

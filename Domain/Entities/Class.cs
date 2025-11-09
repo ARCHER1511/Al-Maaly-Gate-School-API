@@ -4,6 +4,8 @@
     {
         public string ClassName { get; set; } = string.Empty;
         public string ClassYear { get; set; } = string.Empty;
+
+        public List<TeacherClass> TeacherClasses { get; set; } = new();
         public List<Student>? Students { get; set; }
         public List<ClassAssets>? ClassAssets { get; set; }
         public List<ClassAppointment>? ClassAppointments { get; set; }
