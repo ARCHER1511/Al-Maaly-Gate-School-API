@@ -133,7 +133,7 @@ namespace Application.Services
             response.ProfileImageUrl = user.ProfileImagePath ?? "/uploads/users/default.png";
             response.RoleEntityIds = new Dictionary<string, string?>
             {
-                { normalizedRole, roleEntityId },
+                { $"{char.ToUpper(normalizedRole[0]) + normalizedRole.Substring(1)}Id", roleEntityId }
             }!;
 
             await _userRepo.UpdateAsync(user);
