@@ -17,6 +17,14 @@ namespace Al_Maaly_Gate_School.Controllers
             _StudentExamResultService = studentExamResultService;
         }
 
+        [HttpGet("student/results/{Id}")]
+        public async Task<IActionResult> GetAllResultsByStudentId(string Id)
+        {
+            var result = await _StudentExamResultService.GetAllResultsByStudentIdAsync(Id);
+            if (!result.Success) return NotFound(ApiResponse<IEnumerable<StudentExamResultDto>>.Fail(result.Message!));
+            return Ok(ApiResponse<IEnumerable<StudentExamResultDto>>.Ok(result.Data!, result.Message));
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

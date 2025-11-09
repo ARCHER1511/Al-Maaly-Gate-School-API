@@ -11,6 +11,7 @@
         public Teacher Teacher { get; set; } = null!;
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
+        public string Status { get; set; } = "Upcoming";
         public decimal MinMark { get; set; } = 0;
         public decimal FullMark { get; set; } = 0;
         public List<Question> Questions { get; set; } = new List<Question>();
