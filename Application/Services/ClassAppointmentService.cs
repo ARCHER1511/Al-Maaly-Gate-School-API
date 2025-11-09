@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.AppointmentsDTOs;
+using Application.DTOs.ClassAppointmentsDTOs;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
@@ -53,6 +54,8 @@ public class ClassAppointmentService : IClassAppointmentService
 
             return ServiceResult<IEnumerable<ClassAppointmentDto>>.Ok(resultDto, "Appointment retrieved successfully");
         }
+
+
         public async Task<ServiceResult<IEnumerable<ClassAppointmentDto>>> GetAllAsync()
     {
             var result = await _classAppointmentRepository.GetAllAsync();
@@ -126,8 +129,36 @@ public class ClassAppointmentService : IClassAppointmentService
             return ServiceResult<bool>.Fail("Appointment not found");
 
             _classAppointmentRepository.Delete(result);
-        await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true, "Appointment deleted successfully");
+        }
+
+        public async Task<ServiceResult<IEnumerable<StudentClassAppointmentDto>>> GetAppointmentsForStudentByClassIdAsync(string ClassId)
+        {
+            var result = await _classAppointmentRepository.AsQueryable()
+                    .Where(c => c.ClassId == ClassId)
+                    .Include(c => c.Subject)
+                    .Include(c => c.Teacher)
+                    .ToListAsync();
+            if (result == null) return ServiceResult<IEnumerable<StudentClassAppointmentDto>>.Fail("Appointments not found");
+
+            bool isChanged = false;
+            foreach (var appointment in result)
+            {
+                var newStatus = GetStatus(appointment.StartTime, appointment.EndTime);
+                if (appointment.Status != newStatus)
+                {
+                    appointment.Status = newStatus;
+                    _classAppointmentRepository.Update(appointment);
+                    isChanged = true;
+                }
+            }
+            if (isChanged)
+                await _unitOfWork.SaveChangesAsync();
+
+            var resultDto = _mapper.Map<IEnumerable<StudentClassAppointmentDto>>(result);
+
+            return ServiceResult<IEnumerable<StudentClassAppointmentDto>>.Ok(resultDto, "Appointment retrieved successfully");
         }
     }
 }

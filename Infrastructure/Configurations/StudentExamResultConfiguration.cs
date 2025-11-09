@@ -9,7 +9,7 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<StudentExamResult> builder)
         {
-            builder.ToTable("StudentExamResults");
+            builder.ToTable("StudentExamResults", "Academics");
 
             builder.HasKey(r => r.Id);
 
@@ -44,8 +44,21 @@ namespace Infrastructure.Configurations
             builder.Property(r => r.StudentName)
                 .HasMaxLength(200);
 
+            builder.Property(r => r.SubjectName)
+                .HasMaxLength(200);
+
+            builder.Property(r => r.TeacherName)
+                .HasMaxLength(200);
+
             builder.Property(r => r.ExamName)
                 .HasMaxLength(200);
+
+            builder.Property(r => r.Date)
+                .HasConversion(
+                    v => v.ToDateTime(TimeOnly.MinValue),
+                    v => DateOnly.FromDateTime(v)
+                )
+                .IsRequired();
 
             builder.HasIndex(r => new { r.StudentId, r.ExamId }).IsUnique();
         }

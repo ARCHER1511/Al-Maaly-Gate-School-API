@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.AdminDTOs;
 using Application.DTOs.AppointmentsDTOs;
+using Application.DTOs.ClassAppointmentsDTOs;
 using Application.DTOs.ClassDTOs;
 using Application.Interfaces;
 using Domain.Entities;
@@ -28,6 +29,14 @@ namespace Al_Maaly_Gate_School.Controllers
             if (!result.Success)
                 return NotFound(ApiResponse<IEnumerable<ClassAppointmentDto>>.Fail(result.Message!));
             return Ok(ApiResponse<IEnumerable<ClassAppointmentDto>>.Ok(result.Data!, result.Message));
+        }
+        [HttpGet("student/{ClassId}")]
+        public async Task<IActionResult> GetAppointmentsForStudentByClassIdAsync(string ClassId)
+        {
+            var result = await _appointmentService.GetAppointmentsForStudentByClassIdAsync(ClassId);
+            if (!result.Success)
+                return NotFound(ApiResponse<IEnumerable<StudentClassAppointmentDto>>.Fail(result.Message!));
+            return Ok(ApiResponse<IEnumerable<StudentClassAppointmentDto>>.Ok(result.Data!, result.Message));
         }
         [HttpGet]
         public async Task<IActionResult> GetAll()

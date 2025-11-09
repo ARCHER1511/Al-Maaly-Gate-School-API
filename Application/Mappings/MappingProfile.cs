@@ -11,6 +11,7 @@ using AutoMapper;
 using Common.Extensions;
 using Domain.Entities;
 using Application.DTOs.StudentExamAnswerDTOs;
+using Application.DTOs.ClassAppointmentsDTOs;
 
 namespace Application.Mappings
 {
@@ -122,6 +123,9 @@ namespace Application.Mappings
             CreateMap<ClassAppointment, ClassAppointmentDto>().IgnoreUnmapped();
             CreateMap<ClassAppointmentDto, ClassAppointment>().IgnoreUnmapped()
             .ForMember(dest => dest.Id, opt => opt.Ignore());
+            CreateMap<ClassAppointment, StudentClassAppointmentDto>()
+            .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.SubjectName))
+            .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.Teacher.FullName));
             #endregion
 
             #region Question Mappings
@@ -169,7 +173,7 @@ namespace Application.Mappings
             CreateMap<Exam, ExamViewDto>().ReverseMap();
             CreateMap<CreateExamDto, Exam>().ReverseMap();
             CreateMap<UpdateExamDto, Exam>().ReverseMap();
-            //View
+
             CreateMap<Question, QuestionViewDto>().IgnoreUnmapped();
             #endregion
 
@@ -185,13 +189,16 @@ namespace Application.Mappings
             #region StudentExamAnswer
             CreateMap<StudentExamAnswerDto, StudentExamAnswer>().ForMember(dest => dest.Id, opt => opt.Ignore()).IgnoreUnmapped();
             CreateMap<StudentExamAnswer, StudentExamAnswerDto>().IgnoreUnmapped();
-            CreateMap<Exam, GetStudentExamsDto>().IgnoreUnmapped();
+            CreateMap<Exam, GetStudentExamsDto>()
+           .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.SubjectName))
+           .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.Teacher.FullName));
             #endregion
 
             #region Student Exam Result
             CreateMap<StudentExamResult, StudentExamResultDto>().IgnoreUnmapped();
             CreateMap<StudentExamResultDto, StudentExamResult>().ForMember(dest => dest.Id, opt => opt.Ignore()).IgnoreUnmapped();
             #endregion
+
         }
     }
 }

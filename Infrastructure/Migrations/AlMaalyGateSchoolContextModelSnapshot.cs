@@ -357,6 +357,13 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("Start")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Upcoming");
+
                     b.Property<string>("SubjectId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -688,6 +695,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ExamId")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -725,6 +735,16 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("SubjectName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("TeacherName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<decimal>("TotalMark")
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
@@ -734,7 +754,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("StudentId", "ExamId")
                         .IsUnique();
 
-                    b.ToTable("StudentExamResults", (string)null);
+                    b.ToTable("StudentExamResults", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.Subject", b =>

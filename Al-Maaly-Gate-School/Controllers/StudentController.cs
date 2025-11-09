@@ -36,12 +36,12 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] StudentViewDto admin)
+        public async Task<IActionResult> Create([FromBody] StudentViewDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ApiResponse<Student>.Fail("Invalid Student data."));
 
-            var result = await _StudentService.CreateAsync(admin);
+            var result = await _StudentService.CreateAsync(dto);
 
             if (!result.Success)
                 return BadRequest(ApiResponse<Student>.Fail(result.Message!));
@@ -50,16 +50,16 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] StudentViewDto admin)
+        public async Task<IActionResult> Update(string id, [FromBody] StudentViewDto dto)
         {
-            if (id != admin.Id)
+            if (id != dto.Id)
                 return BadRequest(ApiResponse<StudentViewDto>.Fail("ID in URL does not match ID in body."));
 
             var exists = await _StudentService.GetByIdAsync(id);
             if (!exists.Success)
                 return NotFound(ApiResponse<StudentViewDto>.Fail(exists.Message!));
 
-            var result = await _StudentService.UpdateAsync(admin);
+            var result = await _StudentService.UpdateAsync(dto);
 
             if (!result.Success)
                 return BadRequest(ApiResponse<StudentViewDto>.Fail(result.Message!));
