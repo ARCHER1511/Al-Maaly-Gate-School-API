@@ -225,7 +225,8 @@ namespace Application.Services
 
             var exam = await _ExamRepository.AsQueryable()
                      .Include(e => e.Subject)
-                     .ThenInclude(s => s.Teacher)
+                     .ThenInclude(s => s.TeacherSubjects)
+                     .ThenInclude(t => t.Teacher)
                      .FirstOrDefaultAsync(e => e.Id == dto.ExamId);
 
             if (exam == null)
@@ -255,7 +256,7 @@ namespace Application.Services
                 existingResult.MinMark = exam.MinMark;
                 existingResult.StudentName = student.FullName;
                 existingResult.SubjectName = exam.Subject.SubjectName;
-                existingResult.TeacherName = exam.Subject.Teacher!.FullName;
+                existingResult.TeacherName = exam.Subject.TeacherSubjects?.FirstOrDefault()?.Teacher?.FullName ?? "[Unknown]";
                 existingResult.ExamName = exam.ExamName;
                 existingResult.Date = DateOnly.FromDateTime(exam.Start);
                 _studentExamResultRepository.Update(existingResult);
@@ -273,7 +274,7 @@ namespace Application.Services
                     Status = status,
                     StudentName = student.FullName,
                     SubjectName = exam.Subject.SubjectName,
-                    TeacherName = exam.Subject.Teacher!.FullName,
+                    TeacherName = exam.Subject.TeacherSubjects?.FirstOrDefault()?.Teacher?.FullName ?? "[Unknown]",
                     ExamName = exam.ExamName,
                     Date = DateOnly.FromDateTime(exam.Start)
                 };
