@@ -90,6 +90,7 @@ namespace Al_Maaly_Gate_School.Controllers
 
         //Get Students by Class
         [HttpGet("students/class/{classId}")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<IActionResult> GetStudentsByClass(string classId)
         {
             var result = await _adminManagementService.GetStudentsByClassAsync(classId);

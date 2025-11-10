@@ -154,7 +154,8 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("ProfileImagePath")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");

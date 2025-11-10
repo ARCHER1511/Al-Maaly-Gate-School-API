@@ -16,6 +16,9 @@ namespace Infrastructure.Configurations
             builder.Property(u => u.ContactInfo)
                 .HasMaxLength(512);
 
+            builder.Property(u => u.ProfileImagePath)
+                   .HasMaxLength(300);
+
             //Enum as string
             builder.Property(u => u.AccountStatus)
                 .HasConversion(v => v.ToString(),
