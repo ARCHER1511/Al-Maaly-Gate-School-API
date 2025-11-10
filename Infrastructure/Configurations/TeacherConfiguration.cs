@@ -12,11 +12,6 @@ namespace Infrastructure.Configurations
 
             builder.HasKey(t => t.Id);
 
-            builder.HasMany(t => t.Subjects)
-                   .WithOne(s => s.Teacher)
-                   .HasForeignKey(s => s.TeacherId)
-                   .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasMany(t => t.Questions)
                 .WithOne(s => s.Teacher)
                 .HasForeignKey(s => s.TeacherId)
