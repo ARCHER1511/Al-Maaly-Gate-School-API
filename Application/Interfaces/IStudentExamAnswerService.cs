@@ -10,6 +10,8 @@ namespace Application.Interfaces
         Task<ServiceResult<StudentExamAnswerDto>> UpdateStudentTextAnswerMark(StudentExamAnswerDto dto);
         Task<ServiceResult<IEnumerable<StudentExamAnswerDto>>> GetExamsTextQuestions(string examId ,string subjectId, string ClassId);
         Task<ServiceResult<IEnumerable<GetStudentExamsDto>>> GetExamsForStudentByClassId(string classId);
+        Task<ServiceResult<List<StudentExamAnswerDto>>> SubmitExamAsync(StudentExamSubmissionDto submission);
+        Task<ServiceResult<ExamQuestionsDto>> GetExamQuestions(string ExamId);
         Task<ServiceResult<IEnumerable<StudentExamAnswerDto>>> GetAllAsync();
         Task<ServiceResult<StudentExamAnswerDto>> GetByIdAsync(object id);
         Task<ServiceResult<StudentExamAnswerDto>> CreateAsync(StudentExamAnswerDto dto);
