@@ -39,6 +39,7 @@ namespace Application.Services
             // Create exam and assign questions
             var exam = new Exam
             {
+                ExamName = dto.ExamName,
                 SubjectId = dto.SubjectId,
                 ClassId = dto.ClassId,
                 TeacherId = dto.TeacherId,

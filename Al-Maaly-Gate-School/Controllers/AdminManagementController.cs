@@ -90,6 +90,7 @@ namespace Al_Maaly_Gate_School.Controllers
 
         //Get Students by Class
         [HttpGet("students/class/{classId}")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<IActionResult> GetStudentsByClass(string classId)
         {
             var result = await _adminManagementService.GetStudentsByClassAsync(classId);
@@ -129,7 +130,7 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         //Assign Teacher to Subject
-        [HttpPost("teachers/assign-subject")]
+        [HttpPost("teachers/assign-subject/")]
         public async Task<IActionResult> AssignTeacherToSubject([FromQuery] string teacherId, [FromQuery] string subjectId)
         {
             var result = await _adminManagementService.AssignTeacherToSubjectAsync(teacherId, subjectId);

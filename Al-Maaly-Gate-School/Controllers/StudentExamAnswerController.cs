@@ -1,6 +1,5 @@
 ﻿using Application.DTOs.StudentExamAnswerDTOs;
 using Application.Interfaces;
-using Domain.Entities;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -52,6 +51,30 @@ namespace Al_Maaly_Gate_School.Controllers
                 return NotFound(ApiResponse<GetStudentExamsDto>.Fail(result.Message!));
 
             return Ok(ApiResponse<IEnumerable<GetStudentExamsDto>>.Ok(result.Data!, result.Message));
+        }
+
+        [HttpPost("SubmitExam")]
+        public async Task<IActionResult> SubmitExam([FromBody] StudentExamSubmissionDto submission)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponse<StudentExamSubmissionDto>.Fail("Invalid submission data."));
+
+            var result = await _studentExamAnswerService.SubmitExamAsync(submission);
+
+            if (!result.Success)
+                return BadRequest(ApiResponse<List<StudentExamAnswerDto>>.Fail(result.Message!));
+
+            return Ok(ApiResponse<List<StudentExamAnswerDto>>.Ok(result.Data!, result.Message));
+        }
+
+        [HttpGet("ExamQuestions/{ExamId}")]
+        public async Task<IActionResult> GetExamQuestions(string ExamId)
+        {
+            var result = await _studentExamAnswerService.GetExamQuestions(ExamId);
+            if (!result.Success)
+                return NotFound(ApiResponse<ExamQuestionsDto>.Fail(result.Message!));
+
+            return Ok(ApiResponse<ExamQuestionsDto>.Ok(result.Data!, result.Message));
         }
 
         [HttpGet]

@@ -208,8 +208,21 @@ namespace Application.Mappings
             CreateMap<StudentExamAnswerDto, StudentExamAnswer>().ForMember(dest => dest.Id, opt => opt.Ignore()).IgnoreUnmapped();
             CreateMap<StudentExamAnswer, StudentExamAnswerDto>().IgnoreUnmapped();
             CreateMap<Exam, GetStudentExamsDto>()
-           .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.SubjectName))
-           .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.Teacher.FullName));
+              .ForMember(dest => dest.ExamId, opt => opt.MapFrom(src => src.Id))
+              .ForMember(dest => dest.ExamName, opt => opt.MapFrom(src => src.ExamName))
+              .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.SubjectName))
+              .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.Teacher.FullName))
+              .ForMember(dest => dest.TeacherId, opt => opt.MapFrom(src => src.Teacher.Id));
+
+            CreateMap<Exam, ExamQuestionsDto>()
+                .ForMember(dest => dest.ExamId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.SubjectName))
+                .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions));
+
+            CreateMap<Question, QuestionDto>()
+                .ForMember(dest => dest.Choices, opt => opt.MapFrom(src => src.Choices));
+
+            CreateMap<Choices, ChoicesDto>();
             #endregion
 
             #region Student Exam Result
