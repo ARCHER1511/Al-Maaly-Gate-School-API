@@ -1,7 +1,4 @@
-﻿using Domain.Entities;
-using System.Collections;
-
-namespace Application.DTOs.TeacherDTOs
+﻿namespace Application.DTOs.TeacherDTOs
 {
     public class TeacherAdminViewDto
     {
