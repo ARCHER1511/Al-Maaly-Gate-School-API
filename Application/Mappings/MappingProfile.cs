@@ -169,10 +169,15 @@ namespace Application.Mappings
             #region Exam Mappings
             // From Exam entity to detail view
             CreateMap<Exam, ExamDetailsViewDto>()
-                .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions));
+                .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.SubjectName))
+                .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.Class.ClassName));
+
 
             // Basic bidirectional views
-            CreateMap<Exam, ExamViewDto>().ReverseMap();
+            CreateMap<Exam, ExamViewDto>()
+                .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.SubjectName))
+                .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.Class.ClassName));
+
 
             // Create mapping
             CreateMap<CreateExamDto, Exam>()

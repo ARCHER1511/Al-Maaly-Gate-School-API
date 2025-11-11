@@ -16,6 +16,7 @@ namespace Application.DTOs.ExamDTOS
         public DateTime End { get; set; }
         public decimal MinMark { get; set; }
         public decimal FullMark { get; set; }
+        public string Status { get; set; }
 
         // List of existing Question IDs to assign
         public List<string> QuestionIds { get; set; } = new();
