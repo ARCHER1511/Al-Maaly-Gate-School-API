@@ -41,6 +41,7 @@ namespace Application.Services
             else
                 return "Finished";
         }
+
         public async Task<ServiceResult<IEnumerable<StudentExamAnswerDto>>> GetExamsTextQuestions(
             string examId, string subjectId, string classId)
         {
@@ -225,7 +226,7 @@ namespace Application.Services
 
             var exam = await _ExamRepository.AsQueryable()
                      .Include(e => e.Subject)
-                     .ThenInclude(s => s.TeacherSubjects)
+                     .ThenInclude(s => s.TeacherSubjects)!
                      .ThenInclude(t => t.Teacher)
                      .FirstOrDefaultAsync(e => e.Id == dto.ExamId);
 
@@ -292,7 +293,8 @@ namespace Application.Services
         {
             var exam = await _ExamRepository.AsQueryable()
                 .Include(e => e.Subject)
-                .ThenInclude(s => s.Teacher)
+                 .ThenInclude(s => s.TeacherSubjects)!
+                  .ThenInclude(ts => ts.Teacher)
                 .Include(e => e.Questions)
                     .ThenInclude(q => q.Choices)
                 .FirstOrDefaultAsync(e => e.Id == submission.ExamId);
@@ -381,6 +383,7 @@ namespace Application.Services
             //{
             //    return ServiceResult<List<StudentExamAnswerDto>>.Fail("You have already submitted this exam.");
             //}
+            var teacher = exam.Subject.TeacherSubjects?.FirstOrDefault(t=>t.TeacherId == submission.TeacherId)?.Teacher;
 
             if (existingResult != null)
             {
@@ -404,7 +407,7 @@ namespace Application.Services
                     Status = status,
                     StudentName = student.FullName,
                     SubjectName = exam.Subject.SubjectName,
-                    TeacherName = exam.Subject.Teacher?.FullName!,
+                    TeacherName = teacher?.FullName! ?? "Unknown Teacher",
                     ExamName = exam.ExamName,
                     Date = DateOnly.FromDateTime(DateTime.UtcNow)
                 };

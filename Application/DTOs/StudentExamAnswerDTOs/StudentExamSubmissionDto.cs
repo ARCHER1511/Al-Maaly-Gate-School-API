@@ -6,6 +6,7 @@ namespace Application.DTOs.StudentExamAnswerDTOs
     {
         public string StudentId { get; set; } = string.Empty;
         public string ExamId { get; set; } = string.Empty;
+        public string TeacherId { get; set; } = string.Empty;
         public List<StudentExamAnswerDto> Answers { get; set; } = new();
     }
 

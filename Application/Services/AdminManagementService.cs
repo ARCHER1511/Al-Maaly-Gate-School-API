@@ -211,7 +211,7 @@ namespace Application.Services
                 .FindAllAsync(
                     t => t.TeacherClasses.Any(tc => tc.ClassId == classId),
                     q => q.Include(t => t.AppUser)
-                          .Include(t => t.TeacherSubjects)
+                          .Include(t => t.TeacherSubjects)!
                               .ThenInclude(ts => ts.Subject)
                           .Include(t => t.TeacherClasses)
                               .ThenInclude(tc => tc.Class)
@@ -374,7 +374,7 @@ namespace Application.Services
             if (teacher.TeacherSubjects!.Any(ts => ts.SubjectId == subjectId))
                 return ServiceResult<bool>.Fail("Teacher already assigned to this subject.");
 
-            teacher.TeacherSubjects.Add(new TeacherSubject
+            teacher.TeacherSubjects!.Add(new TeacherSubject
             {
                 TeacherId = teacherId,
                 SubjectId = subjectId

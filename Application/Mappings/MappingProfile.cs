@@ -211,7 +211,8 @@ namespace Application.Mappings
               .ForMember(dest => dest.ExamId, opt => opt.MapFrom(src => src.Id))
               .ForMember(dest => dest.ExamName, opt => opt.MapFrom(src => src.ExamName))
               .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.SubjectName))
-              .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.Teacher.FullName));
+              .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.Teacher.FullName))
+              .ForMember(dest => dest.TeacherId, opt => opt.MapFrom(src => src.Teacher.Id));
 
             CreateMap<Exam, ExamQuestionsDto>()
                 .ForMember(dest => dest.ExamId, opt => opt.MapFrom(src => src.Id))
