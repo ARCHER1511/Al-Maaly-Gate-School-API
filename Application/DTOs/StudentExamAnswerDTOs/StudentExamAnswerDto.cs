@@ -10,7 +10,9 @@ namespace Application.DTOs.StudentExamAnswerDTOs
         public string QuestionId { get; set; } = string.Empty;
         public string? ChoiceId { get; set; }
         public bool? TrueAndFalseAnswer { get; set; }
-        public string? TextAnswer { get; set; }
+        public string? CorrectTextAnswer { get; set; }
+        public ConnectionDto? ConnectionId { get; set; }
         public decimal? Mark { get; set; }
     }
+
 }

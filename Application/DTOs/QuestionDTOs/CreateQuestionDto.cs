@@ -15,6 +15,7 @@ namespace Application.DTOs.QuestionDTOs
         public string TeacherId { get; set; } = string.Empty;
         public List<ChoiceDto>? Choices { get; set; }
         public string? CorrectChoiceId { get; set; }
+        public string? CorrectTextAnswer { get; set; }
         public bool? TrueAndFalses { get; set; }
     }
 

@@ -532,6 +532,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CorrectTextAnswer")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Degree")
                         .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
@@ -658,6 +661,12 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ChoiceId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CorrectTextAnswer")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ExamId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -672,9 +681,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("StudentId")
                         .IsRequired()
                         .HasColumnType("nvarchar(36)");
-
-                    b.Property<string>("TextAnswer")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("TrueAndFalseAnswer")
                         .HasColumnType("bit");

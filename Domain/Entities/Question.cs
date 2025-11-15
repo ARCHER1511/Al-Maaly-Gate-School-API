@@ -3,6 +3,7 @@
     public class Question: BaseEntity
     {
         public string Content { get; set; } = string.Empty;
+        public string? CorrectTextAnswer { get; set; }
         public decimal Degree { get; set; }
         public string? ExamId { get; set; }
         public Exam? Exam { get; set; }
@@ -16,8 +17,8 @@
 
     public enum QuestionTypes
     {
-        None,
-        Text,
+        Complete,
+        Connection,
         TrueOrFalse,
         Choices
     }
