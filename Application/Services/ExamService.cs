@@ -47,8 +47,10 @@ namespace Application.Services
                 End = dto.End,
                 MinMark = dto.MinMark,
                 FullMark = dto.FullMark,
+                Status = dto.Status,
                 Questions = questions.ToList()
             };
+
 
             await examRepo.AddAsync(exam);
             await _unitOfWork.SaveChangesAsync();
@@ -73,13 +75,12 @@ namespace Application.Services
             var examRepo = _unitOfWork.Repository<Exam>();
 
             var exam = await examRepo.AsQueryable(e => e.Id == examId)
+                .Include(e => e.Subject)
+                .Include(e => e.Class)
                 .Include(e => e.Questions)
                     .ThenInclude(q => q.Choices)
-                //.Include(e => e.Questions)
-                //    .ThenInclude(q => q.TextAnswer)
-                //.Include(e => e.Questions)
-                //    .ThenInclude(q => q.TrueAndFalses)
                 .FirstOrDefaultAsync();
+
 
             if (exam == null)
                 return ServiceResult<ExamDetailsViewDto>.Fail("Exam not found.");
@@ -91,21 +92,26 @@ namespace Application.Services
         public async Task<ServiceResult<IEnumerable<ExamViewDto>>> GetAllAsync()
         {
             var repo = _unitOfWork.Repository<Exam>();
-            var exams = await repo.GetAllAsync();
+
+            var exams = await repo.AsQueryable()
+                .Include(e => e.Subject)
+                .Include(e => e.Class)
+                .ToListAsync();
+
             var result = exams.Select(_mapper.Map<ExamViewDto>);
             return ServiceResult<IEnumerable<ExamViewDto>>.Ok(result);
         }
 
+
         public async Task<ServiceResult<ExamDetailsViewDto>> GetByIdAsync(string id)
         {
             var repo = _unitOfWork.Repository<Exam>();
+
             var exam = await repo.AsQueryable(e => e.Id == id)
+                .Include(e => e.Subject)
+                .Include(e => e.Class)
                 .Include(e => e.Questions)
                     .ThenInclude(q => q.Choices)
-                //.Include(e => e.Questions)
-                //    .ThenInclude(q => q.TextAnswer)
-                //.Include(e => e.Questions)
-                    //.ThenInclude(q => q.TrueAndFalses)
                 .FirstOrDefaultAsync();
 
             if (exam == null)
@@ -115,13 +121,20 @@ namespace Application.Services
             return ServiceResult<ExamDetailsViewDto>.Ok(mapped);
         }
 
+
         public async Task<ServiceResult<IEnumerable<ExamViewDto>>> GetByTeacherAsync(string teacherId)
         {
             var repo = _unitOfWork.Repository<Exam>();
-            var exams = await repo.FindAllAsync(e => e.TeacherId == teacherId);
+
+            var exams = await repo.AsQueryable(e => e.TeacherId == teacherId)
+                .Include(e => e.Subject)
+                .Include(e => e.Class)
+                .ToListAsync();
+
             var result = exams.Select(_mapper.Map<ExamViewDto>);
             return ServiceResult<IEnumerable<ExamViewDto>>.Ok(result);
         }
+
 
         public async Task<ServiceResult<ExamViewDto>> CreateExamForTeacherAsync(string teacherId, CreateExamDto dto)
         {
