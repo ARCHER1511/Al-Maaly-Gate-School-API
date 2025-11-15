@@ -14,7 +14,8 @@ namespace Domain.Entities
 
         public string? ChoiceId { get; set; }
         public bool? TrueAndFalseAnswer { get; set; }
-        public string? TextAnswer { get; set; }
+        public string? CorrectTextAnswer { get; set; }
+        public string? ConnectionId { get; set; }
         public decimal? Mark { get; set; }
     }
 }

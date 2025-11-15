@@ -41,94 +41,6 @@ namespace Application.Services
             else
                 return "Finished";
         }
-
-        public async Task<ServiceResult<IEnumerable<StudentExamAnswerDto>>> GetExamsTextQuestions(
-            string examId, string subjectId, string classId)
-        {
-            var textAnswers = await _studentExamAnswerRepository.AsQueryable()
-                .Where(a =>
-                    a.ExamId == examId &&
-                    a.Exam.SubjectId == subjectId &&
-                    a.Exam.ClassId == classId &&
-                    a.Question.Type == QuestionTypes.Text)
-                .Include(a => a.Student)
-                .Include(a => a.Question)
-                .Include(a => a.Exam)
-                .ToListAsync();
-
-            if (!textAnswers.Any())
-                return ServiceResult<IEnumerable<StudentExamAnswerDto>>.Fail("No text questions found for this exam");
-
-            var dto = _mapper.Map<IEnumerable<StudentExamAnswerDto>>(textAnswers);
-            return ServiceResult<IEnumerable<StudentExamAnswerDto>>.Ok(dto, "Text questions retrieved successfully");
-        }
-
-        public async Task<ServiceResult<StudentExamAnswerDto>> UpdateStudentTextAnswerMark(StudentExamAnswerDto dto)
-        {
-            var studentAnswer = await _studentExamAnswerRepository.AsQueryable()
-                .FirstOrDefaultAsync(a =>
-                    a.Id == dto.Id &&
-                    a.ExamId == dto.ExamId &&
-                    a.StudentId == dto.StudentId);
-
-            if (studentAnswer == null)
-                return ServiceResult<StudentExamAnswerDto>.Fail("Student answer not found");
-
-            studentAnswer.Mark = dto.Mark;
-            _studentExamAnswerRepository.Update(studentAnswer);
-
-            await _unitOfWork.SaveChangesAsync();
-
-            var exam = await _ExamRepository.FirstOrDefaultAsync(e => e.Id == dto.ExamId);
-            if (exam == null)
-                return ServiceResult<StudentExamAnswerDto>.Fail("Exam not found");
-
-            var allAnswers = await _studentExamAnswerRepository.AsQueryable()
-                .Where(a => a.StudentId == dto.StudentId && a.ExamId == dto.ExamId)
-                .ToListAsync();
-
-            decimal totalMark = allAnswers.Sum(a => a.Mark ?? 0);
-            decimal percentage = exam.FullMark == 0
-                ? 0
-                : Math.Round((totalMark / (decimal)exam.FullMark) * 100, 2);
-
-            string status = totalMark >= exam.MinMark ? "Success" : "Fail";
-
-            var existingResult = await _studentExamResultRepository.AsQueryable()
-                .FirstOrDefaultAsync(r => r.StudentId == dto.StudentId && r.ExamId == dto.ExamId);
-
-            if (existingResult != null)
-            {
-                existingResult.TotalMark = Math.Round(totalMark, 2);
-                existingResult.Percentage = percentage;
-                existingResult.Status = status;
-                existingResult.FullMark = exam.FullMark;
-                existingResult.MinMark = exam.MinMark;
-
-                _studentExamResultRepository.Update(existingResult);
-            }
-            else
-            {
-                var result = new StudentExamResult
-                {
-                    StudentId = dto.StudentId,
-                    ExamId = dto.ExamId,
-                    TotalMark = Math.Round(totalMark, 2),
-                    FullMark = exam.FullMark,
-                    MinMark = exam.MinMark,
-                    Percentage = percentage,
-                    Status = status
-                };
-
-                await _studentExamResultRepository.AddAsync(result);
-            }
-
-            await _unitOfWork.SaveChangesAsync();
-
-            var viewDto = _mapper.Map<StudentExamAnswerDto>(studentAnswer);
-            return ServiceResult<StudentExamAnswerDto>.Ok(viewDto, "Mark updated and exam result recalculated successfully.");
-        }
-        
         public async Task<ServiceResult<IEnumerable<StudentExamAnswerDto>>> GetAllAsync()
         {
             var students = await _studentExamAnswerRepository.GetAllAsync();
@@ -145,148 +57,6 @@ namespace Application.Services
 
             var studentDto = _mapper.Map<StudentExamAnswerDto>(student);
             return ServiceResult<StudentExamAnswerDto>.Ok(studentDto, "Student Answer retrieved successfully");
-        }
-
-        public async Task<ServiceResult<StudentExamAnswerDto>> CreateAsync(StudentExamAnswerDto dto)
-        {
-            var question = await _ExamRepository.AsQueryable()
-                .Where(e => e.Id == dto.ExamId)
-                .SelectMany(e => e.Questions)
-                .Include(q => q.Choices)
-                .FirstOrDefaultAsync(q => q.Id == dto.QuestionId);
-
-            if (question == null)
-                return ServiceResult<StudentExamAnswerDto>.Fail("You are trying to answer a question that does not exist.");
-
-            var existingAnswer = await _studentExamAnswerRepository.AsQueryable()
-                .FirstOrDefaultAsync(a =>
-                    a.StudentId == dto.StudentId &&
-                    a.ExamId == dto.ExamId &&
-                    a.QuestionId == dto.QuestionId);
-
-            StudentExamAnswer studentAnswer;
-
-            if (existingAnswer != null)
-            {
-                studentAnswer = existingAnswer;
-                studentAnswer.Mark = 0;
-
-                switch (question.Type)
-                {
-                    case QuestionTypes.Choices:
-                        var correctChoice = question.Choices?.FirstOrDefault(c => c.IsCorrect);
-                        studentAnswer.ChoiceId = dto.ChoiceId;
-                        studentAnswer.TextAnswer = null;
-                        studentAnswer.TrueAndFalseAnswer = null;
-
-                        if (correctChoice != null && correctChoice.Id == dto.ChoiceId)
-                            studentAnswer.Mark = Math.Round((decimal)question.Degree, 2);
-                        break;
-
-                    case QuestionTypes.TrueOrFalse:
-                        studentAnswer.TrueAndFalseAnswer = dto.TrueAndFalseAnswer;
-                        studentAnswer.TextAnswer = null;
-                        studentAnswer.ChoiceId = null;
-
-                        if (question.TrueAndFalses == dto.TrueAndFalseAnswer)
-                            studentAnswer.Mark = Math.Round((decimal)question.Degree, 2);
-                        break;
-
-                    case QuestionTypes.Text:
-                        studentAnswer.TextAnswer = dto.TextAnswer;
-                        studentAnswer.ChoiceId = null;
-                        studentAnswer.TrueAndFalseAnswer = null;
-                        studentAnswer.Mark = 0;
-                        break;
-                }
-
-                _studentExamAnswerRepository.Update(studentAnswer);
-            }
-            else
-            {
-                studentAnswer = _mapper.Map<StudentExamAnswer>(dto);
-                studentAnswer.Mark = 0;
-
-                switch (question.Type)
-                {
-                    case QuestionTypes.Choices:
-                        var correctChoice = question.Choices?.FirstOrDefault(c => c.IsCorrect);
-                        if (correctChoice != null && correctChoice.Id == dto.ChoiceId)
-                            studentAnswer.Mark = Math.Round((decimal)question.Degree, 2);
-                        break;
-
-                    case QuestionTypes.TrueOrFalse:
-                        if (question.TrueAndFalses == dto.TrueAndFalseAnswer)
-                            studentAnswer.Mark = Math.Round((decimal)question.Degree, 2);
-                        break;
-                }
-
-                await _studentExamAnswerRepository.AddAsync(studentAnswer);
-            }
-
-            var exam = await _ExamRepository.AsQueryable()
-                     .Include(e => e.Subject)
-                     .ThenInclude(s => s.TeacherSubjects)!
-                     .ThenInclude(t => t.Teacher)
-                     .FirstOrDefaultAsync(e => e.Id == dto.ExamId);
-
-            if (exam == null)
-                return ServiceResult<StudentExamAnswerDto>.Fail("Exam not found.");
-
-            var student = await _studentRepository.FirstOrDefaultAsync(s => s.Id == dto.StudentId);
-            if (student == null)
-                return ServiceResult<StudentExamAnswerDto>.Fail("Student not found.");
-
-            var allAnswers = await _studentExamAnswerRepository.AsQueryable()
-                .Where(a => a.StudentId == dto.StudentId && a.ExamId == dto.ExamId)
-                .ToListAsync();
-
-            decimal totalMark = allAnswers.Sum(a => a.Mark ?? 0);
-            decimal percentage = exam!.FullMark == 0 ? 0 : Math.Round((totalMark / (decimal)exam.FullMark) * 100, 2);
-            string status = totalMark >= exam.MinMark ? "Success" : "Fail";
-
-            var existingResult = await _studentExamResultRepository.AsQueryable()
-                .FirstOrDefaultAsync(r => r.StudentId == dto.StudentId && r.ExamId == dto.ExamId);
-
-            if (existingResult != null)
-            {
-                existingResult.TotalMark = Math.Round(totalMark, 2);
-                existingResult.Percentage = percentage;
-                existingResult.Status = status;
-                existingResult.FullMark = exam.FullMark;
-                existingResult.MinMark = exam.MinMark;
-                existingResult.StudentName = student.FullName;
-                existingResult.SubjectName = exam.Subject.SubjectName;
-                existingResult.TeacherName = exam.Subject.TeacherSubjects?.FirstOrDefault()?.Teacher?.FullName ?? "[Unknown]";
-                existingResult.ExamName = exam.ExamName;
-                existingResult.Date = DateOnly.FromDateTime(exam.Start);
-                _studentExamResultRepository.Update(existingResult);
-            }
-            else
-            {
-                var result = new StudentExamResult
-                {
-                    StudentId = dto.StudentId,
-                    ExamId = dto.ExamId,
-                    TotalMark = Math.Round(totalMark, 2),
-                    FullMark = exam.FullMark,
-                    MinMark = exam.MinMark,
-                    Percentage = percentage,
-                    Status = status,
-                    StudentName = student.FullName,
-                    SubjectName = exam.Subject.SubjectName,
-                    TeacherName = exam.Subject.TeacherSubjects?.FirstOrDefault()?.Teacher?.FullName ?? "[Unknown]",
-                    ExamName = exam.ExamName,
-                    Date = DateOnly.FromDateTime(exam.Start)
-                };
-
-                await _studentExamResultRepository.AddAsync(result);
-            }
-
-            await _unitOfWork.SaveChangesAsync();
-
-            var viewDto = _mapper.Map<StudentExamAnswerDto>(studentAnswer);
-            return ServiceResult<StudentExamAnswerDto>.Ok(viewDto, "Student answer saved and result updated successfully.");
         }
 
         public async Task<ServiceResult<List<StudentExamAnswerDto>>> SubmitExamAsync(StudentExamSubmissionDto submission)
@@ -326,7 +96,7 @@ namespace Application.Services
                                     };
 
                 studentAnswer.Mark = 0;
-                studentAnswer.TextAnswer = dto.TextAnswer;
+                studentAnswer.CorrectTextAnswer = dto.CorrectTextAnswer;
                 studentAnswer.ChoiceId = dto.ChoiceId;
                 studentAnswer.TrueAndFalseAnswer = dto.TrueAndFalseAnswer;
 
@@ -352,14 +122,58 @@ namespace Application.Services
                         }
                         break;
 
+                    case QuestionTypes.Connection:
+                        if (dto.ConnectionId != null)
+                        {
+                            var leftId = dto.ConnectionId.LeftId;
+                            var rightId = dto.ConnectionId.RightId;
+
+                            // Assuming your question.Choices have IsCorrect and Ids for left-right mapping
+                            var correctLeft = question.Choices?.FirstOrDefault(c => c.IsCorrect && c.Id == leftId);
+                            var correctRight = question.Choices?.FirstOrDefault(c => c.IsCorrect && c.Id == rightId);
+
+                            if (correctLeft != null && correctRight != null)
+                            {
+                                studentAnswer.Mark = Math.Round((decimal)question.Degree, 2);
+                            }
+                            else
+                            {
+                                studentAnswer.Mark = 0;
+                            }
+                        }
+                        else
+                        {
+                            studentAnswer.Mark = 0;
+                        }
+                        break;
+
+
                     case QuestionTypes.TrueOrFalse:
                         if (question.TrueAndFalses == dto.TrueAndFalseAnswer)
                             studentAnswer.Mark = Math.Round((decimal)question.Degree, 2);
                         break;
 
-                    case QuestionTypes.Text:
-                        studentAnswer.Mark = 0;
-                        break;
+                    case QuestionTypes.Complete:
+                        {
+                            if (!string.IsNullOrWhiteSpace(dto.CorrectTextAnswer) &&
+                                !string.IsNullOrWhiteSpace(question.CorrectTextAnswer))
+                            {
+                                // Normalize (ignore case and spaces)
+                                var correct = question.CorrectTextAnswer.Trim().ToLower();
+                                var studentText = dto.CorrectTextAnswer.Trim().ToLower();
+
+                                if (studentText == correct)
+                                    studentAnswer.Mark = Math.Round((decimal)question.Degree, 2);
+                                else
+                                    studentAnswer.Mark = 0;
+                            }
+                            else
+                            {
+                                studentAnswer.Mark = 0;
+                            }
+                            break;
+                        }
+
                 }
 
                 if (existingAnswers.Any(a => a.QuestionId == dto.QuestionId))
@@ -379,11 +193,32 @@ namespace Application.Services
             var existingResult = await _studentExamResultRepository.AsQueryable()
                 .FirstOrDefaultAsync(r => r.StudentId == submission.StudentId && r.ExamId == submission.ExamId);
 
-            //if (existingResult != null && existingResult.TotalMark > 0)
+            //if (existingResult != null)
             //{
-            //    return ServiceResult<List<StudentExamAnswerDto>>.Fail("You have already submitted this exam.");
+            //    existingResult.TotalMark = Math.Round(totalMark, 2);
+            //    existingResult.MinMark = exam.MinMark;
+            //    existingResult.Percentage = percentage;
+            //    existingResult.Status = status;
+            //    existingResult.Date = DateOnly.FromDateTime(DateTime.UtcNow);
+            //    existingResult.TeacherName = teacher?.FullName!;
+            //    existingResult.SubjectName = exam.Subject.SubjectName;
+            //    existingResult.ExamName = exam.ExamName;
+            //    existingResult.StudentId = submission.StudentId;
+            //    existingResult.ExamId = submission.ExamId;
+            //    existingResult.SubjectName = student.FullName;
+
+            //    _studentExamResultRepository.Update(existingResult);
             //}
-            var teacher = exam.Subject.TeacherSubjects?.FirstOrDefault(t=>t.TeacherId == submission.TeacherId)?.Teacher;
+
+            Guid teacherGuid;
+            if (!Guid.TryParse(submission.TeacherId, out teacherGuid))
+            {
+                teacherGuid = Guid.Empty; 
+            }
+
+            var teacher = exam.Subject.TeacherSubjects?.FirstOrDefault(t => t.TeacherId == submission.TeacherId)?.Teacher;
+            if (teacher == null)
+                return ServiceResult<List<StudentExamAnswerDto>>.Fail("teacher not found.");
 
             if (existingResult != null)
             {
@@ -407,7 +242,7 @@ namespace Application.Services
                     Status = status,
                     StudentName = student.FullName,
                     SubjectName = exam.Subject.SubjectName,
-                    TeacherName = teacher?.FullName! ?? "Unknown Teacher",
+                    TeacherName = teacher?.FullName ?? "Teacher Name",
                     ExamName = exam.ExamName,
                     Date = DateOnly.FromDateTime(DateTime.UtcNow)
                 };

@@ -24,12 +24,11 @@ namespace Application.Services
         public async Task<ServiceResult<IEnumerable<StudentExamResultDto>>> GetAllResultsByStudentIdAsync(object Id)
         {
             var result = await _StudentExamResultRepository.AsQueryable().Where(s => s.StudentId == (string)Id).ToListAsync();
-            if (result == null) return ServiceResult<IEnumerable<StudentExamResultDto>>.Fail("Student Exams Results not found");
+            if (result == null || !result.Any()) return ServiceResult<IEnumerable<StudentExamResultDto>>.Fail("Student Exams Results not found");
 
             var resultDto = _mapper.Map<IEnumerable<StudentExamResultDto>>(result);
             return ServiceResult<IEnumerable<StudentExamResultDto>>.Ok(resultDto, "Student Exams Results retrieved successfully");
         }
-
         public async Task<ServiceResult<IEnumerable<StudentExamResultDto>>> GetAllAsync()
         {
             var result = await  _StudentExamResultRepository.GetAllAsync();
@@ -41,7 +40,7 @@ namespace Application.Services
         public async Task<ServiceResult<StudentExamResultDto>> GetByIdAsync(object id)
         {
             var result = await  _StudentExamResultRepository.GetByIdAsync(id);
-            if (result == null) return ServiceResult<StudentExamResultDto>.Fail("Student Exam Result not found");
+            if (result == null ) return ServiceResult<StudentExamResultDto>.Fail("Student Exam Result not found");
 
             var resultDto = _mapper.Map<StudentExamResultDto>(result);
             return ServiceResult<StudentExamResultDto>.Ok(resultDto, "Student Exam Result retrieved successfully");
