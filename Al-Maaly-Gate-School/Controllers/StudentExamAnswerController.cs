@@ -17,32 +17,6 @@ namespace Al_Maaly_Gate_School.Controllers
             _studentExamAnswerService = studentExamAnswerService;
         }
 
-        [HttpGet("GetExamsTextQuestions/{examId}/{subjectId}/{ClassId}")]
-        public async Task<IActionResult> GetExamsTextQuestions(string examId, string subjectId, string ClassId)
-        {
-            var result = await _studentExamAnswerService.GetExamsTextQuestions(examId ,subjectId ,ClassId);
-            if (!result.Success) return NotFound(ApiResponse<IEnumerable<StudentExamAnswerDto>>.Fail(result.Message!));
-            return Ok(ApiResponse<IEnumerable<StudentExamAnswerDto>>.Ok(result.Data!, result.Message));
-        }
-
-        [HttpPut("TextAnswerMark/{id}")]
-        public async Task<IActionResult> UpdateStudentTextAnswerMark(string id, [FromBody] StudentExamAnswerDto dto)
-        {
-            if (id != dto.Id)
-                return BadRequest(ApiResponse<StudentExamAnswerDto>.Fail("ID in URL does not match ID in body."));
-
-            var exists = await _studentExamAnswerService.GetByIdAsync(id);
-            if (!exists.Success)
-                return NotFound(ApiResponse<StudentExamAnswerDto>.Fail(exists.Message!));
-
-            var result = await _studentExamAnswerService.UpdateStudentTextAnswerMark(dto);
-
-            if (!result.Success)
-                return BadRequest(ApiResponse<StudentExamAnswerDto>.Fail(result.Message!));
-
-            return Ok(ApiResponse<StudentExamAnswerDto>.Ok(result.Data!, result.Message));
-        }
-
         [HttpGet("studentExams/{classId}")]
         public async Task<IActionResult> GetExams(string classId)
         {
@@ -91,20 +65,6 @@ namespace Al_Maaly_Gate_School.Controllers
             var result = await _studentExamAnswerService.GetByIdAsync(id);
             if (!result.Success)
                 return NotFound(ApiResponse<StudentExamAnswerDto>.Fail(result.Message!));
-
-            return Ok(ApiResponse<StudentExamAnswerDto>.Ok(result.Data!, result.Message));
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] StudentExamAnswerDto dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ApiResponse<StudentExamAnswerDto>.Fail("Invalid Answer data."));
-
-            var result = await _studentExamAnswerService.CreateAsync(dto);
-
-            if (!result.Success)
-                return BadRequest(ApiResponse<StudentExamAnswerDto>.Fail(result.Message!));
 
             return Ok(ApiResponse<StudentExamAnswerDto>.Ok(result.Data!, result.Message));
         }

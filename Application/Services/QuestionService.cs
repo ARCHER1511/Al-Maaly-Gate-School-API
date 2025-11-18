@@ -44,10 +44,38 @@ namespace Application.Services
 
             switch (dto.Type)
             {
-                case QuestionTypes.Text:
+                case QuestionTypes.Complete:
+                    if (dto.CorrectTextAnswer == null)
+                        return ServiceResult<QuestionViewDto>.Fail("Correct Text are required for questions.");
                     break;
 
                 case QuestionTypes.TrueOrFalse:
+                    break;
+
+                case QuestionTypes.Connection:
+                    if (dto.Choices == null || !dto.Choices.Any())
+                        return ServiceResult<QuestionViewDto>.Fail("Choices are required for multiple-choice questions.");
+
+                    var ConnectionChoices = dto.Choices.Select(c => new Choices
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Text = c.Text.Trim(),
+                        IsCorrect = c.IsCorrect,
+                        QuestionId = question.Id
+                    }).ToList();
+
+                    question.Choices = ConnectionChoices;
+
+                    var correctConnection = ConnectionChoices.FirstOrDefault(c => c.IsCorrect);
+                    if (correctConnection == null)
+                        return ServiceResult<QuestionViewDto>.Fail("At least one choice must be marked as correct.");
+
+                    question.ChoiceAnswer = new ChoiceAnswer
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        QuestionId = question.Id,
+                        ChoiceId = correctConnection.Id
+                    };
                     break;
 
                 case QuestionTypes.Choices:
