@@ -195,6 +195,33 @@ namespace Infrastructure.Migrations
                     b.ToTable("AppUserRoles", "Identity");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Certificate", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("GPA")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("IssuedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("TemplateName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Certificates", "Academics");
+                });
+
             modelBuilder.Entity("Domain.Entities.ChoiceAnswer", b =>
                 {
                     b.Property<string>("Id")
@@ -329,6 +356,42 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ClassId");
 
                     b.ToTable("ClassAssets", "Academics");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Degree", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("DegreeType")
+                        .HasColumnType("int");
+
+                    b.Property<double>("MaxScore")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Score")
+                        .HasColumnType("float");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("SubjectId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SubjectName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("Degrees", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.Exam", b =>
@@ -634,6 +697,18 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("IqamaNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nationality")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PassportNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ProfileStatus")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -772,9 +847,15 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<double>("CreditHours")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(3.0);
+
                     b.Property<string>("SubjectName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.HasKey("Id");
 
@@ -1023,6 +1104,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Certificate", b =>
+                {
+                    b.HasOne("Domain.Entities.Student", "Student")
+                        .WithMany("Certificates")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Domain.Entities.ChoiceAnswer", b =>
                 {
                     b.HasOne("Domain.Entities.Choices", "Choice")
@@ -1088,6 +1180,25 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Class");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Degree", b =>
+                {
+                    b.HasOne("Domain.Entities.Student", "Student")
+                        .WithMany("Degrees")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Subject", "Subject")
+                        .WithMany("Degrees")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("Domain.Entities.Exam", b =>
@@ -1397,12 +1508,18 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Student", b =>
                 {
+                    b.Navigation("Certificates");
+
+                    b.Navigation("Degrees");
+
                     b.Navigation("Parents");
                 });
 
             modelBuilder.Entity("Domain.Entities.Subject", b =>
                 {
                     b.Navigation("ClassAppointments");
+
+                    b.Navigation("Degrees");
 
                     b.Navigation("Exams");
 

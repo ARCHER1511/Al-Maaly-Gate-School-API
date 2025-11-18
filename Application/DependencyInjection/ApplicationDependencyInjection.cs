@@ -31,6 +31,9 @@ namespace Application.DependencyInjection
             services.AddScoped<IClassAppointmentService, ClassAppointmentService>();
             services.AddScoped<IStudentExamAnswerService, StudentExamAnswerService>();
             services.AddScoped<IStudentExamResultService, StudentExamResultService>();
+            services.AddScoped<IDegreeService, DegreeService>();
+            services.AddScoped<IGpaCalculator, GpaCalculator>();
+            services.AddScoped<ICertificateService, CertificateService>();
             //SignalR
             services.AddSignalR();
             services.AddScoped<INotificationBroadcaster, SignalRNotificationBroadcaster>();

@@ -5,6 +5,7 @@ using Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.OpenApi.Models;
+using QuestPDF.Infrastructure;
 using System.Text.Json.Serialization;
 
 
@@ -15,6 +16,8 @@ namespace Al_Maaly_Gate_School
         public void Main() { }
         public static void Main(string[] args)
         {
+            QuestPDF.Settings.License = LicenseType.Community;
+
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
 
