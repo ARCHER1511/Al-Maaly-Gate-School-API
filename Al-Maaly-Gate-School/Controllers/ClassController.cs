@@ -76,5 +76,27 @@ namespace Al_Maaly_Gate_School.Controllers
 
             return Ok(ApiResponse<string>.Ok("class deleted successfully."));
         }
+
+        [HttpGet("{classId}/students")]
+        public async Task<IActionResult> GetStudents(string classId)
+        {
+            var result = await _classService.GetStudentsByClassIdAsync(classId);
+
+            if (!result.Success)
+                return NotFound(ApiResponse<List<Student>>.Fail(result.Message!));
+
+            return Ok(ApiResponse<List<Student>>.Ok(result.Data!));
+        }
+
+        [HttpGet("{classId}/subjects")]
+        public async Task<IActionResult> GetSubjects(string classId)
+        {
+            var result = await _classService.GetSubjectsByClassIdAsync(classId);
+
+            if (!result.Success)
+                return NotFound(ApiResponse<List<Subject>>.Fail(result.Message!));
+
+            return Ok(ApiResponse<List<Subject>>.Ok(result.Data!));
+        }
     }
 }

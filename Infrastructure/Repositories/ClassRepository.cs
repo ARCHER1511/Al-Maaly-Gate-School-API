@@ -15,5 +15,19 @@ namespace Infrastructure.Repositories
             _context = context;
             _dbSet = context.Set<Class>();
         }
+
+        public async Task<List<Student>> GetStudentsByClassIdAsync(string classId)
+        {
+            return await _context.Students
+                .Where(s => s.ClassId == classId)
+                .ToListAsync();
+        }
+
+        public async Task<List<Subject>> GetSubjectsByClassIdAsync(string classId)
+        {
+            return await _context.Subjects
+                .Where(s => s.ClassId == classId)
+                .ToListAsync();
+        }
     }
 }
