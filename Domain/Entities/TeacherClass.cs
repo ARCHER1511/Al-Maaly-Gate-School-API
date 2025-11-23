@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
     public class TeacherClass : BaseEntity
     {
@@ -13,5 +7,8 @@ namespace Domain.Entities
 
         public string ClassId { get; set; } = default!;
         public Class Class { get; set; } = default!;
+
+        public DateTime AssignedAt { get; set; } = DateTime.Now;
+        public string Notes { get; set; } = string.Empty;
     }
 }

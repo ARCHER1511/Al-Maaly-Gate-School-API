@@ -2,9 +2,16 @@
 using Domain.Entities;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+using PdfSharp.Fonts;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Application.Helpers;
 
 namespace Application.Services
 {
@@ -17,11 +24,69 @@ namespace Application.Services
         {
             _unitOfWork = unitOfWork;
             _gpaCalculator = gpaCalculator;
+
+            if (GlobalFontSettings.FontResolver == null)
+                GlobalFontSettings.FontResolver = new FontResolver();
         }
 
-        public async Task<byte[]> GenerateCertificatePdfAsync(string studentId)
+        public async Task<byte[]> GenerateCertificateForStudentAsync(string studentId, DegreeType degreeType, string templatePath)
         {
-            // Load student with degrees and subjects
+            var (pdfBytes, _) = await GenerateCertificateInternalAsync(studentId, degreeType, templatePath);
+            return pdfBytes;
+        }
+
+        public async Task<Certificate> GenerateAndSaveCertificateAsync(string studentId, DegreeType degreeType, string templatePath)
+        {
+            var (pdfBytes, gpa) = await GenerateCertificateInternalAsync(studentId, degreeType, templatePath);
+
+            // Check if certificate already exists
+            var existingCertificate = await _unitOfWork.Certificates
+                .FirstOrDefaultAsync(c => c.StudentId == studentId && c.DegreeType == degreeType);
+
+            if (existingCertificate != null)
+            {
+                // Update existing certificate
+                existingCertificate.PdfData = pdfBytes;
+                existingCertificate.GPA = gpa;
+                existingCertificate.IssuedDate = DateTime.UtcNow;
+                existingCertificate.FileSize = pdfBytes.Length;
+                existingCertificate.FileName = $"{studentId}_{degreeType}_certificate.pdf";
+
+                _unitOfWork.Certificates.Update(existingCertificate);
+            }
+            else
+            {
+                // Create new certificate
+                var certificate = new Certificate
+                {
+                    StudentId = studentId,
+                    DegreeType = degreeType,
+                    GPA = gpa,
+                    PdfData = pdfBytes,
+                    FileName = $"{studentId}_{degreeType}_certificate.pdf",
+                    ContentType = "application/pdf",
+                    FileSize = pdfBytes.Length,
+                    TemplateName = degreeType.ToString(),
+                    IssuedDate = DateTime.UtcNow
+                };
+
+                await _unitOfWork.Certificates.AddAsync(certificate);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return existingCertificate ?? await _unitOfWork.Certificates
+                .FirstOrDefaultAsync(c => c.StudentId == studentId && c.DegreeType == degreeType);
+        }
+
+        public async Task<Certificate?> GetCertificateAsync(string studentId, DegreeType degreeType)
+        {
+            return await _unitOfWork.Certificates
+                .FirstOrDefaultAsync(c => c.StudentId == studentId && c.DegreeType == degreeType);
+        }
+
+        private async Task<(byte[] pdfBytes, double gpa)> GenerateCertificateInternalAsync(string studentId, DegreeType degreeType, string templatePath)
+        {
             var student = await _unitOfWork.Students.FirstOrDefaultAsync(
                 s => s.Id == studentId,
                 include: q => q
@@ -33,112 +98,271 @@ namespace Application.Services
             if (student == null)
                 throw new KeyNotFoundException("Student not found");
 
-            var degrees = student.Degrees!.ToList();
+            // Shape Arabic text for student fields
+            student.FullName = ArabicHelper.ShapeArabic(student.FullName);
+            student.Nationality = ArabicHelper.ShapeArabic(student.Nationality);
+            student.PassportNumber = ArabicHelper.ShapeArabic(student.PassportNumber ?? "");
+            student.IqamaNumber = ArabicHelper.ShapeArabic(student.IqamaNumber ?? "");
+            if (student.Class != null)
+                student.Class.ClassYear = ArabicHelper.ShapeArabic(student.Class.ClassYear);
 
-            double totalGpa = _gpaCalculator.CalculateGpa(degrees);
-            double totalMarks = degrees.Sum(d => d.Score);
-            double totalMax = degrees.Sum(d => d.MaxScore);
-            double gpaPercent = totalMax > 0 ? (totalMarks / totalMax) * 100.0 : 0.0;
+            var allDegrees = student.Degrees!.ToList();
+            List<Degree> degreesToDisplay;
 
-            // Save certificate record
-            var cert = new Certificate
+            if (degreeType == DegreeType.Final1 || degreeType == DegreeType.Final2)
             {
-                StudentId = student.Id,
-                GPA = totalGpa,
-                IssuedDate = DateTime.UtcNow,
-                TemplateName = "Default"
-            };
-
-            await _unitOfWork.Certificates.AddAsync(cert);
-            await _unitOfWork.SaveChangesAsync();
-
-            // ========================
-            // PDF GENERATION
-            // ========================
-            var document = Document.Create(container =>
+                degreesToDisplay = CalculateCumulativeDegrees(allDegrees, degreeType);
+            }
+            else
             {
-                container.Page(page =>
+                degreesToDisplay = degreeType switch
                 {
-                    page.Size(PageSizes.A4);
-                    page.Margin(20);
-                    page.DefaultTextStyle(x => x.FontSize(12));
+                    DegreeType.MidTerm1 => allDegrees.Where(d => d.DegreeType == DegreeType.MidTerm1).ToList(),
+                    DegreeType.MidTerm2 => allDegrees.Where(d => d.DegreeType == DegreeType.MidTerm2).ToList(),
+                    _ => allDegrees
+                };
+            }
 
-                    // Header
-                    page.Header().Column(col =>
+            // Shape all subject names
+            foreach (var d in degreesToDisplay)
+            {
+                if (d.Subject != null)
+                    d.Subject.SubjectName = ArabicHelper.ShapeArabic(d.Subject.SubjectName);
+                d.SubjectName = ArabicHelper.ShapeArabic(d.SubjectName ?? "");
+            }
+
+            using var template = PdfReader.Open(templatePath, PdfDocumentOpenMode.Modify);
+            var page = template.Pages[0];
+            var gfx = XGraphics.FromPdfPage(page);
+
+            // Fix page rotation
+            switch (page.Rotate)
+            {
+                case 90: gfx.RotateTransform(-90); gfx.TranslateTransform(-page.Height, 0); break;
+                case 180: gfx.RotateTransform(-180); gfx.TranslateTransform(-page.Width, -page.Height); break;
+                case 270: gfx.RotateTransform(-270); gfx.TranslateTransform(0, -page.Width); break;
+            }
+            page.Rotate = 0;
+
+            // Auto Arabic font selector + shaping
+            XFont GetAppropriateFont(string text, double size, XFontStyleEx style)
+            {
+                if (FontResolver.ContainsArabic(text))
+                {
+                    text = ArabicHelper.ShapeArabic(text);
+                    return new XFont("ArabicFont", size, style);
+                }
+                else
+                {
+                    return new XFont("MyFont", size, style);
+                }
+            }
+
+            var darkBlueBrush = new XSolidBrush(XColor.FromArgb(44, 62, 80));
+            var mediumGrayBrush = new XSolidBrush(XColor.FromArgb(108, 117, 125));
+            var lightGrayBrush = new XSolidBrush(XColor.FromArgb(248, 249, 250));
+
+            var headerFont = new XFont("MyFont", 11, XFontStyleEx.Bold);
+            var regularFont = new XFont("MyFont", 10, XFontStyleEx.Regular);
+
+            double pageWidth = page.Width;
+            double pageHeight = page.Height;
+            double tableWidth = 480;
+            double marginX = (pageWidth - tableWidth) / 2 + 100;
+            double startY = 180;
+            double rowHeight = 22;
+            double currentY = startY;
+
+            // Student info
+            gfx.DrawString($"Name: {ArabicHelper.ShapeArabic(student.FullName)}", GetAppropriateFont(student.FullName, 11, XFontStyleEx.Bold), darkBlueBrush, new XPoint(marginX, currentY));
+            currentY += 18;
+
+            gfx.DrawString("Grade:", headerFont, darkBlueBrush, new XPoint(marginX, currentY));
+            gfx.DrawString(ArabicHelper.ShapeArabic(student.Class?.ClassYear ?? "N/A"),
+               GetAppropriateFont(student.Class?.ClassYear ?? "N/A", 11, XFontStyleEx.Bold),
+               darkBlueBrush, new XPoint(marginX + 50, currentY));
+            currentY += 18;
+
+            double rightSideX = marginX + 250;
+            double rightSideY = startY;
+
+            gfx.DrawString($"Nationality: {ArabicHelper.ShapeArabic(student.Nationality)}", GetAppropriateFont(student.Nationality, 11, XFontStyleEx.Bold), darkBlueBrush, new XPoint(rightSideX, rightSideY));
+            rightSideY += 18;
+
+            gfx.DrawString($"Iqama: {ArabicHelper.ShapeArabic(student.IqamaNumber)}", GetAppropriateFont(student.IqamaNumber, 11, XFontStyleEx.Bold), darkBlueBrush, new XPoint(rightSideX, rightSideY));
+            rightSideY += 18;
+
+            gfx.DrawString($"Passport: {ArabicHelper.ShapeArabic(student.PassportNumber)}", GetAppropriateFont(student.PassportNumber, 11, XFontStyleEx.Bold), darkBlueBrush, new XPoint(rightSideX, rightSideY));
+
+            currentY = Math.Max(currentY, rightSideY) + 25;
+
+            double[] columnWidths = { 180, 60, 60, 60, 80, 60 };
+            double tableStartX = marginX;
+            string[] headers = { "COURSE", "MAX", "MARKS", "GPA", "CREDIT HRS", "LETTER" };
+
+            double xPos = tableStartX;
+            for (int i = 0; i < headers.Length; i++)
+            {
+                var format = new XStringFormat { Alignment = i == 0 ? XStringAlignment.Near : XStringAlignment.Center };
+                gfx.DrawString(headers[i], headerFont, darkBlueBrush, new XRect(xPos, currentY + 4, columnWidths[i], rowHeight), format);
+                xPos += columnWidths[i];
+            }
+            currentY += rowHeight;
+
+            foreach (var d in degreesToDisplay)
+            {
+                if (currentY + rowHeight + 80 > pageHeight)
+                {
+                    page = template.AddPage();
+                    gfx = XGraphics.FromPdfPage(page);
+                    currentY = 80;
+
+                    // Redraw header
+                    xPos = tableStartX;
+                    for (int i = 0; i < headers.Length; i++)
                     {
-                        col.Item().Text("المعالي بوابة مدارس").Bold().FontSize(18).AlignCenter();
-                        col.Item().Text("Al Maaly Gate Int'l Schools").Bold().FontSize(14).AlignCenter();
-                        col.Item().Text("K.S.A - Ministry of Education").AlignCenter();
-                        col.Item().Text($"Academic Year: {student.ClassYear}").AlignCenter();
-                    });
+                        var format = new XStringFormat { Alignment = i == 0 ? XStringAlignment.Near : XStringAlignment.Center };
+                        gfx.DrawString(headers[i], headerFont, darkBlueBrush, new XRect(xPos, currentY + 4, columnWidths[i], rowHeight), format);
+                        xPos += columnWidths[i];
+                    }
+                    currentY += rowHeight;
+                }
 
-                    // Content: Only ONE page.Content()
-                    page.Content().PaddingTop(10).Column(col =>
-                    {
-                        col.Spacing(8);
+                double subjectGpa = _gpaCalculator.GetSubjectGpa(d.Score, d.MaxScore);
+                string letterGrade = _gpaCalculator.GetLetterGrade(subjectGpa);
+                double creditHours = d.Subject?.CreditHours ?? 3.0;
 
-                        // Student Info
-                        col.Item().Text($"Name: {student.FullName}").Bold();
-                        string grade = student.Class?.ClassYear ?? "N/A";
-                        col.Item().Text($"Grade: {grade}");
-                        col.Item().Text($"Nationality: {student.Nationality}");
-                        col.Item().Text($"Iqama No: {student.IqamaNumber}  Passport No: {student.PassportNumber}");
+                if (degreesToDisplay.IndexOf(d) % 2 == 1)
+                {
+                    gfx.DrawRectangle(new XSolidBrush(XColor.FromArgb(252, 252, 252)),
+                        tableStartX, currentY, tableWidth, rowHeight);
+                }
 
-                        // Subjects Table
-                        col.Item().PaddingTop(10).Table(table =>
-                        {
-                            table.ColumnsDefinition(columns =>
-                            {
-                                columns.RelativeColumn(2); // Course
-                                columns.RelativeColumn();  // Max
-                                columns.RelativeColumn();  // Marks
-                                columns.RelativeColumn();  // Course GPA
-                                columns.RelativeColumn();  // Credit Hours
-                                columns.RelativeColumn();  // Letter Grade
-                            });
+                xPos = tableStartX;
 
-                            table.Header(header =>
-                            {
-                                header.Cell().Text("Course").SemiBold();
-                                header.Cell().Text("Max");
-                                header.Cell().Text("Marks Obtained");
-                                header.Cell().Text("Course GPA");
-                                header.Cell().Text("Credit Hours");
-                                header.Cell().Text("Letter Grade");
-                            });
+                var subjectNameFont = GetAppropriateFont(d.Subject?.SubjectName ?? d.SubjectName, 10, XFontStyleEx.Regular);
 
-                            foreach (var d in degrees)
-                            {
-                                double subjectGpa = _gpaCalculator.GetSubjectGpa(d.Score, d.MaxScore);
-                                string letter = _gpaCalculator.GetLetterGrade(subjectGpa);
-                                double creditHours = d.Subject?.CreditHours ?? 3.0;
+                var rowValues = new[]
+                {
+                    d.Subject?.SubjectName ?? d.SubjectName,
+                    d.MaxScore.ToString(),
+                    d.Score.ToString(),
+                    subjectGpa.ToString("F2"),
+                    creditHours.ToString("F1"),
+                    letterGrade
+                };
 
-                                table.Cell().Text(d.Subject?.SubjectName ?? d.SubjectName);
-                                table.Cell().Text(d.MaxScore.ToString());
-                                table.Cell().Text(d.Score.ToString());
-                                table.Cell().Text(subjectGpa.ToString("F2"));
-                                table.Cell().Text(creditHours.ToString("F2"));
-                                table.Cell().Text(letter);
-                            }
-                        });
+                var rowFonts = new[]
+                {
+                    subjectNameFont,
+                    regularFont,
+                    regularFont,
+                    regularFont,
+                    regularFont,
+                    regularFont
+                };
 
-                        // Totals & Comments
-                        col.Item().PaddingTop(10).Column(totals =>
-                        {
-                            totals.Item().Text($"Total Marks: {totalMarks} / {totalMax}");
-                            totals.Item().Text($"Total GPA: {totalGpa:F2} / 4.0  GPA%: {gpaPercent:F2}%");
-                            totals.Item().Text("General Comment: Excellent").Italic();
-                        });
-                    });
+                for (int i = 0; i < rowValues.Length; i++)
+                {
+                    var format = new XStringFormat { Alignment = i == 0 ? XStringAlignment.Near : XStringAlignment.Center };
+                    gfx.DrawString(rowValues[i], rowFonts[i], mediumGrayBrush, new XRect(xPos, currentY + 4, columnWidths[i], rowHeight), format);
+                    xPos += columnWidths[i];
+                }
 
-                    // Footer
-                    page.Footer().AlignCenter().Text("➤ This certificate is for the parent's use ONLY & not for the official use.").FontSize(10);
-                });
-            });
+                currentY += rowHeight;
+            }
+
+            // Summary section
+            double gpa = _gpaCalculator.CalculateGpa(degreesToDisplay);
+            double totalMarks = degreesToDisplay.Sum(d => d.Score);
+            double totalMax = degreesToDisplay.Sum(d => d.MaxScore);
+
+            currentY += 25;
+            double summaryWidth = 300;
+            double summaryX = marginX + (tableWidth - summaryWidth) / 2;
+
+            gfx.DrawRectangle(lightGrayBrush, summaryX, currentY, summaryWidth, 35);
+            gfx.DrawRectangle(new XPen(XColor.FromArgb(222, 226, 230), 1), summaryX, currentY, summaryWidth, 35);
+
+            var summaryFormat = new XStringFormat { Alignment = XStringAlignment.Center, LineAlignment = XLineAlignment.Center };
+            var summaryText = ArabicHelper.ShapeArabic($"TOTAL MARKS: {totalMarks}/{totalMax} | GPA: {gpa:F2}");
+
+            gfx.DrawString(summaryText, headerFont, darkBlueBrush, new XRect(summaryX, currentY, summaryWidth, 35), summaryFormat);
 
             using var ms = new MemoryStream();
-            document.GeneratePdf(ms);
-            return ms.ToArray();
+            template.Save(ms, false);
+
+            return (ms.ToArray(), gpa);
+        }
+
+        private List<Degree> CalculateCumulativeDegrees(List<Degree> allDegrees, DegreeType degreeType)
+        {
+            // Keep your existing implementation
+            var cumulativeDegrees = new List<Degree>();
+
+            var degreesBySubject = allDegrees
+                .Where(d => d.SubjectId != null)
+                .GroupBy(d => d.SubjectId);
+
+            foreach (var subjectGroup in degreesBySubject)
+            {
+                var subjectDegrees = subjectGroup.ToList();
+                var firstDegree = subjectDegrees.First();
+
+                if (degreeType == DegreeType.Final1)
+                {
+                    var midTerm1 = subjectDegrees.FirstOrDefault(d => d.DegreeType == DegreeType.MidTerm1);
+                    var final1 = subjectDegrees.FirstOrDefault(d => d.DegreeType == DegreeType.Final1);
+
+                    if (midTerm1 != null || final1 != null)
+                    {
+                        var cumulativeScore = (midTerm1?.Score ?? 0) + (final1?.Score ?? 0);
+                        var cumulativeMax = (midTerm1?.MaxScore ?? 0) + (final1?.MaxScore ?? 0);
+
+                        cumulativeDegrees.Add(new Degree
+                        {
+                            Subject = firstDegree.Subject,
+                            SubjectName = ArabicHelper.ShapeArabic(firstDegree.Subject?.SubjectName ?? firstDegree.SubjectName),
+                            Score = cumulativeScore,
+                            MaxScore = cumulativeMax,
+                            DegreeType = DegreeType.Final1,
+                            SubjectId = firstDegree.SubjectId
+                        });
+                    }
+                }
+                else if (degreeType == DegreeType.Final2)
+                {
+                    var midTerm1 = subjectDegrees.FirstOrDefault(d => d.DegreeType == DegreeType.MidTerm1);
+                    var final1 = subjectDegrees.FirstOrDefault(d => d.DegreeType == DegreeType.Final1);
+                    var midTerm2 = subjectDegrees.FirstOrDefault(d => d.DegreeType == DegreeType.MidTerm2);
+                    var final2 = subjectDegrees.FirstOrDefault(d => d.DegreeType == DegreeType.Final2);
+
+                    if (midTerm1 != null || final1 != null || midTerm2 != null || final2 != null)
+                    {
+                        var cumulativeScore = (midTerm1?.Score ?? 0)
+                                            + (final1?.Score ?? 0)
+                                            + (midTerm2?.Score ?? 0)
+                                            + (final2?.Score ?? 0);
+
+                        var cumulativeMax = (midTerm1?.MaxScore ?? 0)
+                                          + (final1?.MaxScore ?? 0)
+                                          + (midTerm2?.MaxScore ?? 0)
+                                          + (final2?.MaxScore ?? 0);
+
+                        cumulativeDegrees.Add(new Degree
+                        {
+                            Subject = firstDegree.Subject,
+                            SubjectName = ArabicHelper.ShapeArabic(firstDegree.Subject?.SubjectName ?? firstDegree.SubjectName),
+                            Score = cumulativeScore,
+                            MaxScore = cumulativeMax,
+                            DegreeType = DegreeType.Final2,
+                            SubjectId = firstDegree.SubjectId
+                        });
+                    }
+                }
+            }
+
+            return cumulativeDegrees;
         }
     }
 }
