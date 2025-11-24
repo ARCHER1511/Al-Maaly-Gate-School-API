@@ -1,17 +1,17 @@
 ﻿using Application.DTOs.AdminDTOs;
 using Application.DTOs.AppointmentsDTOs;
 using Application.DTOs.AuthDTOs;
+using Application.DTOs.ClassAppointmentsDTOs;
 using Application.DTOs.ClassDTOs;
 using Application.DTOs.ExamDTOS;
 using Application.DTOs.QuestionDTOs;
 using Application.DTOs.StudentDTOs;
+using Application.DTOs.StudentExamAnswerDTOs;
 using Application.DTOs.SubjectDTOs;
 using Application.DTOs.TeacherDTOs;
 using AutoMapper;
 using Common.Extensions;
 using Domain.Entities;
-using Application.DTOs.StudentExamAnswerDTOs;
-using Application.DTOs.ClassAppointmentsDTOs;
 
 namespace Application.Mappings
 {
@@ -106,26 +106,43 @@ namespace Application.Mappings
             #region Student
             CreateMap<Student, StudentViewDto>().IgnoreUnmapped();
             CreateMap<StudentViewDto, Student>()
-            .IgnoreUnmapped()
-            .ForMember(dest => dest.ClassId,
-                       opt => opt.MapFrom(src =>
-                   string.IsNullOrWhiteSpace(src.ClassId) ? null : src.ClassId));
+                .IgnoreUnmapped()
+                .ForMember(
+                    dest => dest.ClassId,
+                    opt =>
+                        opt.MapFrom(src =>
+                            string.IsNullOrWhiteSpace(src.ClassId) ? null : src.ClassId
+                        )
+                );
             #endregion
 
             #region Classes Mappings
             CreateMap<ClassViewDto, Class>().IgnoreUnmapped();
-            CreateMap<Class, ClassViewDto>().IgnoreUnmapped();
-            CreateMap<ClassDto, Class>().ForMember(dest => dest.Id, opt => opt.Ignore()).IgnoreUnmapped();
-            CreateMap<Class,ClassDto>().IgnoreUnmapped();
+            CreateMap<Class, ClassViewDto>()
+                .ForMember(
+                    dest => dest.AssignedTeachers,
+                    opt => opt.MapFrom(src => src.TeacherClasses.Select(tc => tc.Teacher))
+                );
+            CreateMap<ClassDto, Class>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .IgnoreUnmapped();
+            CreateMap<Class, ClassDto>().IgnoreUnmapped();
             #endregion
 
             #region Class Appointments
             CreateMap<ClassAppointment, ClassAppointmentDto>().IgnoreUnmapped();
-            CreateMap<ClassAppointmentDto, ClassAppointment>().IgnoreUnmapped()
-            .ForMember(dest => dest.Id, opt => opt.Ignore());
+            CreateMap<ClassAppointmentDto, ClassAppointment>()
+                .IgnoreUnmapped()
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
             CreateMap<ClassAppointment, StudentClassAppointmentDto>()
-            .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.SubjectName))
-            .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.Teacher.FullName));
+                .ForMember(
+                    dest => dest.SubjectName,
+                    opt => opt.MapFrom(src => src.Subject.SubjectName)
+                )
+                .ForMember(
+                    dest => dest.TeacherName,
+                    opt => opt.MapFrom(src => src.Teacher.FullName)
+                );
             #endregion
 
             #region Question Mappings
@@ -148,10 +165,16 @@ namespace Application.Mappings
                 //            IsTrue = src.Choices.Any(c => c.IsCorrect)
                 //        }
                 //        : null))
-                .ForMember(dest => dest.ChoiceAnswer, opt => opt.MapFrom(src =>
-                    src.Type == QuestionTypes.Choices && !string.IsNullOrWhiteSpace(src.CorrectChoiceId)
-                        ? new ChoiceAnswer { ChoiceId = src.CorrectChoiceId }
-                        : null))
+                .ForMember(
+                    dest => dest.ChoiceAnswer,
+                    opt =>
+                        opt.MapFrom(src =>
+                            src.Type == QuestionTypes.Choices
+                            && !string.IsNullOrWhiteSpace(src.CorrectChoiceId)
+                                ? new ChoiceAnswer { ChoiceId = src.CorrectChoiceId }
+                                : null
+                        )
+                )
                 .IgnoreUnmapped();
 
             CreateMap<Choices, ChoiceViewDto>().IgnoreUnmapped();
@@ -160,8 +183,13 @@ namespace Application.Mappings
                 //.ForMember(dest => dest.TextAnswer,
                 //    opt => opt.MapFrom(src => src.TextAnswer != null ? src.TextAnswer.Content : null))
                 .ForMember(dest => dest.Choices, opt => opt.MapFrom(src => src.Choices))
-                .ForMember(dest => dest.CorrectChoiceId,
-                    opt => opt.MapFrom(src => src.ChoiceAnswer != null ? src.ChoiceAnswer.ChoiceId : null))
+                .ForMember(
+                    dest => dest.CorrectChoiceId,
+                    opt =>
+                        opt.MapFrom(src =>
+                            src.ChoiceAnswer != null ? src.ChoiceAnswer.ChoiceId : null
+                        )
+                )
                 .IgnoreUnmapped();
 
             #endregion
@@ -169,15 +197,19 @@ namespace Application.Mappings
             #region Exam Mappings
             // From Exam entity to detail view
             CreateMap<Exam, ExamDetailsViewDto>()
-                .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.SubjectName))
+                .ForMember(
+                    dest => dest.SubjectName,
+                    opt => opt.MapFrom(src => src.Subject.SubjectName)
+                )
                 .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.Class.ClassName));
-
 
             // Basic bidirectional views
             CreateMap<Exam, ExamViewDto>()
-                .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.SubjectName))
+                .ForMember(
+                    dest => dest.SubjectName,
+                    opt => opt.MapFrom(src => src.Subject.SubjectName)
+                )
                 .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.Class.ClassName));
-
 
             // Create mapping
             CreateMap<CreateExamDto, Exam>()
@@ -197,7 +229,6 @@ namespace Application.Mappings
                 .ForMember(dest => dest.Questions, opt => opt.Ignore())
                 .IgnoreUnmapped();
 
-            
             #endregion
 
             #region Subject Mappings
@@ -210,18 +241,29 @@ namespace Application.Mappings
             #endregion
 
             #region StudentExamAnswer
-            CreateMap<StudentExamAnswerDto, StudentExamAnswer>().ForMember(dest => dest.Id, opt => opt.Ignore()).IgnoreUnmapped();
+            CreateMap<StudentExamAnswerDto, StudentExamAnswer>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .IgnoreUnmapped();
             CreateMap<StudentExamAnswer, StudentExamAnswerDto>().IgnoreUnmapped();
             CreateMap<Exam, GetStudentExamsDto>()
-              .ForMember(dest => dest.ExamId, opt => opt.MapFrom(src => src.Id))
-              .ForMember(dest => dest.ExamName, opt => opt.MapFrom(src => src.ExamName))
-              .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.SubjectName))
-              .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.Teacher.FullName))
-              .ForMember(dest => dest.TeacherId, opt => opt.MapFrom(src => src.Teacher.Id));
+                .ForMember(dest => dest.ExamId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.ExamName, opt => opt.MapFrom(src => src.ExamName))
+                .ForMember(
+                    dest => dest.SubjectName,
+                    opt => opt.MapFrom(src => src.Subject.SubjectName)
+                )
+                .ForMember(
+                    dest => dest.TeacherName,
+                    opt => opt.MapFrom(src => src.Teacher.FullName)
+                )
+                .ForMember(dest => dest.TeacherId, opt => opt.MapFrom(src => src.Teacher.Id));
 
             CreateMap<Exam, ExamQuestionsDto>()
                 .ForMember(dest => dest.ExamId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.SubjectName))
+                .ForMember(
+                    dest => dest.SubjectName,
+                    opt => opt.MapFrom(src => src.Subject.SubjectName)
+                )
                 .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions));
 
             CreateMap<Question, QuestionDto>()
@@ -232,9 +274,10 @@ namespace Application.Mappings
 
             #region Student Exam Result
             CreateMap<StudentExamResult, StudentExamResultDto>().IgnoreUnmapped();
-            CreateMap<StudentExamResultDto, StudentExamResult>().ForMember(dest => dest.Id, opt => opt.Ignore()).IgnoreUnmapped();
+            CreateMap<StudentExamResultDto, StudentExamResult>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .IgnoreUnmapped();
             #endregion
-
         }
     }
 }

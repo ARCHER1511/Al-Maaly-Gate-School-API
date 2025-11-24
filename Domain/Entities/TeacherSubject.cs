@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
     public class TeacherSubject : BaseEntity
     {
-        public string TeacherId { get; set;}
-        public Teacher Teacher { get; set; }
+        public string TeacherId { get; set; } = string.Empty;
+        public Teacher Teacher { get; set; } = default!;
 
-        public string SubjectId { get; set; }
-        public Subject Subject { get; set; }
+        public string SubjectId { get; set; } = string.Empty;
+        public Subject Subject { get; set; } = default!;
     }
 }

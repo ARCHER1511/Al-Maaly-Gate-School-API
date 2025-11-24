@@ -15,14 +15,5 @@ namespace Infrastructure.Repositories
             _context = context;
             _dbSet = context.Set<ClassAppointment>();
         }
-
-        public async Task<IEnumerable<ClassAppointment>> GetByTeacherIdAsync(string teacherId)
-        {
-            return await _dbSet
-                .Where(c => c.TeacherId == teacherId)
-                .Include(c => c.Subject)
-                .Include(c => c.Class)
-                .ToListAsync();
-        }
     }
 }

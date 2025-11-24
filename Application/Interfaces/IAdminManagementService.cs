@@ -3,7 +3,6 @@ using Application.DTOs.ParentDTOs;
 using Application.DTOs.StudentDTOs;
 using Application.DTOs.TeacherDTOs;
 using Domain.Wrappers;
-using Microsoft.Identity.Client;
 
 namespace Application.Interfaces
 {
