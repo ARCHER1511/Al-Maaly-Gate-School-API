@@ -76,6 +76,14 @@ namespace Al_Maaly_Gate_School.Controllers
 
             return Ok(ApiResponse<string>.Ok("class deleted successfully."));
         }
+        [HttpGet("with-teachers")]
+        public async Task<IActionResult> GetAllWithTeachers()
+        {
+            var result = await _classService.GetAllWithTeachersAsync();
+            if (!result.Success) return NotFound(result);
+            return Ok(result);
+        }
+
 
         [HttpGet("{classId}/students")]
         public async Task<IActionResult> GetStudents(string classId)

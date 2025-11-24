@@ -15,6 +15,12 @@ namespace Infrastructure.Repositories
             _context = context;
             _dbSet = context.Set<Class>();
         }
+        public async Task<IEnumerable<Class>> GetAllWithTeachersAsync() 
+        {
+            return await _dbSet
+            .Include(c => c.TeacherClasses)
+                .ThenInclude(tc => tc.Teacher)
+            .ToListAsync();
 
         public async Task<List<Student>> GetStudentsByClassIdAsync(string classId)
         {

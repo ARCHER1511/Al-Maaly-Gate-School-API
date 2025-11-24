@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
 {
@@ -21,7 +22,12 @@ namespace Application.Services
 
         public async Task<ServiceResult<IEnumerable<ClassViewDto>>> GetAllAsync()
         {
-            var result = await _classRepository.GetAllAsync();
+            var result = await _classRepository.FindAllAsync(include: q => q.Include(t => t.TeacherClasses)
+                                                                             .ThenInclude(tc => tc.Teacher)
+                                                                            .Include(s => s.Students)
+                                                                            .Include(ca => ca.ClassAssets)
+                                                                            .Include(cp => cp.ClassAppointments)!);
+
             if (result == null) return ServiceResult<IEnumerable<ClassViewDto>>.Fail("class not found");
 
             var resultDto = _mapper.Map<IEnumerable<ClassViewDto>>(result);
@@ -69,6 +75,18 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true, "class deleted successfully");
         }
+        public async Task<ServiceResult<IEnumerable<ClassViewDto>>> GetAllWithTeachersAsync()
+        {
+            var result = await _classRepository.GetAllWithTeachersAsync();
+
+            if (result == null || !result.Any())
+                return ServiceResult<IEnumerable<ClassViewDto>>.Fail("No classes found");
+
+            var dto = _mapper.Map<IEnumerable<ClassViewDto>>(result);
+
+            return ServiceResult<IEnumerable<ClassViewDto>>.Ok(dto, "Classes with teachers retrieved successfully");
+        }
+
 
         public async Task<ServiceResult<List<Student>>> GetStudentsByClassIdAsync(string classId)
         {
