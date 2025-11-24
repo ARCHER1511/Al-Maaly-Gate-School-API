@@ -74,9 +74,14 @@ namespace Application.Services
             }
 
             await _unitOfWork.SaveChangesAsync();
-
-            return existingCertificate ?? await _unitOfWork.Certificates
+            
+            var finalCertificate = existingCertificate ?? await _unitOfWork.Certificates
                 .FirstOrDefaultAsync(c => c.StudentId == studentId && c.DegreeType == degreeType);
+
+            if (finalCertificate is null)
+                throw new InvalidOperationException("Certificate should exist but was not found in the database.");
+
+            return finalCertificate;
         }
 
         public async Task<Certificate?> GetCertificateAsync(string studentId, DegreeType degreeType)
@@ -92,7 +97,7 @@ namespace Application.Services
                 include: q => q
                     .Include(s => s.Degrees!)
                     .ThenInclude(d => d.Subject)
-                    .Include(s => s.Class)
+                    .Include(s => s.Class)!
             );
 
             if (student == null)
