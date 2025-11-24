@@ -1,8 +1,10 @@
 ﻿using Application.Interfaces;
 using Application.Services;
 using Domain.Entities;
+using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
@@ -13,11 +15,16 @@ namespace Al_Maaly_Gate_School.Controllers
     {
         private readonly ICertificateService _certificateService;
         private readonly IWebHostEnvironment _env;
+        private readonly IUnitOfWork _unitOfWork; // Add this field
 
-        public CertificateController(ICertificateService certificateService, IWebHostEnvironment env)
+        public CertificateController(
+            ICertificateService certificateService,
+            IWebHostEnvironment env,
+            IUnitOfWork unitOfWork) // Add this parameter
         {
             _certificateService = certificateService;
             _env = env;
+            _unitOfWork = unitOfWork; // Initialize it
         }
 
         [HttpGet("{studentId}/{degreeType}")]
@@ -128,6 +135,35 @@ namespace Al_Maaly_Gate_School.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("student/{studentId}")]
+        public async Task<IActionResult> GetStudentCertificates(string studentId)
+        {
+            try
+            {
+                var certificates = await _unitOfWork.Certificates
+                    .AsQueryable() // This returns IQueryable<Certificate>
+                    .Where(c => c.StudentId == studentId)
+                    .OrderByDescending(c => c.IssuedDate)
+                    .ToListAsync(); // You need to call ToListAsync() here
+
+                return Ok(new
+                {
+                    Data = certificates,
+                    Success = true,
+                    Message = "Certificates retrieved successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Data = new List<Certificate>(),
+                    Success = false,
+                    Message = ex.Message
+                });
             }
         }
     }

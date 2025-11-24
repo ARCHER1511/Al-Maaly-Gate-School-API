@@ -164,12 +164,26 @@ namespace Application.Services
 
         public async Task<ServiceResult<bool>> DeleteAsync(string id)
         {
-            var repo = _unitOfWork.Repository<Exam>();
-            var exam = await repo.GetByIdAsync(id);
+            var examRepo = _unitOfWork.Repository<Exam>();
+            var questionRepo = _unitOfWork.Repository<Question>();
+
+            var exam = await examRepo.GetByIdAsync(id);
             if (exam == null)
                 return ServiceResult<bool>.Fail("Exam not found");
 
-            repo.Delete(exam);
+            // Get all questions related to this exam and set their ExamId to null
+            var questions = await questionRepo.FindAllAsync(
+                predicate: q => q.ExamId == id,
+                include: null // Add include if you need related entities
+            );
+
+            foreach (var question in questions)
+            {
+                question.ExamId = null; // This will break the relationship
+                questionRepo.Update(question);
+            }
+
+            examRepo.Delete(exam);
             await _unitOfWork.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true);
         }

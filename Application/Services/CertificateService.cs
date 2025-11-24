@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
@@ -39,7 +40,7 @@ namespace Application.Services
         {
             var (pdfBytes, gpa) = await GenerateCertificateInternalAsync(studentId, degreeType, templatePath);
 
-            // Check if certificate already exists
+            // Check if certificate already exists - FIXED: No include parameter
             var existingCertificate = await _unitOfWork.Certificates
                 .FirstOrDefaultAsync(c => c.StudentId == studentId && c.DegreeType == degreeType);
 
@@ -75,18 +76,21 @@ namespace Application.Services
 
             await _unitOfWork.SaveChangesAsync();
 
-            return existingCertificate ?? await _unitOfWork.Certificates
+            // Get the saved certificate - FIXED: No include parameter
+            return await _unitOfWork.Certificates
                 .FirstOrDefaultAsync(c => c.StudentId == studentId && c.DegreeType == degreeType);
         }
 
         public async Task<Certificate?> GetCertificateAsync(string studentId, DegreeType degreeType)
         {
+            // FIXED: No include parameter
             return await _unitOfWork.Certificates
                 .FirstOrDefaultAsync(c => c.StudentId == studentId && c.DegreeType == degreeType);
         }
 
         private async Task<(byte[] pdfBytes, double gpa)> GenerateCertificateInternalAsync(string studentId, DegreeType degreeType, string templatePath)
         {
+            // FIXED: Use the correct FirstOrDefaultAsync with include parameter
             var student = await _unitOfWork.Students.FirstOrDefaultAsync(
                 s => s.Id == studentId,
                 include: q => q
@@ -297,7 +301,6 @@ namespace Application.Services
 
         private List<Degree> CalculateCumulativeDegrees(List<Degree> allDegrees, DegreeType degreeType)
         {
-            // Keep your existing implementation
             var cumulativeDegrees = new List<Degree>();
 
             var degreesBySubject = allDegrees
