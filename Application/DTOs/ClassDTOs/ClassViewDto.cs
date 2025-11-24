@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.DTOs.TeacherDTOs;
+using Domain.Entities;
 
 
 namespace Application.DTOs.ClassDTOs
@@ -8,8 +9,7 @@ namespace Application.DTOs.ClassDTOs
         public string Id { get; set; } = string.Empty;
         public string ClassYear { get; set; } = string.Empty;
         public string ClassName { get; set; } = string.Empty;
-        public string TeacherId { get; set; } = string.Empty;
-        public Teacher? Teacher { get; set; }
+        public List<TeacherViewDto> AssignedTeachers { get; set; } = new();
         public List<Student>? Students { get; set; } = new List<Student>();
         public List<ClassAssets>? ClassAssets { get; set; } = new List<ClassAssets>();
         public List<ClassAppointment>? ClassAppointments { get; set; } = new List<ClassAppointment>();
