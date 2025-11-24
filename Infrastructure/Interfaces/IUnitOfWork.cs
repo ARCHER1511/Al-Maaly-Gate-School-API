@@ -12,6 +12,8 @@ namespace Infrastructure.Interfaces
         IGenericRepository<Subject> Subjects { get; }
         IGenericRepository<ClassAppointment> ClassAppointments { get; }
         IGenericRepository<StudentExamAnswer> StudentExamAnswers { get; }
+        IGenericRepository<Certificate> Certificates { get; }
+        IGenericRepository<Degree> Degrees { get; }
         Task<int> SaveChangesAsync();
     }
 }

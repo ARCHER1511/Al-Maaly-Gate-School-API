@@ -29,6 +29,14 @@ namespace Infrastructure.Configurations
                    .HasForeignKey(e => e.SubjectId)
                    .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Property(s => s.SubjectName)
+                   .IsRequired()
+                   .HasMaxLength(150);
+
+            builder.Property(s => s.CreditHours)
+                   .IsRequired()
+                   .HasDefaultValue(3.0);
+
             builder.ToTable("Subjects", "Academics");
         }
     }

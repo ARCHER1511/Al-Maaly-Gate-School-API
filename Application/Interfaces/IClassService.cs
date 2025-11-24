@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.ClassDTOs;
+using Domain.Entities;
 using Domain.Wrappers;
 
 namespace Application.Interfaces
@@ -11,5 +12,8 @@ namespace Application.Interfaces
         Task<ServiceResult<ClassDto>> UpdateAsync(ClassDto dto);
         Task<ServiceResult<bool>> DeleteAsync(object id);
         Task<ServiceResult<IEnumerable<ClassViewDto>>> GetAllWithTeachersAsync();
+
+        Task<ServiceResult<List<Student>>> GetStudentsByClassIdAsync(string classId);
+        Task<ServiceResult<List<Subject>>> GetSubjectsByClassIdAsync(string classId);
     }
 }

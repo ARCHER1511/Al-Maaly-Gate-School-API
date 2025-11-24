@@ -87,5 +87,17 @@ namespace Application.Services
             return ServiceResult<IEnumerable<ClassViewDto>>.Ok(dto, "Classes with teachers retrieved successfully");
         }
 
+
+        public async Task<ServiceResult<List<Student>>> GetStudentsByClassIdAsync(string classId)
+        {
+            var students = await _classRepository.GetStudentsByClassIdAsync(classId);
+            return ServiceResult<List<Student>>.Ok(students);
+        }
+
+        public async Task<ServiceResult<List<Subject>>> GetSubjectsByClassIdAsync(string classId)
+        {
+            var subjects = await _classRepository.GetSubjectsByClassIdAsync(classId);
+            return ServiceResult<List<Subject>>.Ok(subjects);
+        }
     }
 }

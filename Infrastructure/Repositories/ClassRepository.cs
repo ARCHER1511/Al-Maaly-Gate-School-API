@@ -21,6 +21,19 @@ namespace Infrastructure.Repositories
             .Include(c => c.TeacherClasses)
                 .ThenInclude(tc => tc.Teacher)
             .ToListAsync();
+
+        public async Task<List<Student>> GetStudentsByClassIdAsync(string classId)
+        {
+            return await _context.Students
+                .Where(s => s.ClassId == classId)
+                .ToListAsync();
+        }
+
+        public async Task<List<Subject>> GetSubjectsByClassIdAsync(string classId)
+        {
+            return await _context.Subjects
+                .Where(s => s.ClassId == classId)
+                .ToListAsync();
         }
     }
 }
