@@ -31,9 +31,16 @@ namespace Application.SignalR
 
             // Optional: Add to role or project groups
             // await Groups.AddToGroupAsync(Context.ConnectionId, "Admins");
-            var undelivered = await _userNotificationService.GetByUserIdAsync(userId);
+            var undeliveredResult = await _userNotificationService.GetByUserIdAsync(userId);
 
-            foreach (var n in undelivered.Where(x => !x.IsDelivered))
+            if (!undeliveredResult.Success || undeliveredResult.Data == null) 
+            {
+                _logger.LogWarning("No undelivered notifications for user {UserId}", userId);
+                await base.OnConnectedAsync();
+                return;
+            }
+
+            foreach (var n in undeliveredResult.Data.Where(x => !x.IsDelivered))
             {
                 await Clients.User(userId).SendAsync("ReceiveNotification", Map(n.Notification));
                 await _userNotificationService.MarkAsDeliveredAsync(n.NotificationId, userId);

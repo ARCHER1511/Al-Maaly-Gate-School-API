@@ -4,7 +4,6 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
-using Infrastructure.Repositories;
 
 namespace Application.Services
 {
@@ -24,6 +23,8 @@ namespace Application.Services
         public async Task<ServiceResult<IEnumerable<QuestionViewDto>>> GetAllAsync()
         {
             var questions = await _questionRepo.GetAllAsync();
+            if (questions.Any())
+                return ServiceResult<IEnumerable<QuestionViewDto>>.Fail("No Questions found");
             var data = _mapper.Map<IEnumerable<QuestionViewDto>>(questions);
             return ServiceResult<IEnumerable<QuestionViewDto>>.Ok(data);
         }

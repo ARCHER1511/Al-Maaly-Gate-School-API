@@ -1,7 +1,4 @@
 ﻿using PdfSharp.Fonts;
-using System;
-using System.IO;
-using System.Text;
 
 namespace Application.Helpers
 {
@@ -18,7 +15,7 @@ namespace Application.Helpers
                 Path.Combine(AppContext.BaseDirectory, "Fonts"),
                 Path.Combine(Directory.GetCurrentDirectory(), "Fonts"),
                 Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "Fonts"), // Go up to project root
-                Path.Combine(Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.FullName, "Fonts")
+                Path.Combine(Directory.GetParent(AppContext.BaseDirectory)!.Parent!.Parent!.FullName, "Fonts")
             };
 
             foreach (var path in possiblePaths)
@@ -87,7 +84,7 @@ namespace Application.Helpers
                 return new FontResolverInfo(isBold ? "ArabicBold" : "ArabicRegular");
             }
 
-            return null;
+            return null!;
         }
 
         // Helper method to detect if text contains Arabic characters

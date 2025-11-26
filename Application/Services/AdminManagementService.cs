@@ -54,19 +54,24 @@ namespace Application.Services
         }
 
         // TeacherBySubject
-        public async Task<ServiceResult<IEnumerable<TeacherAdminViewDto>>> GetTeahcerInfo(string subjectName)
+        public async Task<ServiceResult<IEnumerable<TeacherAdminViewDto>>> GetTeahcerInfo(
+            string subjectName
+        )
         {
             var teachers = await _teacherRepository.FindAllAsync(
                 t => t.TeacherSubjects!.Any(ts => ts.Subject.SubjectName == subjectName),
-                q => q.Include(t => t.TeacherSubjects!)
-                      .ThenInclude(ts => ts.Subject)
-                      .Include(t => t.TeacherClasses)
-                      .ThenInclude(tc => tc.Class)
-                      .Include(t => t.AppUser)
+                q =>
+                    q.Include(t => t.TeacherSubjects!)
+                        .ThenInclude(ts => ts.Subject)
+                        .Include(t => t.TeacherClasses)
+                        .ThenInclude(tc => tc.Class)
+                        .Include(t => t.AppUser)
             );
 
             if (!teachers.Any())
-                return ServiceResult<IEnumerable<TeacherAdminViewDto>>.Fail("No teachers found for this subject.");
+                return ServiceResult<IEnumerable<TeacherAdminViewDto>>.Fail(
+                    "No teachers found for this subject."
+                );
 
             var dto = teachers.Select(t => new TeacherAdminViewDto
             {
@@ -78,10 +83,11 @@ namespace Application.Services
                 ProfileStatus = t.ProfileStatus.ToString(),
             });
 
-            return ServiceResult<IEnumerable<TeacherAdminViewDto>>.Ok(dto, "Teachers retrieved successfully.");
+            return ServiceResult<IEnumerable<TeacherAdminViewDto>>.Ok(
+                dto,
+                "Teachers retrieved successfully."
+            );
         }
-
-
 
         //New
         //Approve Teacher
@@ -205,16 +211,20 @@ namespace Application.Services
         }
 
         //Teachers by Class
-        public async Task<ServiceResult<IEnumerable<TeacherAdminViewDto>>> GetTeachersByClassAsync(string classId)
+        public async Task<ServiceResult<IEnumerable<TeacherAdminViewDto>>> GetTeachersByClassAsync(
+            string classId
+        )
         {
-            var teachers = await _unitOfWork.Repository<Teacher>()
+            var teachers = await _unitOfWork
+                .Repository<Teacher>()
                 .FindAllAsync(
                     t => t.TeacherClasses.Any(tc => tc.ClassId == classId),
-                    q => q.Include(t => t.AppUser)
-                          .Include(t => t.TeacherSubjects)!
-                              .ThenInclude(ts => ts.Subject)
-                          .Include(t => t.TeacherClasses)
-                              .ThenInclude(tc => tc.Class)
+                    q =>
+                        q.Include(t => t.AppUser)
+                            .Include(t => t.TeacherSubjects)!
+                            .ThenInclude(ts => ts.Subject)
+                            .Include(t => t.TeacherClasses)
+                            .ThenInclude(tc => tc.Class)
                 );
 
             var dto = teachers.Select(t => new TeacherAdminViewDto
@@ -229,8 +239,6 @@ namespace Application.Services
 
             return ServiceResult<IEnumerable<TeacherAdminViewDto>>.Ok(dto);
         }
-
-
 
         // Students by Class
         public async Task<ServiceResult<IEnumerable<StudentViewDto>>> GetStudentsByClassAsync(
@@ -286,9 +294,9 @@ namespace Application.Services
                 return ServiceResult<bool>.Fail("Teacher not found.");
 
             // Fetch all current TeacherClass relations for this teacher
-            var existingAssignments = (await teacherClassRepo.FindAllAsync(
-                tc => tc.TeacherId == teacherId
-            )).ToList();
+            var existingAssignments = (
+                await teacherClassRepo.FindAllAsync(tc => tc.TeacherId == teacherId)
+            ).ToList();
 
             // Remove existing assignments
             foreach (var assign in existingAssignments)
@@ -302,7 +310,7 @@ namespace Application.Services
                 var newAssignment = new TeacherClass
                 {
                     TeacherId = teacherId,
-                    ClassId = newClassId
+                    ClassId = newClassId,
                 };
 
                 await teacherClassRepo.AddAsync(newAssignment);
@@ -313,9 +321,10 @@ namespace Application.Services
 
             // Prepare notification message (use AppUser.FullName if available)
             var teacherName = teacher.AppUser?.FullName ?? "Teacher";
-            string message = newClassId == null
-                ? $"Dear {teacherName}, you have been unassigned from all your classes."
-                : $"Dear {teacherName}, you have been reassigned to a new class successfully.";
+            string message =
+                newClassId == null
+                    ? $"Dear {teacherName}, you have been unassigned from all your classes."
+                    : $"Dear {teacherName}, you have been reassigned to a new class successfully.";
 
             await _notificationService.CreateNotificationAsync(
                 title: "Class Assignment Updated",
@@ -328,7 +337,6 @@ namespace Application.Services
 
             return ServiceResult<bool>.Ok(true, "Teacher moved successfully.");
         }
-
 
         //Assign Teacher to Class
         public async Task<ServiceResult<bool>> AssignTeacherToClassAsync(
@@ -347,11 +355,7 @@ namespace Application.Services
                 return ServiceResult<bool>.Fail("Teacher already assigned to this class.");
 
             // Create new relationship entry
-            var teacherClass = new TeacherClass
-            {
-                TeacherId = teacherId,
-                ClassId = classId
-            };
+            var teacherClass = new TeacherClass { TeacherId = teacherId, ClassId = classId };
 
             await repo.AddAsync(teacherClass);
             await _unitOfWork.SaveChangesAsync();
@@ -360,9 +364,13 @@ namespace Application.Services
         }
 
         // Assign Teacher to Subject
-        public async Task<ServiceResult<bool>> AssignTeacherToSubjectAsync(string teacherId, string subjectId)
+        public async Task<ServiceResult<bool>> AssignTeacherToSubjectAsync(
+            string teacherId,
+            string subjectId
+        )
         {
-            var teacher = await _unitOfWork.Repository<Teacher>()
+            var teacher = await _unitOfWork
+                .Repository<Teacher>()
                 .FirstOrDefaultAsync(
                     t => t.Id == teacherId,
                     q => q.Include(t => t.TeacherSubjects!)
@@ -374,19 +382,15 @@ namespace Application.Services
             if (teacher.TeacherSubjects!.Any(ts => ts.SubjectId == subjectId))
                 return ServiceResult<bool>.Fail("Teacher already assigned to this subject.");
 
-            teacher.TeacherSubjects!.Add(new TeacherSubject
-            {
-                TeacherId = teacherId,
-                SubjectId = subjectId
-            });
+            teacher.TeacherSubjects!.Add(
+                new TeacherSubject { TeacherId = teacherId, SubjectId = subjectId }
+            );
 
             _unitOfWork.Repository<Teacher>().Update(teacher);
             await _unitOfWork.SaveChangesAsync();
 
             return ServiceResult<bool>.Ok(true, "Teacher assigned to subject successfully.");
         }
-
-
 
         // Unassign Teacher
         public async Task<ServiceResult<bool>> UnassignTeacherAsync(
