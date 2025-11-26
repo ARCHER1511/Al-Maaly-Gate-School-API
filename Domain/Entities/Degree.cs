@@ -8,7 +8,7 @@ namespace Domain.Entities
 {
     public class Degree : BaseEntity
     {
-        public string StudentId { get; set; }
+        public string StudentId { get; set; } = string.Empty;
         public Student Student { get; set; } = null!;
 
         // Link to Subject to get CreditHours

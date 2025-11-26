@@ -6,21 +6,18 @@ using Domain.Wrappers;
 using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
     public class ExamService : IExamService
     {
+        private readonly IExamRepository _examRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ExamService(IUnitOfWork unitOfWork, IMapper mapper)
+        public ExamService(IUnitOfWork unitOfWork, IMapper mapper,IExamRepository examRepository)
         {
+            _examRepository = examRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -60,9 +57,6 @@ namespace Application.Services
                 .Include(e => e.Questions)
                     .ThenInclude(q => q.Choices)
                 .Include(e => e.Questions)
-                //    .ThenInclude(q => q.TextAnswer)
-                //.Include(e => e.Questions)
-                //    .ThenInclude(q => q.TrueAndFalses)
                 .FirstOrDefaultAsync();
 
             var result = _mapper.Map<ExamDetailsViewDto>(loadedExam);
@@ -86,7 +80,7 @@ namespace Application.Services
                 return ServiceResult<ExamDetailsViewDto>.Fail("Exam not found.");
 
             var result = _mapper.Map<ExamDetailsViewDto>(exam);
-            return ServiceResult<ExamDetailsViewDto>.Ok(result);
+            return ServiceResult<ExamDetailsViewDto>.Ok(result,"Exam Retrived Succesfully");
         }
 
         public async Task<ServiceResult<IEnumerable<ExamViewDto>>> GetAllAsync()
@@ -99,7 +93,9 @@ namespace Application.Services
                 .ToListAsync();
 
             var result = exams.Select(_mapper.Map<ExamViewDto>);
-            return ServiceResult<IEnumerable<ExamViewDto>>.Ok(result);
+            if(result == null)
+                return ServiceResult<IEnumerable<ExamViewDto>>.Fail("Couldn't retrive the list");
+            return ServiceResult<IEnumerable<ExamViewDto>>.Ok(result,"All the exams retrived successfully");
         }
 
 

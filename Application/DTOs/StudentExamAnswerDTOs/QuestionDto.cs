@@ -1,8 +1,4 @@
-﻿
-
-using Domain.Entities;
-
-namespace Application.DTOs.StudentExamAnswerDTOs
+﻿namespace Application.DTOs.StudentExamAnswerDTOs
 {
     public class QuestionDto
     {

@@ -74,9 +74,9 @@ namespace Application.Services
                 AppUserId = teacher.AppUserId ?? string.Empty,
                 ProfileStatus = teacher.ProfileStatus,
                 Subjects = teacher.TeacherSubjects?.Select(ts => ts.Subject?.SubjectName ?? "[Unknown]").ToList()
-                           ?? new List<string>(),
+                    ?? new List<string>(),
                 ClassNames = teacher.TeacherClasses?.Select(tc => tc.Class?.ClassName ?? "[Unknown]").ToList()
-                             ?? new List<string>()
+                    ?? new List<string>()
             };
 
             return ServiceResult<TeacherViewDto>.Ok(dto);
