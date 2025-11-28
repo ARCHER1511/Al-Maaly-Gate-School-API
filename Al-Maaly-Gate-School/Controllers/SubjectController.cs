@@ -2,7 +2,6 @@
 using Application.Interfaces;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Al_Maaly_Gate_School.Controllers
@@ -13,11 +12,12 @@ namespace Al_Maaly_Gate_School.Controllers
     public class SubjectController : ControllerBase
     {
         private readonly ISubjectService _subjectService;
+
         public SubjectController(ISubjectService subjectService)
         {
             _subjectService = subjectService;
         }
-        //Create Subject
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] SubjectCreateDto dto)
         {
@@ -31,7 +31,6 @@ namespace Al_Maaly_Gate_School.Controllers
                 : BadRequest(ApiResponse<SubjectViewDto>.Fail(result.Message!));
         }
 
-        //Get All Subjects
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -42,7 +41,6 @@ namespace Al_Maaly_Gate_School.Controllers
                 : NotFound(ApiResponse<IEnumerable<SubjectViewDto>>.Fail(result.Message!));
         }
 
-        //Get Subject By Id
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -53,7 +51,6 @@ namespace Al_Maaly_Gate_School.Controllers
                 : NotFound(ApiResponse<SubjectViewDto>.Fail(result.Message!));
         }
 
-        //Update Subject
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] SubjectUpdateDto dto)
         {
@@ -70,7 +67,6 @@ namespace Al_Maaly_Gate_School.Controllers
                 : BadRequest(ApiResponse<SubjectViewDto>.Fail(result.Message!));
         }
 
-        //Delete Subject
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -79,6 +75,20 @@ namespace Al_Maaly_Gate_School.Controllers
             return result.Success
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
+
+        // ADDED: New endpoint to get subjects by grade
+        [HttpGet("grade/{gradeId}")]
+        public async Task<IActionResult> GetSubjectsByGrade(string gradeId)
+        {
+            // You'll need to add this method to your ISubjectService and SubjectService
+            // var result = await _subjectService.GetSubjectsByGradeIdAsync(gradeId);
+
+            // return result.Success
+            //     ? Ok(ApiResponse<IEnumerable<SubjectViewDto>>.Ok(result.Data!, result.Message))
+            //     : NotFound(ApiResponse<IEnumerable<SubjectViewDto>>.Fail(result.Message!));
+
+            return Ok(ApiResponse<string>.Ok("Endpoint not implemented yet."));
         }
     }
 }

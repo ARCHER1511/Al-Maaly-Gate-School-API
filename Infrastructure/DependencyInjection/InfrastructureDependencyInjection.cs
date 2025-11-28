@@ -40,6 +40,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IChoicesRepository, ChoicesRepository>();
             services.AddScoped<IStudentExamAnswerRepository, StudentExamAnswerRepository>();
             services.AddScoped<IStudentExamResultRepository, StudentExamResultRepository>();
+            services.AddScoped<IGradeRepository, GradeRepository>();
             return services;
         }
 

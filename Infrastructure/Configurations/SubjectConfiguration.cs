@@ -10,13 +10,9 @@ namespace Infrastructure.Configurations
         {
             builder.HasKey(s => s.Id);
 
-            builder.Property(s => s.ClassYear)
-                   .IsRequired()
-                   .HasMaxLength(50);
-
-            builder.HasOne(s => s.Class)
-                   .WithMany(c => c.Subjects)
-                   .HasForeignKey(s => s.ClassId)
+            builder.HasOne(s => s.Grade)
+                   .WithMany(g => g.Subjects)
+                   .HasForeignKey(s => s.GradeId)
                    .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(s => s.Exams)

@@ -40,7 +40,7 @@ namespace Application.Services
         {
             var (pdfBytes, gpa) = await GenerateCertificateInternalAsync(studentId, degreeType, templatePath);
 
-            // Check if certificate already exists - FIXED: No include parameter
+            // Check if certificate already exists
             var existingCertificate = await _unitOfWork.Certificates
                 .FirstOrDefaultAsync(c => c.StudentId == studentId && c.DegreeType == degreeType);
 
@@ -75,7 +75,7 @@ namespace Application.Services
             }
 
             await _unitOfWork.SaveChangesAsync();
-            
+
             var finalCertificate = existingCertificate ?? await _unitOfWork.Certificates
                 .FirstOrDefaultAsync(c => c.StudentId == studentId && c.DegreeType == degreeType);
 
@@ -87,20 +87,20 @@ namespace Application.Services
 
         public async Task<Certificate?> GetCertificateAsync(string studentId, DegreeType degreeType)
         {
-            // FIXED: No include parameter
             return await _unitOfWork.Certificates
                 .FirstOrDefaultAsync(c => c.StudentId == studentId && c.DegreeType == degreeType);
         }
 
         private async Task<(byte[] pdfBytes, double gpa)> GenerateCertificateInternalAsync(string studentId, DegreeType degreeType, string templatePath)
         {
-            // FIXED: Use the correct FirstOrDefaultAsync with include parameter
+            // FIXED: Include Grade in the query to access GradeName
             var student = await _unitOfWork.Students.FirstOrDefaultAsync(
                 s => s.Id == studentId,
                 include: q => q
                     .Include(s => s.Degrees!)
                     .ThenInclude(d => d.Subject)
                     .Include(s => s.Class)!
+                    .ThenInclude(c => c.Grade) // Include Grade to get GradeName
             );
 
             if (student == null)
@@ -111,8 +111,10 @@ namespace Application.Services
             student.Nationality = ArabicHelper.ShapeArabic(student.Nationality);
             student.PassportNumber = ArabicHelper.ShapeArabic(student.PassportNumber ?? "");
             student.IqamaNumber = ArabicHelper.ShapeArabic(student.IqamaNumber ?? "");
-            if (student.Class != null)
-                student.Class.ClassYear = ArabicHelper.ShapeArabic(student.Class.ClassYear);
+
+            // FIXED: Use Grade.GradeName instead of Class.ClassYear
+            if (student.Class?.Grade != null)
+                student.Class.Grade.GradeName = ArabicHelper.ShapeArabic(student.Class.Grade.GradeName);
 
             var allDegrees = student.Degrees!.ToList();
             List<Degree> degreesToDisplay;
@@ -185,9 +187,12 @@ namespace Application.Services
             gfx.DrawString($"Name: {ArabicHelper.ShapeArabic(student.FullName)}", GetAppropriateFont(student.FullName, 11, XFontStyleEx.Bold), darkBlueBrush, new XPoint(marginX, currentY));
             currentY += 18;
 
+            // FIXED: Use Grade.GradeName instead of Class.ClassYear
             gfx.DrawString("Grade:", headerFont, darkBlueBrush, new XPoint(marginX, currentY));
-            gfx.DrawString(ArabicHelper.ShapeArabic(student.Class?.ClassYear ?? "N/A"),
-               GetAppropriateFont(student.Class?.ClassYear ?? "N/A", 11, XFontStyleEx.Bold),
+
+            string gradeName = student.Class?.Grade?.GradeName ?? "N/A";
+            gfx.DrawString(ArabicHelper.ShapeArabic(gradeName),
+               GetAppropriateFont(gradeName, 11, XFontStyleEx.Bold),
                darkBlueBrush, new XPoint(marginX + 50, currentY));
             currentY += 18;
 

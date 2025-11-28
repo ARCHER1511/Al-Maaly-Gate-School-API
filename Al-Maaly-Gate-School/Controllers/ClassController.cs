@@ -13,18 +13,23 @@ namespace Al_Maaly_Gate_School.Controllers
     public class ClassController : ControllerBase
     {
         private readonly IClassService _classService;
+
         public ClassController(IClassService classService)
         {
             _classService = classService;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var result = await _classService.GetAllAsync();
-            if (!result.Success) return NotFound(ApiResponse<IEnumerable<ClassViewDto>>.Fail(result.Message!));
+            if (!result.Success)
+                return NotFound(ApiResponse<IEnumerable<ClassViewDto>>.Fail(result.Message!));
+
             return Ok(ApiResponse<IEnumerable<ClassViewDto>>.Ok(result.Data!, result.Message));
         }
-        [HttpGet("class/{id}")]
+
+        [HttpGet("{id}")] // CHANGED: Removed "class/" prefix for consistency
         public async Task<IActionResult> GetById(string id)
         {
             var result = await _classService.GetByIdAsync(id);
@@ -35,12 +40,12 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] ClassDto classDto)
+        public async Task<IActionResult> Create([FromBody] CreateClassDto dto) // Changed to CreateClassDto
         {
             if (!ModelState.IsValid)
-                return BadRequest(ApiResponse<ClassDto>.Fail("Invalid class data."));
+                return BadRequest(ApiResponse<CreateClassDto>.Fail("Invalid class data."));
 
-            var result = await _classService.CreateAsync(classDto);
+            var result = await _classService.CreateAsync(dto);
 
             if (!result.Success)
                 return BadRequest(ApiResponse<ClassDto>.Fail(result.Message!));
@@ -49,16 +54,16 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] ClassDto ClassDto)
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateClassDto dto) // Changed to UpdateClassDto
         {
-            if (id != ClassDto.Id)
-                return BadRequest(ApiResponse<ClassDto>.Fail("ID in URL does not match ID in body."));
+            if (id != dto.Id)
+                return BadRequest(ApiResponse<UpdateClassDto>.Fail("ID in URL does not match ID in body."));
 
             var exists = await _classService.GetByIdAsync(id);
             if (!exists.Success)
-                return NotFound(ApiResponse<ClassDto>.Fail(exists.Message!));
+                return NotFound(ApiResponse<UpdateClassDto>.Fail(exists.Message!));
 
-            var result = await _classService.UpdateAsync(ClassDto);
+            var result = await _classService.UpdateAsync(dto);
 
             if (!result.Success)
                 return BadRequest(ApiResponse<ClassDto>.Fail(result.Message!));
@@ -72,18 +77,20 @@ namespace Al_Maaly_Gate_School.Controllers
             var result = await _classService.DeleteAsync(id);
 
             if (!result.Success)
-                return NotFound(ApiResponse<string>.Fail(result.Message!));
+                return NotFound(ApiResponse<bool>.Fail(result.Message!)); // CHANGED: Return bool instead of string
 
-            return Ok(ApiResponse<string>.Ok("class deleted successfully."));
+            return Ok(ApiResponse<bool>.Ok(true, "Class deleted successfully.")); // CHANGED: Return bool with message
         }
+
         [HttpGet("with-teachers")]
         public async Task<IActionResult> GetAllWithTeachers()
         {
             var result = await _classService.GetAllWithTeachersAsync();
-            if (!result.Success) return NotFound(result);
-            return Ok(result);
-        }
+            if (!result.Success)
+                return NotFound(ApiResponse<IEnumerable<ClassViewDto>>.Fail(result.Message!));
 
+            return Ok(ApiResponse<IEnumerable<ClassViewDto>>.Ok(result.Data!, result.Message));
+        }
 
         [HttpGet("{classId}/students")]
         public async Task<IActionResult> GetStudents(string classId)

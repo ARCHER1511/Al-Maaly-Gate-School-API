@@ -8,8 +8,8 @@ namespace Application.Interfaces
     {
         Task<ServiceResult<IEnumerable<ClassViewDto>>> GetAllAsync();
         Task<ServiceResult<ClassViewDto>> GetByIdAsync(object id);
-        Task<ServiceResult<ClassDto>> CreateAsync(ClassDto dto);
-        Task<ServiceResult<ClassDto>> UpdateAsync(ClassDto dto);
+        Task<ServiceResult<ClassDto>> CreateAsync(CreateClassDto dto);
+        Task<ServiceResult<ClassDto>> UpdateAsync(UpdateClassDto dto);
         Task<ServiceResult<bool>> DeleteAsync(object id);
         Task<ServiceResult<IEnumerable<ClassViewDto>>> GetAllWithTeachersAsync();
 

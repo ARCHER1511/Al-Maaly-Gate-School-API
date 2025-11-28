@@ -4,6 +4,7 @@ using Application.DTOs.AuthDTOs;
 using Application.DTOs.ClassAppointmentsDTOs;
 using Application.DTOs.ClassDTOs;
 using Application.DTOs.ExamDTOS;
+using Application.DTOs.GradeDTOs;
 using Application.DTOs.QuestionDTOs;
 using Application.DTOs.StudentDTOs;
 using Application.DTOs.StudentExamAnswerDTOs;
@@ -117,16 +118,17 @@ namespace Application.Mappings
             #endregion
 
             #region Classes Mappings
-            CreateMap<ClassViewDto, Class>().IgnoreUnmapped();
+            CreateMap<Class, ClassDto>();
+            CreateMap<ClassDto, Class>();
+
+            // ADD THESE MAPPINGS:
+            CreateMap<CreateClassDto, Class>();
+            CreateMap<UpdateClassDto, Class>();
+
             CreateMap<Class, ClassViewDto>()
-                .ForMember(
-                    dest => dest.AssignedTeachers,
-                    opt => opt.MapFrom(src => src.TeacherClasses.Select(tc => tc.Teacher))
-                );
-            CreateMap<ClassDto, Class>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .IgnoreUnmapped();
-            CreateMap<Class, ClassDto>().IgnoreUnmapped();
+                .ForMember(dest => dest.GradeName, opt => opt.MapFrom(src => src.Grade.GradeName))
+                .ForMember(dest => dest.StudentCount, opt => opt.MapFrom(src => src.Students != null ? src.Students.Count : 0))
+                .ForMember(dest => dest.TeacherCount, opt => opt.MapFrom(src => src.TeacherClasses != null ? src.TeacherClasses.Count : 0));
             #endregion
 
             #region Class Appointments
@@ -232,12 +234,13 @@ namespace Application.Mappings
             #endregion
 
             #region Subject Mappings
-            //Create
-            CreateMap<SubjectCreateDto, Subject>().IgnoreUnmapped();
-            //Edit
-            CreateMap<SubjectUpdateDto, Subject>().IgnoreUnmapped().ReverseMap();
-            //View
-            CreateMap<Subject, SubjectViewDto>().IgnoreUnmapped();
+            CreateMap<Subject, SubjectViewDto>()
+                .ForMember(dest => dest.GradeName, opt => opt.MapFrom(src => src.Grade.GradeName))
+                .ForMember(dest => dest.TeacherCount, opt => opt.MapFrom(src => src.TeacherSubjects != null ? src.TeacherSubjects.Count : 0))
+                .ForMember(dest => dest.ExamCount, opt => opt.MapFrom(src => src.Exams != null ? src.Exams.Count : 0));
+
+            CreateMap<SubjectCreateDto, Subject>();
+            CreateMap<SubjectUpdateDto, Subject>();
             #endregion
 
             #region StudentExamAnswer
@@ -277,6 +280,35 @@ namespace Application.Mappings
             CreateMap<StudentExamResultDto, StudentExamResult>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .IgnoreUnmapped();
+            #endregion
+
+            #region Grade
+            CreateMap<Grade, GradeViewDto>()
+                .ForMember(dest => dest.ClassCount, opt => opt.MapFrom(src => src.Classes.Count))
+                .ForMember(dest => dest.SubjectCount, opt => opt.MapFrom(src => src.Subjects.Count));
+
+            CreateMap<CreateGradeDto, Grade>();
+            CreateMap<UpdateGradeDto, Grade>();
+
+            CreateMap<Grade, GradeWithDetailsDto>();
+
+            // Class mappings
+            CreateMap<Class, ClassViewDto>()
+                .ForMember(dest => dest.GradeName, opt => opt.MapFrom(src => src.Grade.GradeName))
+                .ForMember(dest => dest.StudentCount, opt => opt.MapFrom(src => src.Students != null ? src.Students.Count : 0))
+                .ForMember(dest => dest.TeacherCount, opt => opt.MapFrom(src => src.TeacherClasses != null ? src.TeacherClasses.Count : 0));
+
+            CreateMap<ClassDto, Class>();
+            CreateMap<CreateClassInGradeDto, Class>();
+
+            // Subject mappings
+            CreateMap<Subject, SubjectViewDto>()
+                .ForMember(dest => dest.GradeName, opt => opt.MapFrom(src => src.Grade.GradeName))
+                .ForMember(dest => dest.TeacherCount, opt => opt.MapFrom(src => src.TeacherSubjects != null ? src.TeacherSubjects.Count : 0))
+                .ForMember(dest => dest.ExamCount, opt => opt.MapFrom(src => src.Exams != null ? src.Exams.Count : 0));
+
+            CreateMap<SubjectCreateDto, Subject>();
+            CreateMap<SubjectUpdateDto, Subject>();
             #endregion
         }
     }
