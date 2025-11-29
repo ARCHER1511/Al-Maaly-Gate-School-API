@@ -58,5 +58,8 @@ namespace Application.Interfaces
         Task<ServiceResult<bool>> BlockParentAsync(string appUserId, string adminUserId);
         Task<ServiceResult<bool>> UnblockParentAsync(string appUserId, string adminUserId);
         Task<ServiceResult<IEnumerable<ParentViewDto>>> GetPendingParentsAsync();
+
+        Task<ServiceResult<bool>> UnassignTeacherFromClassAsync(string teacherId, string classId);
+        Task<ServiceResult<bool>> BulkAssignTeachersAsync(BulkAssignTeachersDto dto);
     }
 }

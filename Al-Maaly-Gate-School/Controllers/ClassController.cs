@@ -113,5 +113,38 @@ namespace Al_Maaly_Gate_School.Controllers
 
             return Ok(ApiResponse<List<Subject>>.Ok(result.Data!));
         }
+
+        // Add to ClassController
+        [HttpGet("{classId}/statistics")]
+        public async Task<IActionResult> GetClassStatistics(string classId)
+        {
+            var result = await _classService.GetClassStatisticsAsync(classId);
+            if (!result.Success)
+                return NotFound(ApiResponse<ClassStatisticsDto>.Fail(result.Message!));
+
+            return Ok(ApiResponse<ClassStatisticsDto>.Ok(result.Data!, result.Message));
+        }
+
+        [HttpGet("{classId}/export")]
+        public async Task<IActionResult> ExportClassData(string classId)
+        {
+            var result = await _classService.ExportClassDataAsync(classId);
+            if (!result.Success)
+                return BadRequest(ApiResponse<byte[]>.Fail(result.Message!));
+
+            return File(result.Data!, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"class_{classId}_data_{DateTime.Now:yyyyMMdd}.xlsx");
+        }
+
+        [HttpGet("export-all")]
+        public async Task<IActionResult> ExportAllClasses()
+        {
+            var result = await _classService.ExportAllClassesAsync();
+            if (!result.Success)
+                return BadRequest(ApiResponse<byte[]>.Fail(result.Message!));
+
+            return File(result.Data!, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"all_classes_data_{DateTime.Now:yyyyMMdd}.xlsx");
+        }
     }
 }

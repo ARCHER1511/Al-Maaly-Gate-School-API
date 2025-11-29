@@ -232,6 +232,7 @@ namespace Application.Services
                 Id = t.Id,
                 FullName = t.AppUser.FullName,
                 Email = t.Email,
+                ContactInfo = t.ContactInfo,
                 Subjects = t.TeacherSubjects!.Select(ts => ts.Subject.SubjectName).ToList(),
                 ClassNames = t.TeacherClasses.Select(tc => tc.Class.ClassName).ToList(),
                 ProfileStatus = t.ProfileStatus.ToString(),
@@ -900,6 +901,90 @@ namespace Application.Services
             );
 
             return ServiceResult<IEnumerable<Subject>>.Ok(subjects);
+        }
+
+        // Unassign Teacher from Class
+        public async Task<ServiceResult<bool>> UnassignTeacherFromClassAsync(string teacherId, string classId)
+        {
+            var teacherClassRepo = _unitOfWork.Repository<TeacherClass>();
+
+            // Find the specific teacher-class assignment
+            var assignment = await teacherClassRepo.FirstOrDefaultAsync(tc =>
+                tc.TeacherId == teacherId && tc.ClassId == classId
+            );
+
+            if (assignment == null)
+                return ServiceResult<bool>.Fail("Teacher is not assigned to this class.");
+
+            // Remove the assignment
+            teacherClassRepo.Delete(assignment);
+            await _unitOfWork.SaveChangesAsync();
+
+            return ServiceResult<bool>.Ok(true, "Teacher unassigned from class successfully.");
+        }
+
+        // Bulk Assign Teachers
+        // Bulk Assign Teachers
+        public async Task<ServiceResult<bool>> BulkAssignTeachersAsync(BulkAssignTeachersDto dto)
+        {
+            var teacherRepo = _unitOfWork.Repository<Teacher>();
+            var teacherClassRepo = _unitOfWork.Repository<TeacherClass>();
+            var classRepo = _unitOfWork.Repository<Class>();
+
+            // Validate input
+            if (!dto.TeacherIds.Any() || !dto.ClassIds.Any())
+                return ServiceResult<bool>.Fail("Both TeacherIds and ClassIds are required.");
+
+            // Validate all teachers exist
+            var teachers = await teacherRepo.FindAllAsync(t => dto.TeacherIds.Contains(t.Id));
+            if (teachers.Count() != dto.TeacherIds.Count())
+                return ServiceResult<bool>.Fail("One or more teachers not found.");
+
+            // Validate all classes exist
+            var classes = await classRepo.FindAllAsync(c => dto.ClassIds.Contains(c.Id));
+            if (classes.Count() != dto.ClassIds.Count())
+                return ServiceResult<bool>.Fail("One or more classes not found.");
+
+            // Get existing assignments to avoid duplicates
+            var existingAssignments = await teacherClassRepo.FindAllAsync(tc =>
+                dto.TeacherIds.Contains(tc.TeacherId) && dto.ClassIds.Contains(tc.ClassId)
+            );
+
+            var existingAssignmentKeys = existingAssignments
+                .Select(ea => (ea.TeacherId, ea.ClassId))
+                .ToHashSet();
+
+            // Create new assignments (all combinations of teachers and classes)
+            var newAssignmentsCount = 0;
+
+            foreach (var teacherId in dto.TeacherIds)
+            {
+                foreach (var classId in dto.ClassIds)
+                {
+                    // Skip if assignment already exists
+                    if (existingAssignmentKeys.Contains((teacherId, classId)))
+                        continue;
+
+                    // Create and add new assignment
+                    var newAssignment = new TeacherClass
+                    {
+                        TeacherId = teacherId,
+                        ClassId = classId
+                    };
+
+                    await teacherClassRepo.AddAsync(newAssignment);
+                    newAssignmentsCount++;
+                }
+            }
+
+            if (newAssignmentsCount == 0)
+                return ServiceResult<bool>.Fail("All teacher-class assignments already exist.");
+
+            // Save all changes
+            await _unitOfWork.SaveChangesAsync();
+
+            return ServiceResult<bool>.Ok(true,
+                $"Successfully created {newAssignmentsCount} teacher-class assignments.");
         }
     }
 }

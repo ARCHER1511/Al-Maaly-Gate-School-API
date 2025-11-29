@@ -32,5 +32,7 @@ namespace Application.Interfaces
         Task<ServiceResult<IEnumerable<ClassViewDto>>> GetClassesByGradeIdAsync(string gradeId);
         Task<ServiceResult<IEnumerable<SubjectViewDto>>> GetSubjectsByGradeIdAsync(string gradeId);
         Task<ServiceResult<GradeWithDetailsDto>> GetGradeWithDetailsAsync(string id);
+
+        Task<ServiceResult<bool>> BulkMoveClassesAsync(BulkMoveClassesDto dto);
     }
 }

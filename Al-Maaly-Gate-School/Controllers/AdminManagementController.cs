@@ -282,5 +282,24 @@ namespace Al_Maaly_Gate_School.Controllers
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));
         }
+
+        // Add to AdminManagementController
+        [HttpDelete("teachers/unassign-from-class")]
+        public async Task<IActionResult> UnassignTeacherFromClass([FromQuery] string teacherId, [FromQuery] string classId)
+        {
+            var result = await _adminManagementService.UnassignTeacherFromClassAsync(teacherId, classId);
+            return result.Success
+                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
+
+        [HttpPost("bulk-assign-teachers")]
+        public async Task<IActionResult> BulkAssignTeachers([FromBody] BulkAssignTeachersDto dto)
+        {
+            var result = await _adminManagementService.BulkAssignTeachersAsync(dto);
+            return result.Success
+                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
     }
 }

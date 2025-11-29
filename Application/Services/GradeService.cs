@@ -233,5 +233,47 @@ namespace Application.Services
             var data = _mapper.Map<GradeWithDetailsDto>(grade);
             return ServiceResult<GradeWithDetailsDto>.Ok(data);
         }
+
+        public async Task<ServiceResult<bool>> BulkMoveClassesAsync(BulkMoveClassesDto dto)
+        {
+            var classRepo = _unitOfWork.Repository<Class>();
+            var gradeRepo = _unitOfWork.Repository<Grade>();
+
+            // Validate input
+            if (!dto.ClassIds.Any())
+                return ServiceResult<bool>.Fail("At least one class ID is required.");
+
+            if (string.IsNullOrEmpty(dto.NewGradeId))
+                return ServiceResult<bool>.Fail("New grade ID is required.");
+
+            // Validate that new grade exists
+            var newGrade = await gradeRepo.GetByIdAsync(dto.NewGradeId);
+            if (newGrade == null)
+                return ServiceResult<bool>.Fail("New grade not found.");
+
+            // Get all classes to be moved
+            var classes = await classRepo.FindAllAsync(c => dto.ClassIds.Contains(c.Id));
+
+            // Check if all classes exist
+            if (classes.Count() != dto.ClassIds.Count)
+            {
+                var foundClassIds = classes.Select(c => c.Id).ToHashSet();
+                var missingClassIds = dto.ClassIds.Except(foundClassIds).ToList();
+                return ServiceResult<bool>.Fail($"The following classes were not found: {string.Join(", ", missingClassIds)}");
+            }
+
+            // Update each class's grade
+            foreach (var classEntity in classes)
+            {
+                classEntity.GradeId = dto.NewGradeId;
+                classRepo.Update(classEntity);
+            }
+
+            // Save all changes
+            await _unitOfWork.SaveChangesAsync();
+
+            return ServiceResult<bool>.Ok(true,
+                $"Successfully moved {classes.Count()} classes to grade {newGrade.GradeName}.");
+        }
     }
 }

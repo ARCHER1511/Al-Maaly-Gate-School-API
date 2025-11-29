@@ -199,5 +199,16 @@ namespace Al_Maaly_Gate_School.Controllers
 
             return Ok(ApiResponse<bool>.Ok(result.Data!, result.Message));
         }
+
+        // Add to GradeController
+        [HttpPost("bulk-move-classes")]
+        public async Task<IActionResult> BulkMoveClasses([FromBody] BulkMoveClassesDto dto)
+        {
+            var result = await _gradeService.BulkMoveClassesAsync(dto);
+            if (!result.Success)
+                return BadRequest(ApiResponse<bool>.Fail(result.Message!));
+
+            return Ok(ApiResponse<bool>.Ok(result.Data!, result.Message));
+        }
     }
 }

@@ -15,5 +15,9 @@ namespace Application.Interfaces
 
         Task<ServiceResult<List<Student>>> GetStudentsByClassIdAsync(string classId);
         Task<ServiceResult<List<Subject>>> GetSubjectsByClassIdAsync(string classId);
+
+        Task<ServiceResult<ClassStatisticsDto>> GetClassStatisticsAsync(string classId);
+        Task<ServiceResult<byte[]>> ExportClassDataAsync(string classId);
+        Task<ServiceResult<byte[]>> ExportAllClassesAsync();
     }
 }
