@@ -34,7 +34,7 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task MarkAsReadAsync(string notificationId, string userId)
+        public async Task<bool> MarkAsReadAsync(string notificationId, string userId)
         {
             var userNotification = await _context.Set<UserNotification>()
                 .FirstOrDefaultAsync(un => un.NotificationId == notificationId && un.UserId == userId);
@@ -45,9 +45,10 @@ namespace Infrastructure.Repositories
                 userNotification.ReadAt = DateTime.Now;
                 _context.Set<UserNotification>().Update(userNotification);
             }
+            return true;
         }
 
-        public async Task AddUserNotificationAsync(Notification notification, string userId)
+        public async Task<bool> AddUserNotificationAsync(Notification notification, string userId)
         {
             var userNotification = new UserNotification
             {
@@ -55,6 +56,7 @@ namespace Infrastructure.Repositories
                 UserId = userId
             };
             await _context.Set<UserNotification>().AddAsync(userNotification);
+            return true;
         }
     }
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.DTOs.ExamDTOS
+﻿namespace Application.DTOs.ExamDTOS
 {
     public class CreateExamWithQuestionsDto
     {
@@ -16,7 +10,7 @@ namespace Application.DTOs.ExamDTOS
         public DateTime End { get; set; }
         public decimal MinMark { get; set; }
         public decimal FullMark { get; set; }
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
 
         // List of existing Question IDs to assign
         public List<string> QuestionIds { get; set; } = new();

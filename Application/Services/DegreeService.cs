@@ -19,12 +19,12 @@ namespace Application.Services
         // ================================================
         // ADD DEGREES
         // ================================================
-        public async Task<ApiResponse<string>> AddDegreesAsync(string studentId, List<Degree> degrees)
+        public async Task<ServiceResult<string>> AddDegreesAsync(string studentId, List<Degree> degrees)
         {
             var student = await _unitOfWork.Students.GetByIdAsync(studentId);
 
             if (student == null)
-                return ApiResponse<string>.Fail("Student not found");
+                return ServiceResult<string>.Fail("Student not found");
 
             foreach (var degree in degrees)
             {
@@ -33,13 +33,13 @@ namespace Application.Services
             }
 
             await _unitOfWork.SaveChangesAsync();
-            return ApiResponse<string>.Ok("Degrees added successfully");
+            return ServiceResult<string>.Ok("Degrees added successfully");
         }
 
         // =====================================================
         // GET STUDENT + DEGREES
         // =====================================================
-        public async Task<ApiResponse<StudentDegreesDto>> GetStudentDegreesAsync(string studentId)
+        public async Task<ServiceResult<StudentDegreesDto>> GetStudentDegreesAsync(string studentId)
         {
             var student = await _unitOfWork.Students.FirstOrDefaultAsync(
                 s => s.Id == studentId,
@@ -50,7 +50,7 @@ namespace Application.Services
             );
 
             if (student == null)
-                return ApiResponse<StudentDegreesDto>.Fail("Student not found");
+                return ServiceResult<StudentDegreesDto>.Fail("Student not found");
 
             var dto = new StudentDegreesDto
             {
@@ -69,13 +69,13 @@ namespace Application.Services
                 }).ToList()
             };
 
-            return ApiResponse<StudentDegreesDto>.Ok(dto);
+            return ServiceResult<StudentDegreesDto>.Ok(dto);
         }
 
         // =====================================================
         // GET ALL STUDENTS + DEGREES
         // =====================================================
-        public async Task<ApiResponse<List<StudentDegreesDto>>> GetAllStudentsDegreesAsync()
+        public async Task<ServiceResult<List<StudentDegreesDto>>> GetAllStudentsDegreesAsync()
         {
             var students = await _unitOfWork.Students.FindAllAsync(
                 predicate: s => true,
@@ -103,7 +103,7 @@ namespace Application.Services
 
             }).ToList();
 
-            return ApiResponse<List<StudentDegreesDto>>.Ok(result);
+            return ServiceResult<List<StudentDegreesDto>>.Ok(result);
         }
     }
 }

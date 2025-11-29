@@ -1,10 +1,11 @@
 ﻿using Domain.Entities;
+using Domain.Wrappers;
 
 namespace Application.Interfaces
 {
     public interface INotificationService
     {
-        Task<Notification> CreateNotificationAsync(
+        Task<ServiceResult<Notification>> CreateNotificationAsync(
             string title,
             string message,
             string type,
@@ -15,8 +16,8 @@ namespace Application.Interfaces
             bool isBroadcast = false
         );
 
-        Task<IEnumerable<Notification>> GetUserNotificationsAsync(string userId);
-        Task<IEnumerable<Notification>> GetUnreadNotificationsAsync(string userId);
-        Task<bool> MarkAsReadAsync(string notificationId, string userId);
+        Task<ServiceResult<IEnumerable<Notification>>> GetUserNotificationsAsync(string userId);
+        Task<ServiceResult<IEnumerable<Notification>>> GetUnreadNotificationsAsync(string userId);
+        Task<ServiceResult<bool>> MarkAsReadAsync(string notificationId, string userId);
     }
 }

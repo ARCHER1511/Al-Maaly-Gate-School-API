@@ -1,11 +1,8 @@
-﻿using Application.DTOs.ExamDTOS;
+﻿using Al_Maaly_Gate_School.ControllerResponseHandler;
 using Application.DTOs.TeacherDTOs;
 using Application.Interfaces;
-using Domain.Wrappers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
@@ -22,18 +19,18 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll() => Ok(await _teacherService.GetAllAsync());
+        public async Task<IActionResult> GetAll() => await this.HandleAsync(() => _teacherService.GetAllAsync());
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(string id) => Ok(await _teacherService.GetByIdAsync(id));
+        public async Task<IActionResult> GetById(string id) => await this.HandleAsync(() => _teacherService.GetByIdAsync(id));
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateTeacherDto dto) => Ok(await _teacherService.CreateAsync(dto));
+        public async Task<IActionResult> Create([FromBody] CreateTeacherDto dto) => await this.HandleAsync(() => _teacherService.CreateAsync(dto));
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] UpdateTeacherDto dto) => Ok(await _teacherService.UpdateAsync(id, dto));
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateTeacherDto dto) => await this.HandleAsync(() => _teacherService.UpdateAsync(id, dto));
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id) => Ok(await _teacherService.DeleteAsync(id));
+        public async Task<IActionResult> Delete(string id) => await this.HandleAsync(() => _teacherService.DeleteAsync(id));
     }
 }
