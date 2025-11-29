@@ -22,9 +22,10 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public GradeService(IGradeRepository gradeRepo, IUnitOfWork unitOfWork, IMapper mapper)
+        public GradeService(IGradeRepository gradeRepo,IClassRepository classRepository ,IUnitOfWork unitOfWork, IMapper mapper)
         {
             _gradeRepo = gradeRepo;
+            _classRepository = classRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
