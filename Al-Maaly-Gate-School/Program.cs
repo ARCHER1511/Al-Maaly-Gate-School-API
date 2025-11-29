@@ -1,4 +1,5 @@
-﻿using Application.DependencyInjection;
+﻿using Al_Maaly_Gate_School.Seeding;
+using Application.DependencyInjection;
 using Application.SignalR;
 using Common.Extensions;
 using Infrastructure.DependencyInjection;
@@ -14,7 +15,7 @@ namespace Al_Maaly_Gate_School
     public class Program
     {
         public void Main() { }
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
@@ -103,7 +104,10 @@ namespace Al_Maaly_Gate_School
 
             app.MapControllers();
 
+            await IdentitySeeder.SeedAsync(app.Services);
+
             app.Run();
         }
+
     }
 }
