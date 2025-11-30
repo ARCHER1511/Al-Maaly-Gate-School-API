@@ -12,9 +12,14 @@ namespace Infrastructure.Configurations
 
             builder.HasKey(c => c.Id);
 
-            builder.Property(c => c.ClassYear)
+            builder.Property(c => c.ClassName)
                    .IsRequired()
-                   .HasMaxLength(50);
+                   .HasMaxLength(100);
+
+            builder.HasOne(c => c.Grade)
+                   .WithMany(g => g.Classes)
+                   .HasForeignKey(c => c.GradeId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(c => c.ClassAssets)
                    .WithOne(ca => ca.Class)

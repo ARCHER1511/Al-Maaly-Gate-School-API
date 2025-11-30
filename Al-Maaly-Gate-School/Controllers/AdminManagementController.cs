@@ -3,10 +3,8 @@ using Application.DTOs.ParentDTOs;
 using Application.DTOs.StudentDTOs;
 using Application.DTOs.TeacherDTOs;
 using Application.Interfaces;
-using Application.Services;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Al_Maaly_Gate_School.Controllers
@@ -280,6 +278,25 @@ namespace Al_Maaly_Gate_School.Controllers
         public async Task<IActionResult> UnblockParent(string appUserId, string adminUserId)
         {
             var result = await _adminManagementService.UnblockParentAsync(appUserId, adminUserId);
+            return result.Success
+                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
+
+        // Add to AdminManagementController
+        [HttpDelete("teachers/unassign-from-class")]
+        public async Task<IActionResult> UnassignTeacherFromClass([FromQuery] string teacherId, [FromQuery] string classId)
+        {
+            var result = await _adminManagementService.UnassignTeacherFromClassAsync(teacherId, classId);
+            return result.Success
+                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
+
+        [HttpPost("bulk-assign-teachers")]
+        public async Task<IActionResult> BulkAssignTeachers([FromBody] BulkAssignTeachersDto dto)
+        {
+            var result = await _adminManagementService.BulkAssignTeachersAsync(dto);
             return result.Success
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));

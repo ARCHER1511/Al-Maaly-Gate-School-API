@@ -1,10 +1,11 @@
 ﻿using Domain.Entities;
+using Domain.Wrappers;
 
 namespace Application.Interfaces
 {
     public interface IUserNotificationService
     {
-        Task<IEnumerable<UserNotification>> GetByUserIdAsync(string userId);
-        Task<bool> MarkAsDeliveredAsync(string notificationId, string userId);
+        Task<ServiceResult<IEnumerable<UserNotification>>> GetByUserIdAsync(string userId);
+        Task<ServiceResult<bool>> MarkAsDeliveredAsync(string notificationId, string userId);
     }
 }

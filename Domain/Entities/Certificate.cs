@@ -8,7 +8,7 @@ namespace Domain.Entities
 {
     public class Certificate : BaseEntity
     {
-        public string StudentId { get; set; }
+        public string StudentId { get; set; } = string.Empty;
         public Student Student { get; set; } = null!;
 
         public double GPA { get; set; }

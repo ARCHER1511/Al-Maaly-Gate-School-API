@@ -3,7 +3,6 @@ using Application.Interfaces;
 using Domain.Entities;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Al_Maaly_Gate_School.Controllers

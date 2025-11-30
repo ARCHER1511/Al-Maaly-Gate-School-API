@@ -293,14 +293,16 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("ClassName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("ClassYear")
+                    b.Property<string>("GradeId")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GradeId");
 
                     b.ToTable("Classes", "Academics");
                 });
@@ -499,6 +501,26 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FileRecords", "Files");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Grade", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("GradeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Grades", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.Notification", b =>
@@ -865,19 +887,14 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ClassId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ClassYear")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<double>("CreditHours")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("float")
                         .HasDefaultValue(3.0);
+
+                    b.Property<string>("GradeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SubjectName")
                         .IsRequired()
@@ -886,7 +903,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClassId");
+                    b.HasIndex("GradeId");
 
                     b.ToTable("Subjects", "Academics");
                 });
@@ -1178,6 +1195,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("Question");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Class", b =>
+                {
+                    b.HasOne("Domain.Entities.Grade", "Grade")
+                        .WithMany("Classes")
+                        .HasForeignKey("GradeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Grade");
+                });
+
             modelBuilder.Entity("Domain.Entities.ClassAppointment", b =>
                 {
                     b.HasOne("Domain.Entities.Class", "Class")
@@ -1378,13 +1406,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Subject", b =>
                 {
-                    b.HasOne("Domain.Entities.Class", "Class")
+                    b.HasOne("Domain.Entities.Grade", "Grade")
                         .WithMany("Subjects")
-                        .HasForeignKey("ClassId")
+                        .HasForeignKey("GradeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Class");
+                    b.Navigation("Grade");
                 });
 
             modelBuilder.Entity("Domain.Entities.Teacher", b =>
@@ -1513,14 +1541,19 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Students");
 
-                    b.Navigation("Subjects");
-
                     b.Navigation("TeacherClasses");
                 });
 
             modelBuilder.Entity("Domain.Entities.Exam", b =>
                 {
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Grade", b =>
+                {
+                    b.Navigation("Classes");
+
+                    b.Navigation("Subjects");
                 });
 
             modelBuilder.Entity("Domain.Entities.Notification", b =>

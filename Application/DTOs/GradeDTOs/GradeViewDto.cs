@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Application.DTOs.GradeDTOs
+{
+    public class GradeViewDto
+    {
+        public string Id { get; set; } = string.Empty;
+        public string GradeName { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public int ClassCount { get; set; }
+        public int SubjectCount { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+    }
+}

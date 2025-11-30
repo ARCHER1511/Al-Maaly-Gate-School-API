@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.DegreesDTOs;
 using Application.Interfaces;
 using Domain.Entities;
+using Domain.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,7 +33,9 @@ namespace Al_Maaly_Gate_School.Controllers
             }).ToList();
 
             var result = await _degreeService.AddDegreesAsync(dto.StudentId, degrees);
-            return Ok(result);
+            if(!result.Success)
+                return BadRequest(result.Message);
+            return Ok(ApiResponse<string>.Ok(result.Data!, result.Message));
         }
 
         // Get Student degrees
@@ -40,7 +43,9 @@ namespace Al_Maaly_Gate_School.Controllers
         public async Task<IActionResult> GetStudentDegrees(string studentId)
         {
             var result = await _degreeService.GetStudentDegreesAsync(studentId);
-            return Ok(result);
+            if(!result.Success || result == null)
+                return BadRequest(result!.Message);
+            return Ok(ApiResponse<StudentDegreesDto>.Ok(result.Data!,result.Message));
         }
 
         // Get all
@@ -48,7 +53,9 @@ namespace Al_Maaly_Gate_School.Controllers
         public async Task<IActionResult> GetAllStudentsDegrees()
         {
             var result = await _degreeService.GetAllStudentsDegreesAsync();
-            return Ok(result);
+            if (!result.Success || result == null)
+                return BadRequest(result!.Message);
+            return Ok(ApiResponse<List<StudentDegreesDto>>.Ok(result.Data!,result.Message));
         }
     }
 }

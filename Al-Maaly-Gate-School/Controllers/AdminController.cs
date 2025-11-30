@@ -1,7 +1,4 @@
 ﻿using Application.DTOs.AdminDTOs;
-using Application.DTOs.ClassDTOs;
-using Application.DTOs.StudentDTOs;
-using Application.DTOs.TeacherDTOs;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Wrappers;

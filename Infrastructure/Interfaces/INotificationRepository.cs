@@ -6,7 +6,7 @@ namespace Infrastructure.Interfaces
     {
         Task<IEnumerable<Notification>> GetUserNotificationsAsync(string userId);
         Task<IEnumerable<Notification>> GetUnreadNotificationsAsync(string userId);
-        Task MarkAsReadAsync(string notificationId, string userId);
-        Task AddUserNotificationAsync(Notification notification, string userId);
+        Task<bool> MarkAsReadAsync(string notificationId, string userId);
+        Task<bool> AddUserNotificationAsync(Notification notification, string userId);
     }
 }

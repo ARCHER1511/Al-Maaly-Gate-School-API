@@ -1,17 +1,12 @@
-﻿using Application.Interfaces;
+﻿using Application.Helpers;
+using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using PdfSharp.Drawing;
-using PdfSharp.Pdf;
-using PdfSharp.Pdf.IO;
 using PdfSharp.Fonts;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Application.Helpers;
+using PdfSharp.Pdf.IO;
 
 namespace Application.Services
 {
@@ -74,7 +69,7 @@ namespace Application.Services
             }
 
             await _unitOfWork.SaveChangesAsync();
-            
+
             var finalCertificate = existingCertificate ?? await _unitOfWork.Certificates
                 .FirstOrDefaultAsync(c => c.StudentId == studentId && c.DegreeType == degreeType);
 
@@ -92,12 +87,14 @@ namespace Application.Services
 
         private async Task<(byte[] pdfBytes, double gpa)> GenerateCertificateInternalAsync(string studentId, DegreeType degreeType, string templatePath)
         {
+            // FIXED: Include Grade in the query to access GradeName
             var student = await _unitOfWork.Students.FirstOrDefaultAsync(
                 s => s.Id == studentId,
                 include: q => q
                     .Include(s => s.Degrees!)
                     .ThenInclude(d => d.Subject)
                     .Include(s => s.Class)!
+                    .ThenInclude(c => c.Grade) // Include Grade to get GradeName
             );
 
             if (student == null)
@@ -108,8 +105,10 @@ namespace Application.Services
             student.Nationality = ArabicHelper.ShapeArabic(student.Nationality);
             student.PassportNumber = ArabicHelper.ShapeArabic(student.PassportNumber ?? "");
             student.IqamaNumber = ArabicHelper.ShapeArabic(student.IqamaNumber ?? "");
-            if (student.Class != null)
-                student.Class.ClassYear = ArabicHelper.ShapeArabic(student.Class.ClassYear);
+
+            // FIXED: Use Grade.GradeName instead of Class.ClassYear
+            if (student.Class?.Grade != null)
+                student.Class.Grade.GradeName = ArabicHelper.ShapeArabic(student.Class.Grade.GradeName);
 
             var allDegrees = student.Degrees!.ToList();
             List<Degree> degreesToDisplay;
@@ -182,9 +181,12 @@ namespace Application.Services
             gfx.DrawString($"Name: {ArabicHelper.ShapeArabic(student.FullName)}", GetAppropriateFont(student.FullName, 11, XFontStyleEx.Bold), darkBlueBrush, new XPoint(marginX, currentY));
             currentY += 18;
 
+            // FIXED: Use Grade.GradeName instead of Class.ClassYear
             gfx.DrawString("Grade:", headerFont, darkBlueBrush, new XPoint(marginX, currentY));
-            gfx.DrawString(ArabicHelper.ShapeArabic(student.Class?.ClassYear ?? "N/A"),
-               GetAppropriateFont(student.Class?.ClassYear ?? "N/A", 11, XFontStyleEx.Bold),
+
+            string gradeName = student.Class?.Grade?.GradeName ?? "N/A";
+            gfx.DrawString(ArabicHelper.ShapeArabic(gradeName),
+               GetAppropriateFont(gradeName, 11, XFontStyleEx.Bold),
                darkBlueBrush, new XPoint(marginX + 50, currentY));
             currentY += 18;
 
@@ -302,7 +304,6 @@ namespace Application.Services
 
         private List<Degree> CalculateCumulativeDegrees(List<Degree> allDegrees, DegreeType degreeType)
         {
-            // Keep your existing implementation
             var cumulativeDegrees = new List<Degree>();
 
             var degreesBySubject = allDegrees
