@@ -6,6 +6,8 @@ using Domain.Wrappers;
 using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Numerics;
 
 
 namespace Application.Services
@@ -41,6 +43,7 @@ namespace Application.Services
             else
                 return "Finished";
         }
+
         public async Task<ServiceResult<IEnumerable<StudentExamAnswerDto>>> GetAllAsync()
         {
             var students = await _studentExamAnswerRepository.GetAllAsync();
@@ -123,12 +126,16 @@ namespace Application.Services
                         break;
 
                     case QuestionTypes.Connection:
-                        if (dto.ConnectionId != null)
+                        if (!string.IsNullOrEmpty(dto.ConnectionLeftId) && !string.IsNullOrEmpty(dto.ConnectionRightId))
                         {
-                            var leftId = dto.ConnectionId.LeftId;
-                            var rightId = dto.ConnectionId.RightId;
+                            var leftId = dto.ConnectionLeftId;
+                            var rightId = dto.ConnectionRightId;
 
-                            // Assuming your question.Choices have IsCorrect and Ids for left-right mapping
+                            // Connection data is now directly mapped to entity
+                            studentAnswer.ConnectionLeftId = leftId;
+                            studentAnswer.ConnectionRightId = rightId;
+
+                            // Your existing grading logic
                             var correctLeft = question.Choices?.FirstOrDefault(c => c.IsCorrect && c.Id == leftId);
                             var correctRight = question.Choices?.FirstOrDefault(c => c.IsCorrect && c.Id == rightId);
 
@@ -143,10 +150,12 @@ namespace Application.Services
                         }
                         else
                         {
+                            // Clear connection data if incomplete
+                            studentAnswer.ConnectionLeftId = null;
+                            studentAnswer.ConnectionRightId = null;
                             studentAnswer.Mark = 0;
                         }
                         break;
-
 
                     case QuestionTypes.TrueOrFalse:
                         if (question.TrueAndFalses == dto.TrueAndFalseAnswer)
@@ -192,23 +201,6 @@ namespace Application.Services
 
             var existingResult = await _studentExamResultRepository.AsQueryable()
                 .FirstOrDefaultAsync(r => r.StudentId == submission.StudentId && r.ExamId == submission.ExamId);
-
-            //if (existingResult != null)
-            //{
-            //    existingResult.TotalMark = Math.Round(totalMark, 2);
-            //    existingResult.MinMark = exam.MinMark;
-            //    existingResult.Percentage = percentage;
-            //    existingResult.Status = status;
-            //    existingResult.Date = DateOnly.FromDateTime(DateTime.UtcNow);
-            //    existingResult.TeacherName = teacher?.FullName!;
-            //    existingResult.SubjectName = exam.Subject.SubjectName;
-            //    existingResult.ExamName = exam.ExamName;
-            //    existingResult.StudentId = submission.StudentId;
-            //    existingResult.ExamId = submission.ExamId;
-            //    existingResult.SubjectName = student.FullName;
-
-            //    _studentExamResultRepository.Update(existingResult);
-            //}
 
             Guid teacherGuid;
             if (!Guid.TryParse(submission.TeacherId, out teacherGuid))
@@ -329,5 +321,189 @@ namespace Application.Services
 
             return ServiceResult<ExamQuestionsDto>.Ok(examDto, "Exam questions retrieved successfully");
         }
+        public async Task<ServiceResult<IEnumerable<StudentAnswerWithQuestionDto>>> GetStudentAnswersWithQuestions(string examId, string studentId)
+        {
+            try
+            {
+                var examResult = await GetExamQuestions(examId);
+                if (!examResult.Success)
+                    return ServiceResult<IEnumerable<StudentAnswerWithQuestionDto>>.Fail(examResult.Message);
+
+                var studentAnswers = await _studentExamAnswerRepository.AsQueryable().Where(s => s.StudentId == studentId && s.ExamId == examId).ToListAsync();
+                if (studentAnswers == null)
+                    return ServiceResult<IEnumerable<StudentAnswerWithQuestionDto>>.Fail("from correction this student doesnt have any answers");
+
+                var exam = examResult.Data;
+                
+                var result = new List<StudentAnswerWithQuestionDto>();
+
+                foreach (var question in exam!.Questions)
+                {
+                    var studentAnswer = studentAnswers.FirstOrDefault(a => a.QuestionId == question.Id);
+
+                    var studentConnections = GetStudentConnections(studentAnswer);
+                    var correctConnections = GetCorrectConnections(question);
+
+                    var dto = new StudentAnswerWithQuestionDto
+                    {
+                        ExamId = examId,
+                        StudentId = studentId,
+                        QuestionId = question.Id,
+                        QuestionContent = question.Content,
+                        QuestionType = question.Type,
+                        QuestionDegree = question.Degree,
+                        StudentMark = studentAnswer?.Mark,
+
+                        // إجابة الطالب
+                        StudentChoiceText = GetChoiceText(question.Choices!, studentAnswer?.ChoiceId!),
+                        StudentTrueFalseAnswer = studentAnswer?.TrueAndFalseAnswer,
+                        StudentTextAnswer = studentAnswer?.CorrectTextAnswer,
+                        StudentConnectionTexts = GetConnectionTexts(studentConnections, question.Choices),
+
+                        // الحل الصحيح
+                        CorrectChoiceText = GetCorrectChoiceText(question),
+                        CorrectTrueFalseAnswer = question.TrueAndFalses,
+                        CorrectTextAnswer = GetCorrectTextAnswer(question),
+                        CorrectConnectionTexts = GetConnectionTexts(correctConnections, question.Choices)
+                    };
+
+                    dto.IsCorrect = IsAnswerCorrect(studentAnswer!, question);
+                    result.Add(dto);
+                }
+
+                return ServiceResult<IEnumerable<StudentAnswerWithQuestionDto>>.Ok(result, "Student answers with questions retrieved successfully");
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<IEnumerable<StudentAnswerWithQuestionDto>>.Fail($"Error: {ex.Message}");
+            }
+        }
+
+        private string? GetCorrectTextAnswer(QuestionDto question)
+        {
+            return question.CorrectTextAnswer;
+        }
+
+        private string? GetCorrectChoiceId(QuestionDto question)
+        {
+            if (question.Choices == null) return null;
+            return question.Choices.FirstOrDefault(c => c.IsCorrect)?.Id;
+        }
+
+        private string? GetCorrectChoiceText(QuestionDto question)
+        {
+            if (question.Choices == null) return null;
+            return question.Choices.FirstOrDefault(c => c.IsCorrect)?.Text;
+        }
+
+        private string? GetChoiceText(List<ChoicesDto> choices, string choiceId)
+        {
+            if (choices == null || string.IsNullOrEmpty(choiceId)) return null;
+            return choices.FirstOrDefault(c => c.Id == choiceId)?.Text;
+        }
+
+        private List<ConnectionDto>? GetStudentConnections(StudentExamAnswer? studentAnswer)
+        {
+            if (studentAnswer == null || string.IsNullOrEmpty(studentAnswer.ConnectionLeftId) || string.IsNullOrEmpty(studentAnswer.ConnectionRightId))
+                return null;
+
+            return new List<ConnectionDto>
+            {
+                new ConnectionDto
+                {
+                    LeftId = studentAnswer.ConnectionLeftId,
+                    RightId = studentAnswer.ConnectionRightId
+                }
+            };
+        }
+
+        private string? GetConnectionTexts(List<ConnectionDto>? studentConnections, List<ChoicesDto>? allChoices)
+        {
+            if (studentConnections == null || allChoices == null)
+                return null;
+
+            var leftChoiceText = "";
+            var rightChoice= "";
+
+            foreach (var connection in studentConnections)
+            {
+                leftChoiceText = allChoices.FirstOrDefault(c => c.Id == connection.LeftId)!.Text;
+                rightChoice = allChoices.FirstOrDefault(c => c.Id == connection.RightId)!.Text;
+            }
+
+            return $"{leftChoiceText} , {rightChoice}";
+        }
+
+        private bool IsConnectionCorrect(StudentExamAnswer studentExamAnswer, List<ChoicesDto>? correctConnections)
+        {
+            if (studentExamAnswer == null || correctConnections == null)
+                return false;
+
+            var correctConns = correctConnections.ToList();
+
+            var counter = 0;
+
+            foreach (var correct in correctConns)
+            {
+                if (correct.IsCorrect) {
+
+                    if (correct.Id == studentExamAnswer.ConnectionLeftId || correct.Id == studentExamAnswer.ConnectionRightId)
+                    {
+                        counter++;
+                    }
+                }
+            }
+            if (counter < 2) return false;
+
+            return true;
+        }
+
+        private List<ConnectionDto>? GetCorrectConnections(QuestionDto question)
+        {
+            if (question.Choices == null || !question.Choices.Any())
+                return null;
+
+            var correctChoices = question.Choices.Where(c => c.IsCorrect).ToList();
+
+            var connections = new List<ConnectionDto>();
+
+            for (int i = 0; i < correctChoices.Count; i += 2)
+            {
+                if (i + 1 < correctChoices.Count)
+                {
+                    connections.Add(new ConnectionDto
+                    {
+                        LeftId = correctChoices[i].Id,
+                        RightId = correctChoices[i + 1].Id
+                    });
+                }
+            }
+
+            return connections.Any() ? connections : null;
+        }
+
+        private bool IsAnswerCorrect(StudentExamAnswer studentAnswer, QuestionDto question)
+        {
+            switch (question.Type)
+            {
+                case "TrueOrFalse":
+                    return studentAnswer.TrueAndFalseAnswer == question.TrueAndFalses;
+
+                case "Choices":
+                    return GetCorrectChoiceId(question) == studentAnswer.ChoiceId;
+
+                case "Complete":
+                    return !string.IsNullOrEmpty(studentAnswer.CorrectTextAnswer) &&
+                           studentAnswer.CorrectTextAnswer.Trim().ToLower() ==
+                           question.CorrectTextAnswer?.Trim().ToLower();
+
+                case "Connection":
+                    return IsConnectionCorrect(studentAnswer, question.Choices);
+
+                default:
+                    return false;
+            }
+        }
+
     }
 }

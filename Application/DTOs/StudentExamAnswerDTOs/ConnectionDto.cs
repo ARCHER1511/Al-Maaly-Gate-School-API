@@ -5,5 +5,4 @@
         public string LeftId { get; set; } = string.Empty;
         public string RightId { get; set; } = string.Empty;
     }
-
 }

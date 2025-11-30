@@ -17,6 +17,16 @@ namespace Al_Maaly_Gate_School.Controllers
             _studentExamAnswerService = studentExamAnswerService;
         }
 
+        [HttpGet("studentAnswerWithCorrection/{studentId}/{examId}")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<StudentAnswerWithQuestionDto>>>> GetStudentAnswersWithQuestions(string examId, string studentId)
+        {
+            var result = await _studentExamAnswerService.GetStudentAnswersWithQuestions(examId, studentId);
+            if (!result.Success)
+                return NotFound(ApiResponse<IEnumerable<StudentAnswerWithQuestionDto>>.Fail(result.Message!));
+
+            return Ok(ApiResponse<IEnumerable<StudentAnswerWithQuestionDto>>.Ok(result.Data!, result.Message));
+        }
+
         [HttpGet("studentExams/{classId}")]
         public async Task<IActionResult> GetExams(string classId)
         {

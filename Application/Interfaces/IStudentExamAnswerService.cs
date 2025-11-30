@@ -9,6 +9,7 @@ namespace Application.Interfaces
     {
         Task<ServiceResult<List<StudentExamAnswerDto>>> SubmitExamAsync(StudentExamSubmissionDto submission);
         Task<ServiceResult<IEnumerable<GetStudentExamsDto>>> GetExamsForStudentByClassId(string classId);
+        Task<ServiceResult<IEnumerable<StudentAnswerWithQuestionDto>>> GetStudentAnswersWithQuestions(string examId, string studentId);
         Task<ServiceResult<ExamQuestionsDto>> GetExamQuestions(string ExamId);
         Task<ServiceResult<IEnumerable<StudentExamAnswerDto>>> GetAllAsync();
         Task<ServiceResult<StudentExamAnswerDto>> GetByIdAsync(object id);
