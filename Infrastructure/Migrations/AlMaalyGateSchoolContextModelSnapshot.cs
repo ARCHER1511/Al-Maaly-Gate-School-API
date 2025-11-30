@@ -776,7 +776,10 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ChoiceId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ConnectionId")
+                    b.Property<string>("ConnectionLeftId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConnectionRightId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CorrectTextAnswer")
