@@ -23,7 +23,7 @@ namespace Application.Services
         public async Task<ServiceResult<IEnumerable<QuestionViewDto>>> GetAllAsync()
         {
             var questions = await _questionRepo.GetAllAsync();
-            if (questions.Any())
+            if (!questions.Any())
                 return ServiceResult<IEnumerable<QuestionViewDto>>.Fail("No Questions found");
             var data = _mapper.Map<IEnumerable<QuestionViewDto>>(questions);
             return ServiceResult<IEnumerable<QuestionViewDto>>.Ok(data);
