@@ -4,10 +4,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
-using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using System.Numerics;
 
 
 namespace Application.Services
@@ -205,7 +202,7 @@ namespace Application.Services
             Guid teacherGuid;
             if (!Guid.TryParse(submission.TeacherId, out teacherGuid))
             {
-                teacherGuid = Guid.Empty; 
+                teacherGuid = Guid.Empty;
             }
 
             var teacher = exam.Subject.TeacherSubjects?.FirstOrDefault(t => t.TeacherId == submission.TeacherId)?.Teacher;
@@ -217,7 +214,7 @@ namespace Application.Services
                 existingResult.TotalMark = Math.Round(totalMark, 2);
                 existingResult.Percentage = percentage;
                 existingResult.Status = status;
-                existingResult.Date = DateOnly.FromDateTime(DateTime.UtcNow);
+                existingResult.Date = DateOnly.FromDateTime(DateTime.Now);
 
                 _studentExamResultRepository.Update(existingResult);
             }
@@ -334,7 +331,7 @@ namespace Application.Services
                     return ServiceResult<IEnumerable<StudentAnswerWithQuestionDto>>.Fail("from correction this student doesnt have any answers");
 
                 var exam = examResult.Data;
-                
+
                 var result = new List<StudentAnswerWithQuestionDto>();
 
                 foreach (var question in exam!.Questions)
