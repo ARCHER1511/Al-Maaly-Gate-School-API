@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +12,7 @@ namespace Application.Authentication
     {
         public static string GenerateJwtToken(
             AppUser user,
+            Teacher? teacher,
             IList<string> roles,
             IConfiguration _config
         )
@@ -26,6 +28,18 @@ namespace Application.Authentication
 
             // Use ClaimTypes.Role for role mapping consistency
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+            //Custom claims section
+            claims.Add(new Claim("AccountStatus", user.AccountStatus.ToString()));
+            if (roles.Contains("Teacher"))
+            {
+                //claims.Add(new Claim("TeacherSubjects",teacher.TeacherSubjects!.ToString()!));\
+                if (teacher != null &&teacher!.TeacherSubjects != null && teacher.TeacherSubjects.Any())
+                {
+                    var subjectIdentifiers = teacher.TeacherSubjects.Select(ts => ts.Subject.SubjectName).ToList();
+                    var subjectJson = JsonSerializer.Serialize(subjectIdentifiers);
+                    claims.Add(new Claim("TeacherSubjects",subjectJson));
+                }
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
