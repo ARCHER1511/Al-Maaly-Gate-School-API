@@ -252,6 +252,7 @@ namespace Application.Services
 
             // 6️⃣ Create role-specific entity
             string roleEntityId = string.Empty;
+            Teacher? teacherEntity = null;
 
             switch (normalizedRole)
             {
@@ -267,6 +268,7 @@ namespace Application.Services
                     teacher.AppUserId = user.Id;
                     await _teacherRepo.AddAsync(teacher);
                     roleEntityId = teacher.Id;
+                    teacherEntity = teacher;
                     break;
 
                 case "student":
@@ -292,7 +294,7 @@ namespace Application.Services
             var response = _mapper.Map<AuthResponse>(user);
             response.UserId = user.Id;
             response.Roles = roles;
-            response.Token = JwtExtensions.GenerateJwtToken(user, roles, _config);
+            response.Token = JwtExtensions.GenerateJwtToken(user,teacherEntity,roles, _config);
             response.ProfileImageUrl = user.ProfileImagePath ?? "/uploads/users/default.png";
             response.RoleEntityIds = new Dictionary<string, string?>
             {
@@ -301,7 +303,10 @@ namespace Application.Services
 
             await _userRepo.UpdateAsync(user);
             await _unitOfWork.SaveChangesAsync();
-
+            if (normalizedRole == "teacher")
+            {
+                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsByUserIdAsync(user.Id);
+            }
             return ServiceResult<AuthResponse>.Ok(response, "Registration successful.");
         }
 
@@ -314,11 +319,15 @@ namespace Application.Services
             var roles = await _userRepo.GetRolesAsync(user);
             var response = _mapper.Map<AuthResponse>(user);
             response.Roles = roles;
+            Teacher? teacherEntity = null;
+            if (roles.Contains("Teacher"))
+            {
+                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsByUserIdAsync(user.Id);
+            }
             response.UserId = user.Id;
             response.ProfileImageUrl = user.ProfileImagePath;
             response.RoleEntityIds = await BuildRoleEntityIdMap(user);
-            response.Token = JwtExtensions.GenerateJwtToken(user, roles, _config);
-            response.AccountStatus = user.AccountStatus.ToString();
+            response.Token = JwtExtensions.GenerateJwtToken(user,teacherEntity, roles, _config);
 
             var refreshToken = new RefreshToken
             {
@@ -532,8 +541,13 @@ namespace Application.Services
 
             var user = await _userRepo.GetByIdAsync(userId);
             var roles = await _userRepo.GetRolesAsync(user!);
+            Teacher? teacherEntity = null;
+            if (roles.Contains("Teacher"))
+            {
+                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsByUserIdAsync(userId);
+            }
 
-            var newJwt = JwtExtensions.GenerateJwtToken(user!, roles, _config);
+            var newJwt = JwtExtensions.GenerateJwtToken(user!, teacherEntity, roles, _config);
             var newRefresh = new RefreshToken
             {
                 Token = Guid.NewGuid().ToString(),

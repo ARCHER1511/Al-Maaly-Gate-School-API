@@ -19,5 +19,13 @@ namespace Infrastructure.Repositories
         {
             return await _dbSet.FirstOrDefaultAsync(t => t.AppUserId == appUserId);
         }
+        public async Task<Teacher?> GetTeacherWithSubjectsByUserIdAsync(string userId)
+        {
+            return await _dbSet
+                .Include(t => t.TeacherSubjects)!
+                    .ThenInclude(ts => ts.Subject)
+                .FirstOrDefaultAsync(t => t.AppUserId == userId);
+        }
+
     }
 }
