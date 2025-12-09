@@ -13,7 +13,7 @@ namespace Application.DTOs.StudentDTOs
         public string? GradeName { get; set; } = string.Empty;
         public int? Age { get; set; }
         public string? ClassId { get; set; } = string.Empty;
-        public string ProfileStatus { get; set; } = string.Empty;
+        public string AccountStatus { get; set; } = string.Empty;
         public List<ParentStudent>? Parents { get; set; } = new();
     }
 }

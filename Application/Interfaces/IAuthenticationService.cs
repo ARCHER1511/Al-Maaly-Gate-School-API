@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.AuthDTOs;
+using Application.DTOs.ParentDTOs;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Http;
 
@@ -6,6 +7,7 @@ namespace Application.Interfaces
 {
     public interface IAuthenticationService
     {
+        Task<ServiceResult<ParentRegistrationResponse>> RegisterParentWithDocumentsAsync(ParentRegisterRequest request);
         Task<ServiceResult<AuthResponse>> RegisterAsync(RegisterRequest request);
         Task<ServiceResult<AuthResponse>> LoginAsync(LoginRequest request);
         Task<ServiceResult<string>> CreateRoleAsync(CreateRoleRequest roleName);

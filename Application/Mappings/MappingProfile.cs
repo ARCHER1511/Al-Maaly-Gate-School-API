@@ -5,6 +5,7 @@ using Application.DTOs.ClassAppointmentsDTOs;
 using Application.DTOs.ClassDTOs;
 using Application.DTOs.ExamDTOS;
 using Application.DTOs.GradeDTOs;
+using Application.DTOs.ParentDTOs;
 using Application.DTOs.QuestionDTOs;
 using Application.DTOs.StudentDTOs;
 using Application.DTOs.StudentExamAnswerDTOs;
@@ -115,6 +116,10 @@ namespace Application.Mappings
                             string.IsNullOrWhiteSpace(src.ClassId) ? null : src.ClassId
                         )
                 );
+
+            CreateMap<Student, StudentSearchResultDto>().IgnoreUnmapped();
+            CreateMap<StudentSearchResultDto, Student>().IgnoreUnmapped();
+
             #endregion
 
             #region Classes Mappings
@@ -309,6 +314,37 @@ namespace Application.Mappings
 
             CreateMap<SubjectCreateDto, Subject>();
             CreateMap<SubjectUpdateDto, Subject>();
+            #endregion
+
+            #region Parent
+            CreateMap<Parent, ParentViewWithChildrenDto>()
+            .ForMember(dest => dest.Students,
+                       opt => opt.MapFrom(src => src.ParentStudent.Select(ps =>
+                           new StudentMinimalDto
+                           {
+                               Id = ps.Student.Id,
+                               FullName = ps.Student.FullName,
+                               StudentId = ps.Student.Id,
+                               Relation = src.Relation
+                           })));
+
+            CreateMap<ParentViewWithChildrenDto, Parent>();
+
+            CreateMap<ParentViewDto, Parent>();
+            CreateMap<Parent, ParentViewDto>();
+
+            CreateMap<ParentRegisterRequest, RegisterRequest>()
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => "parent"))
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+            CreateMap<ParentRegisterRequest, Parent>()
+                .ForMember(dest => dest.Relation, opt => opt.MapFrom(src => src.Relation))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.ContactInfo, opt => opt.MapFrom(src => src.ContactInfo))
+                .ForMember(dest => dest.AppUserId, opt => opt.Ignore())
+                .ForMember(dest => dest.ParentStudent, opt => opt.Ignore());
+
             #endregion
         }
     }

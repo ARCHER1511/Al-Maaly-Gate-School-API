@@ -3,6 +3,7 @@ using Application.DTOs.ParentDTOs;
 using Application.DTOs.StudentDTOs;
 using Application.DTOs.TeacherDTOs;
 using Application.Interfaces;
+using Domain.Entities;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,8 @@ namespace Al_Maaly_Gate_School.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
+    [AllowAnonymous]
     public class AdminManagementController : ControllerBase
     {
         private readonly IAdminManagementService _adminManagementService;
@@ -37,40 +39,37 @@ namespace Al_Maaly_Gate_School.Controllers
             return Ok(ApiResponse<IEnumerable<TeacherAdminViewDto>>.Ok(result.Data!, result.Message));
         }
         //Approve Teacher
-        [HttpPut("approve-teacher/{teacherId}")]
-        public async Task<IActionResult> ApproveTeacher(string teacherId, string adminUserId)
+        [HttpPut("approve-account/{accountId}")]
+        public async Task<IActionResult> ApproveUserAsync(string accountId, string adminUserId, string role)
         {
-            var result = await _adminManagementService.ApproveTeacherAsync(teacherId, adminUserId);
+            var result = await _adminManagementService.ApproveUserAsync(accountId, adminUserId, role);
             return result.Success
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));
         }
 
-        //Reject Teacher
-        [HttpPut("reject-teacher/{teacherId}")]
-        public async Task<IActionResult> RejectTeacher(string teacherId, string notifyCreatorUserId)
+        [HttpPut("block-account/{accountId}")]
+        public async Task<IActionResult> BlockUserAsync(string accountId, string adminUserId, string role)
         {
-            var result = await _adminManagementService.RejectTeacherAsync(teacherId, notifyCreatorUserId);
+            var result = await _adminManagementService.BlockUserAsync(accountId, adminUserId, role);
             return result.Success
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));
         }
 
-        //Block User
-        [HttpPut("block-user/{appUserId}")]
-        public async Task<IActionResult> BlockUser(string appUserId, string adminUserId, string role)
+        [HttpPut("unblock-account/{accountId}")]
+        public async Task<IActionResult> UnblockUserAsync(string accountId, string adminUserId, string role)
         {
-            var result = await _adminManagementService.BlockUserAsync(appUserId, adminUserId, role);
+            var result = await _adminManagementService.UnblockUserAsync(accountId, adminUserId, role);
             return result.Success
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));
         }
 
-        //Unblock User
-        [HttpPut("unblock-user/{appUserId}")]
-        public async Task<IActionResult> UnblockUser(string appUserId, string adminUserId, string role)
+        [HttpPut("reject-account/{accountId}")]
+        public async Task<IActionResult> RejectUserAsync(string accountId, string adminUserId, string role)
         {
-            var result = await _adminManagementService.UnblockUserAsync(appUserId, adminUserId, role);
+            var result = await _adminManagementService.RejectUserAsync(accountId, adminUserId, role);
             return result.Success
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));
@@ -184,39 +183,7 @@ namespace Al_Maaly_Gate_School.Controllers
                 ? Ok(ApiResponse<IEnumerable<StudentViewDto>>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<IEnumerable<StudentViewDto>>.Fail(result.Message!));
         }
-        [HttpPut("approve-student")]
-        public async Task<IActionResult> ApproveStudent(string studentId, string adminUserId)
-        {
-            var result = await _adminManagementService.ApproveStudentAsync(studentId, adminUserId);
-            return result.Success
-                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
-                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
-        }
-        [HttpPut("reject-student")]
-        public async Task<IActionResult> RejectStudent(string studentId, string adminUserId)
-        {
-            var result = await _adminManagementService.RejectStudentAsync(studentId, adminUserId);
-            return result.Success
-                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
-                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
-
-        }
-        [HttpPut("block-student")]
-        public async Task<IActionResult> BlockStudent(string appUserId, string adminUserId)
-        {
-            var result = await _adminManagementService.BlockStudentAsync(appUserId, adminUserId);
-            return result.Success
-                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
-                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
-        }
-        [HttpPut("unblock-student")]
-        public async Task<IActionResult> UnblockStudent(string appUserId, string adminUserId)
-        {
-            var result = await _adminManagementService.UnblockStudentAsync(appUserId, adminUserId);
-            return result.Success
-                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
-                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
-        }
+        
         [HttpGet("student-count")]
         public async Task<IActionResult> GetStudentCountAsync()
         {
@@ -247,42 +214,10 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             var result = await _adminManagementService.GetPendingParentsAsync();
             return result.Success
-                ? Ok(ApiResponse<IEnumerable<ParentViewDto>>.Ok(result.Data!, result.Message))
-                : BadRequest(ApiResponse<IEnumerable<ParentViewDto>>.Fail(result.Message!));
+                ? Ok(ApiResponse<IEnumerable<ParentViewWithChildrenDto>>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<IEnumerable<ParentViewWithChildrenDto>>.Fail(result.Message!));
         }
-        [HttpPut("approve-parent")]
-        public async Task<IActionResult> ApproveParent(string parentId, string adminUserId)
-        {
-            var result = await _adminManagementService.ApproveParentAsync(parentId, adminUserId);
-            return result.Success
-                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
-                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
-        }
-        [HttpPut("reject-parent")]
-        public async Task<IActionResult> RejectParent(string parentId, string adminUserId)
-        {
-            var result = await _adminManagementService.RejectParentAsync(parentId, adminUserId);
-            return result.Success
-                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
-                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
-        }
-        [HttpPut("block-parent")]
-        public async Task<IActionResult> BlockParent(string appUserId, string adminUserId)
-        {
-            var result = await _adminManagementService.BlockParentAsync(appUserId, adminUserId);
-            return result.Success
-                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
-                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
-        }
-        [HttpPut("unblock-parent")]
-        public async Task<IActionResult> UnblockParent(string appUserId, string adminUserId)
-        {
-            var result = await _adminManagementService.UnblockParentAsync(appUserId, adminUserId);
-            return result.Success
-                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
-                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
-        }
-
+       
         // Add to AdminManagementController
         [HttpDelete("teachers/unassign-from-class")]
         public async Task<IActionResult> UnassignTeacherFromClass([FromQuery] string teacherId, [FromQuery] string classId)
@@ -301,5 +236,52 @@ namespace Al_Maaly_Gate_School.Controllers
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));
         }
+
+        [HttpPost("approve-parent-with-student")]
+        public async Task<IActionResult> ApproveParentWithStudent([FromBody] RelationParentWithStudentRequest relationRequest)
+        {
+            var result = await _adminManagementService.ApproveParentWithStudent(relationRequest);
+            return result.Success
+                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
+
+        [HttpPost("approve-parent-bulk")]
+        public async Task<IActionResult> ApproveParentBulk(ParentApprovalBulkDto bulkDto)
+        {
+            var result = await _adminManagementService.ApproveParentBulk(bulkDto);
+            return result.Success
+                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
+
+        [HttpPost("add-student-toParent")]
+        public async Task<IActionResult> AddStudentToParent(string parentId, ParentStudentApprovalDto studentDto)
+        {
+            var result = await _adminManagementService.AddStudentToParent(parentId, studentDto);
+            return result.Success
+                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
+
+        [HttpPost("remove-student-from-parent")]
+        public async Task<IActionResult> RemoveStudentFromParent(string parentId, string studentId)
+        {
+            var result = await _adminManagementService.RemoveStudentFromParent(parentId,studentId);
+            return result.Success
+                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
+
+        [HttpPost("add-student-toExisting-parent")]
+        public async Task<IActionResult> AddStudentToExistingParent(string parentId, string studentId)
+        {
+            var result = await _adminManagementService.AddStudentToExistingParent( parentId, studentId);
+            return result.Success
+                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
+
+
     }
 }

@@ -1,13 +1,9 @@
-﻿using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Entities;
+using Domain.Enums;
 
 namespace Application.DTOs.ParentDTOs
 {
-    public class ParentViewDto
+    public class ParentViewWithChildrenDto
     {
         public string Id { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
@@ -16,6 +12,6 @@ namespace Application.DTOs.ParentDTOs
         public string AppUserId { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public string? Relation { get; set; }
-        public AccountStatus AccountStatus { get; set; }
+        public List<StudentMinimalDto> Students { get; set; } = new List<StudentMinimalDto>();
     }
 }

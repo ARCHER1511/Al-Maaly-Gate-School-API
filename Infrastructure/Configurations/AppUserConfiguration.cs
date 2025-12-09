@@ -24,7 +24,7 @@ namespace Infrastructure.Configurations
                 .HasConversion(v => v.ToString(),
                                v => (AccountStatus)Enum.Parse(typeof(AccountStatus), v))
                 .HasMaxLength(50)
-                .HasDefaultValue(AccountStatus.PendingApproval);
+                .HasDefaultValue(AccountStatus.Pending);
 
             builder.HasMany(u => u.UserRoles)
                    .WithOne(ur => ur.User)
