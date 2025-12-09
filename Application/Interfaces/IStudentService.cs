@@ -11,5 +11,6 @@ namespace Application.Interfaces
         Task<ServiceResult<StudentViewDto>> CreateAsync(StudentViewDto dto);
         Task<ServiceResult<StudentViewDto>> UpdateAsync(StudentViewDto admin);
         Task<ServiceResult<bool>> DeleteAsync(object id);
+        Task<ServiceResult<List<StudentSearchResultDto>>> SearchStudentsAsync(string searchTerm);
     }
 }

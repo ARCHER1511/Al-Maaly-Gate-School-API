@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.AuthDTOs;
+using Application.DTOs.ParentDTOs;
 using Application.Interfaces;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Authorization;
@@ -16,6 +17,15 @@ namespace Al_Maaly_Gate_School.Controllers
         public AuthenticationController(IAuthenticationService authService)
         {
             _authService = authService;
+        }
+
+        [HttpPost("register/parentWithFiles")]
+        public async Task<IActionResult> RegisterParentWithDocuments(ParentRegisterRequest request)
+        {
+            var result = await _authService.RegisterParentWithDocumentsAsync(request);
+            return result.Success
+                ? Ok(ApiResponse<ParentRegistrationResponse>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<ParentRegistrationResponse>.Fail(result.Message!));
         }
 
         [HttpPost("register")]

@@ -19,11 +19,11 @@ namespace Infrastructure.Configurations
             builder.Property(e => e.ContactInfo)
                    .HasMaxLength(500);
 
-            builder.Property(e => e.ProfileStatus)
+            builder.Property(e => e.AccountStatus)
                      .HasConversion(v => v.ToString(),
-                                    v => (ProfileStatus)Enum.Parse(typeof(ProfileStatus), v))
+                                    v => (AccountStatus)Enum.Parse(typeof(AccountStatus), v))
                         .HasMaxLength(50)
-                        .HasDefaultValue(ProfileStatus.Pending);
+                        .HasDefaultValue(AccountStatus.Pending);
 
             builder.HasOne(u => u.AppUser)
                    .WithMany()

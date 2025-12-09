@@ -76,7 +76,7 @@ namespace Al_Maaly_Gate_School.Seeding
                     ContactInfo = "",
                     AppUserId = adminUser.Id,
                     Type = "SuperAdmin",
-                    ProfileStatus = Domain.Enums.ProfileStatus.Approved,
+                    AccountStatus = Domain.Enums.AccountStatus.Active,
                 };
                 ctx.Admins.Add(adminEntity);
                 await ctx.SaveChangesAsync();

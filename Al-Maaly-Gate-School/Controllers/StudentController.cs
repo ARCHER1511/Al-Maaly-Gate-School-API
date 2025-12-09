@@ -76,5 +76,15 @@ namespace Al_Maaly_Gate_School.Controllers
 
             return Ok(ApiResponse<string>.Ok("Student deleted successfully."));
         }
+
+        [HttpGet("searchTerm")]
+        public async Task<IActionResult> SearchStudents([FromQuery] string searchTerm)
+        {
+            var result = await _StudentService.SearchStudentsAsync(searchTerm);
+            if (!result.Success)
+                return NotFound(ApiResponse<List<StudentSearchResultDto>>.Fail(result.Message!));
+
+            return Ok(ApiResponse<List<StudentSearchResultDto>>.Ok(result.Data!, result.Message));
+        }
     }
 }

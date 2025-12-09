@@ -4,10 +4,12 @@ using Application.DTOs.StudentDTOs;
 using Application.DTOs.TeacherDTOs;
 using Application.Interfaces;
 using AutoMapper;
+using DocumentFormat.OpenXml.InkML;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
@@ -17,6 +19,8 @@ namespace Application.Services
         private readonly IAdminRepository _adminRepository;
         private readonly ITeacherRepository _teacherRepository;
         private readonly IStudentRepository _studentRepository;
+        private readonly IParentRepository _parentRepository;
+        private readonly IParentStudentRepository _parentStudentRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notificationService;
@@ -25,6 +29,8 @@ namespace Application.Services
             IAdminRepository adminRepository,
             ITeacherRepository teacherRepository,
             IStudentRepository studentRepository,
+            IParentRepository parentRepository,
+            IParentStudentRepository parentStudentRepository,
             IUnitOfWork unitOfWork,
             IMapper mapper,
             INotificationService notificationService
@@ -36,6 +42,8 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notificationService = notificationService;
+            _parentRepository = parentRepository;
+            _parentStudentRepository = parentStudentRepository;
         }
 
         //Teachers
@@ -80,7 +88,7 @@ namespace Application.Services
                 Email = t.Email,
                 Subjects = t.TeacherSubjects!.Select(ts => ts.Subject.SubjectName).ToList(),
                 ClassNames = t.TeacherClasses.Select(tc => tc.Class.ClassName).ToList(),
-                ProfileStatus = t.ProfileStatus.ToString(),
+                ProfileStatus = t.AccountStatus.ToString(),
             });
 
             return ServiceResult<IEnumerable<TeacherAdminViewDto>>.Ok(
@@ -89,125 +97,310 @@ namespace Application.Services
             );
         }
 
-        //New
-        //Approve Teacher
-        public async Task<ServiceResult<bool>> ApproveTeacherAsync(
-            string teacherId,
-            string creatorUserId
-        )
+        public async Task<ServiceResult<bool>> ApproveUserAsync(string accountId, string adminId, string role)
         {
-            var teacherRepo = _unitOfWork.Repository<Teacher>();
-            var teacher = await teacherRepo.FirstOrDefaultAsync(
-                t => t.Id == teacherId,
-                q => q.Include(t => t.AppUser)
-            );
+            object? entity = null;
+            AppUser? appUser = null;
+            dynamic? repository = null;
 
-            if (teacher == null)
-                return ServiceResult<bool>.Fail("Teacher not found.");
+            switch (role.ToLower())
+            {
+                case "teacher":
+                    var teacherRepo = _unitOfWork.Repository<Teacher>();
+                    var teacher = await teacherRepo.FirstOrDefaultAsync(
+                        t => t.Id == accountId,
+                        q => q.Include(t => t.AppUser)
+                    );
+                    entity = teacher;
+                    appUser = teacher?.AppUser;
+                    repository = teacherRepo;
+                    break;
 
-            teacher.ProfileStatus = ProfileStatus.Approved;
-            teacher.AppUser.AccountStatus = AccountStatus.Active;
+                case "student":
+                    var studentRepo = _unitOfWork.Repository<Student>();
+                    var student = await studentRepo.FirstOrDefaultAsync(
+                        s => s.Id == accountId,
+                        q => q.Include(s => s.AppUser)
+                    );
+                    entity = student;
+                    appUser = student?.AppUser;
+                    repository = studentRepo;
+                    break;
 
-            teacherRepo.Update(teacher);
+                case "parent":
+                    var parentRepo = _unitOfWork.Repository<Parent>();
+                    var parent = await parentRepo.FirstOrDefaultAsync(
+                        p => p.Id == accountId,
+                        q => q.Include(p => p.AppUser)
+                    );
+                    entity = parent;
+                    appUser = parent?.AppUser;
+                    repository = parentRepo;
+                    break;
+
+                default:
+                    return ServiceResult<bool>.Fail($"Invalid role: {role}");
+            }
+
+            if (entity == null)
+                return ServiceResult<bool>.Fail($"{role} not found.");
+
+            if (appUser == null)
+                return ServiceResult<bool>.Fail($"AppUser for {role} not found.");
+
+            // Update status - using dynamic to avoid reflection
+            dynamic dynamicEntity = entity;
+            dynamicEntity.AccountStatus = AccountStatus.Active;
+            appUser.AccountStatus = AccountStatus.Active;
+
+            repository.Update(dynamicEntity);
+
+            var identityRepo = _unitOfWork.AppUsers;
+            identityRepo.Update(appUser);
+
             await _unitOfWork.SaveChangesAsync();
+
             await _notificationService.CreateNotificationAsync(
                 title: "Profile Approved",
-                message: $"Dear {teacher.AppUser.FullName}, your profile has been approved by the admin.",
+                message: $"Dear {appUser.FullName}, your account has been approved by the admin.",
                 type: "Approval",
-                creatorUserId: creatorUserId, // or admin Id if available
-                targetUserIds: new[] { teacher.AppUserId },
-                role: "Teacher"
+                creatorUserId: adminId,
+                targetUserIds: new[] { appUser.Id },
+                role: role
             );
 
-            return ServiceResult<bool>.Ok(true, "Teacher approved successfully.");
+            return ServiceResult<bool>.Ok(true, $"{role} approved successfully.");
         }
 
-        //Reject Teacher
-        public async Task<ServiceResult<bool>> RejectTeacherAsync(
-            string teacherId,
-            string adminUserId
+        // Reject User
+        public async Task<ServiceResult<bool>> RejectUserAsync(
+            string accountId,
+            string adminId,
+            string role
         )
         {
-            var teacherRepo = _unitOfWork.Repository<Teacher>();
-            var teacher = await teacherRepo.FirstOrDefaultAsync(
-                t => t.Id == teacherId,
-                q => q.Include(t => t.AppUser)
-            );
+            object? entity = null;
+            AppUser? appUser = null;
+            dynamic? repository = null;
 
-            if (teacher == null)
-                return ServiceResult<bool>.Fail("Teacher not found.");
+            switch (role.ToLower())
+            {
+                case "teacher":
+                    var teacherRepo = _unitOfWork.Repository<Teacher>();
+                    var teacher = await teacherRepo.FirstOrDefaultAsync(
+                        t => t.Id == accountId,
+                        q => q.Include(t => t.AppUser)
+                    );
+                    entity = teacher;
+                    appUser = teacher?.AppUser;
+                    repository = teacherRepo;
+                    break;
 
-            teacher.ProfileStatus = ProfileStatus.Rejected;
-            teacher.AppUser.AccountStatus = AccountStatus.PendingApproval;
+                case "student":
+                    var studentRepo = _unitOfWork.Repository<Student>();
+                    var student = await studentRepo.FirstOrDefaultAsync(
+                        s => s.Id == accountId,
+                        q => q.Include(s => s.AppUser)
+                    );
+                    entity = student;
+                    appUser = student?.AppUser;
+                    repository = studentRepo;
+                    break;
 
-            teacherRepo.Update(teacher);
+                case "parent":
+                    var parentRepo = _unitOfWork.Repository<Parent>();
+                    var parent = await parentRepo.FirstOrDefaultAsync(
+                        p => p.Id == accountId,
+                        q => q.Include(p => p.AppUser)
+                    );
+                    entity = parent;
+                    appUser = parent?.AppUser;
+                    repository = parentRepo;
+                    break;
+
+                default:
+                    return ServiceResult<bool>.Fail($"Invalid role: {role}");
+            }
+
+            if (entity == null)
+                return ServiceResult<bool>.Fail($"{role} not found.");
+
+            if (appUser == null)
+                return ServiceResult<bool>.Fail($"AppUser for {role} not found.");
+
+            // Update status to Rejected
+            dynamic dynamicEntity = entity;
+            dynamicEntity.AccountStatus = AccountStatus.Rejected;
+            appUser.AccountStatus = AccountStatus.Pending; // Or AccountStatus.Rejected based on your needs
+
+            repository.Update(dynamicEntity);
+            _unitOfWork.AppUsers.Update(appUser);
             await _unitOfWork.SaveChangesAsync();
 
             await _notificationService.CreateNotificationAsync(
                 title: "Profile Rejected",
-                message: $"Dear {teacher.AppUser.FullName}, your profile has been rejected by the admin. Please review and resubmit.",
+                message: $"Dear {appUser.FullName}, your profile has been rejected by the admin. Please review and resubmit.",
                 type: "Rejection",
-                creatorUserId: adminUserId,
-                targetUserIds: new[] { teacher.AppUserId },
-                role: "Teacher"
+                creatorUserId: adminId,
+                targetUserIds: new[] { appUser.Id },
+                role: role
             );
-            return ServiceResult<bool>.Ok(true, "Teacher rejected successfully.");
+
+            return ServiceResult<bool>.Ok(true, $"{role} rejected successfully.");
         }
 
-        // Block User
+        // Block User for all roles
         public async Task<ServiceResult<bool>> BlockUserAsync(
-            string appUserId,
-            string adminUserId,
+            string accountId,
+            string adminId,
             string role
         )
         {
-            var appUserRepo = _unitOfWork.AppUsers;
-            var user = await appUserRepo.FirstOrDefaultAsync(u => u.Id == appUserId);
+            object? entity = null;
+            AppUser? appUser = null;
+            dynamic? repository = null;
 
-            if (user == null)
-                return ServiceResult<bool>.Fail("User not found.");
+            switch (role.ToLower())
+            {
+                case "teacher":
+                    var teacherRepo = _unitOfWork.Repository<Teacher>();
+                    var teacher = await teacherRepo.FirstOrDefaultAsync(
+                        t => t.Id == accountId,
+                        q => q.Include(t => t.AppUser)
+                    );
+                    entity = teacher;
+                    appUser = teacher?.AppUser;
+                    repository = teacherRepo;
+                    break;
 
-            user.AccountStatus = AccountStatus.Blocked;
-            appUserRepo.Update(user);
+                case "student":
+                    var studentRepo = _unitOfWork.Repository<Student>();
+                    var student = await studentRepo.FirstOrDefaultAsync(
+                        s => s.Id == accountId,
+                        q => q.Include(s => s.AppUser)
+                    );
+                    entity = student;
+                    appUser = student?.AppUser;
+                    repository = studentRepo;
+                    break;
+
+                case "parent":
+                    var parentRepo = _unitOfWork.Repository<Parent>();
+                    var parent = await parentRepo.FirstOrDefaultAsync(
+                        p => p.Id == accountId,
+                        q => q.Include(p => p.AppUser)
+                    );
+                    entity = parent;
+                    appUser = parent?.AppUser;
+                    repository = parentRepo;
+                    break;
+
+                default:
+                    return ServiceResult<bool>.Fail($"Invalid role: {role}");
+            }
+
+            if (entity == null)
+                return ServiceResult<bool>.Fail($"{role} not found.");
+
+            if (appUser == null)
+                return ServiceResult<bool>.Fail($"AppUser for {role} not found.");
+
+            // Update status to Blocked
+            dynamic dynamicEntity = entity;
+            dynamicEntity.AccountStatus = AccountStatus.Blocked;
+            appUser.AccountStatus = AccountStatus.Blocked;
+
+            repository.Update(dynamicEntity);
+            _unitOfWork.AppUsers.Update(appUser);
             await _unitOfWork.SaveChangesAsync();
 
             await _notificationService.CreateNotificationAsync(
                 title: "Account Blocked",
-                message: $"Dear {user.FullName}, your account has been blocked. Please contact support for more information.",
+                message: $"Dear {appUser.FullName}, your account has been blocked. Please contact support for more information.",
                 type: "Account Status",
-                creatorUserId: adminUserId,
-                targetUserIds: new[] { user.Id },
+                creatorUserId: adminId,
+                targetUserIds: new[] { appUser.Id },
                 role: role
             );
 
-            return ServiceResult<bool>.Ok(true, "User blocked successfully.");
+            return ServiceResult<bool>.Ok(true, $"{role} blocked successfully.");
         }
 
-        //Unblock User
+        // Unblock User for all roles
         public async Task<ServiceResult<bool>> UnblockUserAsync(
-            string appUserId,
-            string adminUserId,
+            string accountId,
+            string adminId,
             string role
         )
         {
-            var appUserRepo = _unitOfWork.AppUsers;
-            var user = await appUserRepo.FirstOrDefaultAsync(u => u.Id == appUserId);
+            object? entity = null;
+            AppUser? appUser = null;
+            dynamic? repository = null;
 
-            if (user == null)
-                return ServiceResult<bool>.Fail("User not found.");
+            switch (role.ToLower())
+            {
+                case "teacher":
+                    var teacherRepo = _unitOfWork.Repository<Teacher>();
+                    var teacher = await teacherRepo.FirstOrDefaultAsync(
+                        t => t.Id == accountId,
+                        q => q.Include(t => t.AppUser)
+                    );
+                    entity = teacher;
+                    appUser = teacher?.AppUser;
+                    repository = teacherRepo;
+                    break;
 
-            user.AccountStatus = AccountStatus.Active;
-            appUserRepo.Update(user);
+                case "student":
+                    var studentRepo = _unitOfWork.Repository<Student>();
+                    var student = await studentRepo.FirstOrDefaultAsync(
+                        s => s.Id == accountId,
+                        q => q.Include(s => s.AppUser)
+                    );
+                    entity = student;
+                    appUser = student?.AppUser;
+                    repository = studentRepo;
+                    break;
+
+                case "parent":
+                    var parentRepo = _unitOfWork.Repository<Parent>();
+                    var parent = await parentRepo.FirstOrDefaultAsync(
+                        p => p.Id == accountId,
+                        q => q.Include(p => p.AppUser)
+                    );
+                    entity = parent;
+                    appUser = parent?.AppUser;
+                    repository = parentRepo;
+                    break;
+
+                default:
+                    return ServiceResult<bool>.Fail($"Invalid role: {role}");
+            }
+
+            if (entity == null)
+                return ServiceResult<bool>.Fail($"{role} not found.");
+
+            if (appUser == null)
+                return ServiceResult<bool>.Fail($"AppUser for {role} not found.");
+
+            // Update status to Active
+            dynamic dynamicEntity = entity;
+            dynamicEntity.AccountStatus = AccountStatus.Active;
+            appUser.AccountStatus = AccountStatus.Active;
+
+            repository.Update(dynamicEntity);
+            _unitOfWork.AppUsers.Update(appUser);
             await _unitOfWork.SaveChangesAsync();
+
             await _notificationService.CreateNotificationAsync(
                 title: "Account Unblocked",
-                message: $"Dear {user.FullName}, your account has been unblocked. You can now access all features.",
+                message: $"Dear {appUser.FullName}, your account has been unblocked. You can now access all features.",
                 type: "Account Status",
-                creatorUserId: adminUserId,
-                targetUserIds: new[] { user.Id },
+                creatorUserId: adminId,
+                targetUserIds: new[] { appUser.Id },
                 role: role
             );
-            return ServiceResult<bool>.Ok(true, "User unblocked successfully.");
+
+            return ServiceResult<bool>.Ok(true, $"{role} unblocked successfully.");
         }
 
         //Teachers by Class
@@ -235,7 +428,7 @@ namespace Application.Services
                 ContactInfo = t.ContactInfo,
                 Subjects = t.TeacherSubjects!.Select(ts => ts.Subject.SubjectName).ToList(),
                 ClassNames = t.TeacherClasses.Select(tc => tc.Class.ClassName).ToList(),
-                ProfileStatus = t.ProfileStatus.ToString(),
+                ProfileStatus = t.AccountStatus.ToString(),
             });
 
             return ServiceResult<IEnumerable<TeacherAdminViewDto>>.Ok(dto);
@@ -248,7 +441,7 @@ namespace Application.Services
             var students = await studentRepo.FindAllAsync(
                 s => s.ClassId == classId, // DIRECT class relationship
                 q => q.Include(s => s.AppUser)
-                      .Include(s => s.Class) // Include the class
+                      .Include(s => s.Class)! // Include the class
             );
 
             var dto = students.Select(s => new StudentViewDto
@@ -257,7 +450,7 @@ namespace Application.Services
                 FullName = s.AppUser.FullName,
                 Email = s.Email,
                 ClassName = s.Class?.ClassName ?? "N/A",
-                ProfileStatus = s.ProfileStatus.ToString(),
+                AccountStatus = s.AccountStatus.ToString(),
             });
 
             return ServiceResult<IEnumerable<StudentViewDto>>.Ok(dto);
@@ -339,7 +532,7 @@ namespace Application.Services
         public async Task<ServiceResult<bool>> AssignTeacherToClassAsync(
     string teacherId,
     string classId
-)
+    )
         {
             var teacherClassRepo = _unitOfWork.Repository<TeacherClass>();
             var teacherRepo = _unitOfWork.Repository<Teacher>();
@@ -459,7 +652,7 @@ namespace Application.Services
                 FullName = t.AppUser.FullName,
                 Email = t.Email,
                 ClassNames = t.TeacherClasses.Select(tc => tc.Class.ClassName).ToList(),
-                ProfileStatus = t.ProfileStatus.ToString(),
+                ProfileStatus = t.AccountStatus.ToString(),
             });
 
             return ServiceResult<IEnumerable<TeacherAdminViewDto>>.Ok(dto);
@@ -498,7 +691,7 @@ namespace Application.Services
             var teacherRepo = _unitOfWork.Repository<Teacher>();
 
             var pendingTeachers = await teacherRepo.FindAllAsync(
-                predicate: t => t.ProfileStatus == ProfileStatus.Pending,
+                predicate: t => t.AccountStatus == AccountStatus.Pending,
                 include: q => q.Include(t => t.AppUser)
             );
 
@@ -517,128 +710,12 @@ namespace Application.Services
             );
         }
 
-        //Student
-        //Approve Student
-        public async Task<ServiceResult<bool>> ApproveStudentAsync(
-            string studentId,
-            string adminUserId
-        )
-        {
-            var studentRepo = _unitOfWork.Repository<Student>();
-            var student = await studentRepo.FirstOrDefaultAsync(
-                s => s.Id == studentId,
-                q => q.Include(s => s.AppUser)
-            );
-            if (student == null)
-                return ServiceResult<bool>.Fail("Student not found");
-
-            student.ProfileStatus = ProfileStatus.Approved;
-            student.AppUser.AccountStatus = AccountStatus.Active;
-
-            studentRepo.Update(student);
-            await _unitOfWork.SaveChangesAsync();
-
-            await _notificationService.CreateNotificationAsync(
-                title: "Profile Approved",
-                message: $"Dear {student.AppUser.FullName}, your profile has been approved by the admin.",
-                type: "Approval",
-                creatorUserId: adminUserId,
-                targetUserIds: new[] { student.AppUserId },
-                role: "Student"
-            );
-            return ServiceResult<bool>.Ok(true, "Student approved succesfully");
-        }
-
-        public async Task<ServiceResult<bool>> RejectStudentAsync(
-            string studentId,
-            string adminUserId
-        )
-        {
-            var studentRepo = _unitOfWork.Repository<Student>();
-            var student = await studentRepo.FirstOrDefaultAsync(
-                s => s.Id == studentId,
-                q => q.Include(s => s.AppUser)
-            );
-            if (student == null)
-                return ServiceResult<bool>.Fail("Student not found");
-
-            student.ProfileStatus = ProfileStatus.Rejected;
-            student.AppUser.AccountStatus = AccountStatus.PendingApproval;
-
-            studentRepo.Update(student);
-            await _unitOfWork.SaveChangesAsync();
-
-            await _notificationService.CreateNotificationAsync(
-                title: "Profile Rejected",
-                message: $"Dear {student.AppUser.FullName}, your profile has been rejected by the admin. Please review and resubmit.",
-                type: "Rejection",
-                creatorUserId: adminUserId,
-                targetUserIds: new[] { student.AppUserId },
-                role: "Student"
-            );
-            return ServiceResult<bool>.Ok(true, "Student rejected successfully");
-        }
-
-        public async Task<ServiceResult<bool>> BlockStudentAsync(
-            string appUserId,
-            string adminUserId
-        )
-        {
-            var appUserRepo = _unitOfWork.AppUsers;
-            var user = await appUserRepo.FirstOrDefaultAsync(u => u.Id == appUserId);
-
-            if (user == null)
-                return ServiceResult<bool>.Fail("Student not found.");
-
-            user.AccountStatus = AccountStatus.Blocked;
-            appUserRepo.Update(user);
-            await _unitOfWork.SaveChangesAsync();
-
-            await _notificationService.CreateNotificationAsync(
-                title: "Account Blocked",
-                message: $"Dear {user.FullName}, your account has been blocked. Please contact support for more information.",
-                type: "Account Status",
-                creatorUserId: adminUserId,
-                targetUserIds: new[] { user.Id },
-                role: "Student"
-            );
-
-            return ServiceResult<bool>.Ok(true, "Student blocked successfully.");
-        }
-
-        public async Task<ServiceResult<bool>> UnblockStudentAsync(
-            string appUserId,
-            string adminUserId
-        )
-        {
-            var appUserRepo = _unitOfWork.AppUsers;
-            var user = await appUserRepo.FirstOrDefaultAsync(u => u.Id == appUserId);
-
-            if (user == null)
-                return ServiceResult<bool>.Fail("Student not found.");
-
-            user.AccountStatus = AccountStatus.Active;
-            appUserRepo.Update(user);
-            await _unitOfWork.SaveChangesAsync();
-
-            await _notificationService.CreateNotificationAsync(
-                title: "Account Unblocked",
-                message: $"Dear {user.FullName}, your account has been unblocked. You can now access all features.",
-                type: "Account Status",
-                creatorUserId: adminUserId,
-                targetUserIds: new[] { user.Id },
-                role: "Student"
-            );
-
-            return ServiceResult<bool>.Ok(true, "Student unblocked successfully.");
-        }
-
         public async Task<ServiceResult<IEnumerable<StudentViewDto>>> GetPendingStudentsAsync()
         {
             var studentRepo = _unitOfWork.Repository<Student>();
 
             var pendingStudents = await studentRepo.FindAllAsync(
-                predicate: s => s.ProfileStatus == ProfileStatus.Pending,
+                predicate: s => s.AccountStatus == AccountStatus.Pending,
                 include: q => q.Include(s => s.AppUser)
                                .Include(s => s.Class) // Include class
                                .ThenInclude(c => c.Grade) // Include grade for grade name
@@ -657,7 +734,7 @@ namespace Application.Services
                 Email = s.Email,
                 ClassName = s.Class?.ClassName ?? "N/A",
                 GradeName = s.Class?.Grade?.GradeName ?? "N/A", // Add grade name
-                ProfileStatus = s.ProfileStatus.ToString(),
+                AccountStatus = s.AccountStatus.ToString(),
             });
 
             return ServiceResult<IEnumerable<StudentViewDto>>.Ok(
@@ -744,149 +821,29 @@ namespace Application.Services
             return ServiceResult<bool>.Ok(true, "Student moved successfully.");
         }
 
-        //Parent
-        public async Task<ServiceResult<bool>> ApproveParentAsync(
-            string parentId,
-            string adminUserId
-        )
-        {
-            var parentRepo = _unitOfWork.Repository<Parent>();
-            var parent = await parentRepo.FirstOrDefaultAsync(
-                p => p.Id == parentId,
-                q => q.Include(p => p.AppUser)
-            );
-
-            if (parent == null)
-                return ServiceResult<bool>.Fail("Parent not found.");
-
-            parent.ProfileStatus = ProfileStatus.Approved;
-            parent.AppUser.AccountStatus = AccountStatus.Active;
-
-            parentRepo.Update(parent);
-            await _unitOfWork.SaveChangesAsync();
-
-            await _notificationService.CreateNotificationAsync(
-                title: "Profile Approved",
-                message: $"Dear {parent.AppUser.FullName}, your profile has been approved by the admin.",
-                type: "Approval",
-                creatorUserId: adminUserId,
-                targetUserIds: new[] { parent.AppUserId },
-                role: "Parent"
-            );
-
-            return ServiceResult<bool>.Ok(true, "Parent approved successfully.");
-        }
-
-        public async Task<ServiceResult<bool>> RejectParentAsync(
-            string parentId,
-            string adminUserId
-        )
-        {
-            var parentRepo = _unitOfWork.Repository<Parent>();
-            var parent = await parentRepo.FirstOrDefaultAsync(
-                p => p.Id == parentId,
-                q => q.Include(p => p.AppUser)
-            );
-
-            if (parent == null)
-                return ServiceResult<bool>.Fail("Parent not found.");
-
-            parent.ProfileStatus = ProfileStatus.Rejected;
-            parent.AppUser.AccountStatus = AccountStatus.PendingApproval;
-
-            parentRepo.Update(parent);
-            await _unitOfWork.SaveChangesAsync();
-
-            await _notificationService.CreateNotificationAsync(
-                title: "Profile Rejected",
-                message: $"Dear {parent.AppUser.FullName}, your profile has been rejected by the admin. Please review and resubmit.",
-                type: "Rejection",
-                creatorUserId: adminUserId,
-                targetUserIds: new[] { parent.AppUserId },
-                role: "Parent"
-            );
-
-            return ServiceResult<bool>.Ok(true, "Parent rejected successfully.");
-        }
-
-        public async Task<ServiceResult<bool>> BlockParentAsync(
-            string appUserId,
-            string adminUserId
-        )
-        {
-            var appUserRepo = _unitOfWork.AppUsers;
-            var user = await appUserRepo.FirstOrDefaultAsync(u => u.Id == appUserId);
-
-            if (user == null)
-                return ServiceResult<bool>.Fail("Parent not found.");
-
-            user.AccountStatus = AccountStatus.Blocked;
-            appUserRepo.Update(user);
-            await _unitOfWork.SaveChangesAsync();
-
-            await _notificationService.CreateNotificationAsync(
-                title: "Account Blocked",
-                message: $"Dear {user.FullName}, your account has been blocked. Please contact support for more information.",
-                type: "Account Status",
-                creatorUserId: adminUserId,
-                targetUserIds: new[] { user.Id },
-                role: "Parent"
-            );
-
-            return ServiceResult<bool>.Ok(true, "Parent blocked successfully.");
-        }
-
-        public async Task<ServiceResult<bool>> UnblockParentAsync(
-            string appUserId,
-            string adminUserId
-        )
-        {
-            var appUserRepo = _unitOfWork.AppUsers;
-            var user = await appUserRepo.FirstOrDefaultAsync(u => u.Id == appUserId);
-
-            if (user == null)
-                return ServiceResult<bool>.Fail("Parent not found.");
-
-            user.AccountStatus = AccountStatus.Active;
-            appUserRepo.Update(user);
-            await _unitOfWork.SaveChangesAsync();
-
-            await _notificationService.CreateNotificationAsync(
-                title: "Account Unblocked",
-                message: $"Dear {user.FullName}, your account has been unblocked. You can now access all features.",
-                type: "Account Status",
-                creatorUserId: adminUserId,
-                targetUserIds: new[] { user.Id },
-                role: "Parent"
-            );
-
-            return ServiceResult<bool>.Ok(true, "Parent unblocked successfully.");
-        }
-
-        public async Task<ServiceResult<IEnumerable<ParentViewDto>>> GetPendingParentsAsync()
+        public async Task<ServiceResult<IEnumerable<ParentViewWithChildrenDto>>> GetPendingParentsAsync()
         {
             var parentRepo = _unitOfWork.Repository<Parent>();
 
             var pendingParents = await parentRepo.FindAllAsync(
-                predicate: p => p.ProfileStatus == ProfileStatus.Pending,
+                predicate: p => p.AccountStatus == AccountStatus.Pending,
                 include: q => q.Include(p => p.AppUser)
             );
 
             if (!pendingParents.Any())
-                return ServiceResult<IEnumerable<ParentViewDto>>.Ok(
-                    Enumerable.Empty<ParentViewDto>(),
+                return ServiceResult<IEnumerable<ParentViewWithChildrenDto>>.Ok(
+                    Enumerable.Empty<ParentViewWithChildrenDto>(),
                     "No pending parents found."
                 );
 
-            var result = pendingParents.Select(p => new ParentViewDto
+            var result = pendingParents.Select(p => new ParentViewWithChildrenDto
             {
                 Id = p.Id,
                 FullName = p.AppUser.FullName,
                 Email = p.Email,
-                ProfileStatus = p.ProfileStatus,
             });
 
-            return ServiceResult<IEnumerable<ParentViewDto>>.Ok(
+            return ServiceResult<IEnumerable<ParentViewWithChildrenDto>>.Ok(
                 result,
                 "Pending parents retrieved successfully."
             );
@@ -925,6 +882,7 @@ namespace Application.Services
 
         // Bulk Assign Teachers
         // Bulk Assign Teachers
+
         public async Task<ServiceResult<bool>> BulkAssignTeachersAsync(BulkAssignTeachersDto dto)
         {
             var teacherRepo = _unitOfWork.Repository<Teacher>();
@@ -986,5 +944,234 @@ namespace Application.Services
             return ServiceResult<bool>.Ok(true,
                 $"Successfully created {newAssignmentsCount} teacher-class assignments.");
         }
+
+        public async Task<ServiceResult<bool>> ApproveParentWithStudent(RelationParentWithStudentRequest relationRequest)
+        {
+            try
+            {
+                var parent = await _parentRepository.GetByIdAsync(relationRequest.ParentId);
+                if (parent == null)
+                {
+                    return ServiceResult<bool>.Fail("Parent not found");
+                }
+
+                var student = await _studentRepository.GetByIdAsync(relationRequest.StudentId);
+                if (student == null)
+                {
+                    return ServiceResult<bool>.Fail("Student not found");
+                }
+
+                if (parent.AccountStatus == AccountStatus.Active)
+                {
+                    return await AddStudentToExistingParent(relationRequest.ParentId, relationRequest.StudentId);
+                }
+
+                var existingRelationship = await _parentStudentRepository
+                    .FirstOrDefaultAsync(ps => ps.ParentId == relationRequest.ParentId && ps.StudentId == relationRequest.StudentId);
+
+                if (existingRelationship == null)
+                {
+                    var parentStudent = new ParentStudent
+                    {
+                        ParentId = relationRequest.ParentId,
+                        StudentId = relationRequest.StudentId,
+                        Relation = relationRequest.Relation ?? parent.Relation
+                    };
+
+                    await _parentStudentRepository.AddAsync(parentStudent);
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(relationRequest.Relation))
+                    {
+                        existingRelationship.Relation = relationRequest.Relation;
+                        _parentStudentRepository.Update(existingRelationship);
+                    }
+                }
+
+                _parentRepository.Update(parent);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                return ServiceResult<bool>.Ok(true, "Parent approved successfully");
+            }
+            catch (Exception)
+            {
+                return ServiceResult<bool>.Fail("An error occurred while approving parent");
+            }
+        }
+        public async Task<ServiceResult<bool>> ApproveParentBulk(ParentApprovalBulkDto bulkDto)
+        {
+
+            try
+            {
+                var parent = await _parentRepository.GetByIdAsync(bulkDto.ParentId);
+                if (parent == null)
+                {
+                    return ServiceResult<bool>.Fail("Parent not found");
+                }
+
+                var studentIds = bulkDto.StudentApprovals.Select(s => s.StudentId).ToList();
+
+                var existingStudents = await _studentRepository
+                    .FindAllAsync(s => studentIds.Contains(s.Id));
+
+                var existingStudentIds = existingStudents.Select(s => s.Id).ToList();
+                var missingStudentIds = studentIds.Except(existingStudentIds).ToList();
+
+                if (missingStudentIds.Any())
+                {
+                    return ServiceResult<bool>.Fail($"Students not found: {string.Join(", ", missingStudentIds)}");
+                }
+
+                var existingRelationships = await _parentStudentRepository
+                    .FindAllAsync(ps => ps.ParentId == bulkDto.ParentId);
+
+                foreach (var approval in bulkDto.StudentApprovals)
+                {
+                    var existingRelationship = existingRelationships
+                        .FirstOrDefault(ps => ps.StudentId == approval.StudentId);
+
+                    if (existingRelationship == null)
+                    {
+                        var parentStudent = new ParentStudent
+                        {
+                            ParentId = bulkDto.ParentId,
+                            StudentId = approval.StudentId,
+                            Relation = approval.Relation ?? parent.Relation
+                        };
+
+                        await _parentStudentRepository.AddAsync(parentStudent);
+                    }
+                    else if (!string.IsNullOrEmpty(approval.Relation))
+                    {
+                        existingRelationship.Relation = approval.Relation;
+                        _parentStudentRepository.Update(existingRelationship);
+                    }
+                }
+
+                parent.AccountStatus = AccountStatus.Active;
+                _parentRepository.Update(parent);
+
+                await _unitOfWork.SaveChangesAsync();
+
+
+                return ServiceResult<bool>.Ok(true,
+                    $"Parent approved successfully with {bulkDto.StudentApprovals.Count} student(s)");
+            }
+            catch (Exception)
+            {
+                return ServiceResult<bool>.Fail("An error occurred during bulk parent approval");
+            }
+        }
+        public async Task<ServiceResult<bool>> AddStudentToParent(string parentId, ParentStudentApprovalDto studentDto)
+        {
+            try
+            {
+                var parent = await _parentRepository
+                    .FirstOrDefaultAsync(p => p.Id == parentId && p.AccountStatus == AccountStatus.Active);
+
+                if (parent == null)
+                {
+                    return ServiceResult<bool>.Fail("Active parent not found");
+                }
+
+                var student = await _studentRepository.GetByIdAsync(studentDto.StudentId);
+                if (student == null)
+                {
+                    return ServiceResult<bool>.Fail("Student not found");
+                }
+
+                var existingRelationship = await _parentStudentRepository
+                    .FirstOrDefaultAsync(ps => ps.ParentId == parentId && ps.StudentId == studentDto.StudentId);
+
+                if (existingRelationship != null)
+                {
+                    return ServiceResult<bool>.Fail("Student is already linked to this parent");
+                }
+
+                // Create new relationship
+                var parentStudent = new ParentStudent
+                {
+                    ParentId = parentId,
+                    StudentId = studentDto.StudentId,
+                    Relation = studentDto.Relation ?? parent.Relation
+                };
+
+                await _parentStudentRepository.AddAsync(parentStudent);
+                await _unitOfWork.SaveChangesAsync();
+
+                return ServiceResult<bool>.Ok(true, "Student added to parent successfully");
+            }
+            catch (Exception)
+            {
+                return ServiceResult<bool>.Fail("An error occurred while adding student to parent");
+            }
+        }
+        public async Task<ServiceResult<bool>> RemoveStudentFromParent(string parentId, string studentId)
+        {
+            try
+            {
+                var relationship = await _parentStudentRepository
+                    .FirstOrDefaultAsync(ps => ps.ParentId == parentId && ps.StudentId == studentId);
+
+                if (relationship == null)
+                {
+                    return ServiceResult<bool>.Fail("Relationship not found");
+                }
+
+                var parent = await _parentRepository.GetByIdAsync(parentId);
+                var student = await _studentRepository.GetByIdAsync(studentId);
+
+                _parentStudentRepository.Delete(relationship);
+                await _unitOfWork.SaveChangesAsync();
+
+                return ServiceResult<bool>.Ok(true, "Student removed from parent successfully");
+            }
+            catch (Exception)
+            {
+                return ServiceResult<bool>.Fail("An error occurred while removing student from parent");
+            }
+        }
+        public async Task<ServiceResult<bool>> AddStudentToExistingParent(string parentId, string studentId)
+        {
+            try
+            {
+                var existingRelationship = await _parentStudentRepository
+                    .FirstOrDefaultAsync(ps => ps.ParentId == parentId && ps.StudentId == studentId);
+
+                if (existingRelationship != null)
+                {
+                    return ServiceResult<bool>.Fail("Student is already linked to this parent");
+                }
+
+                var parent = await _parentRepository.GetByIdAsync(parentId);
+                var student = await _studentRepository.GetByIdAsync(studentId);
+
+                if (parent == null || student == null)
+                {
+                    return ServiceResult<bool>.Fail("Parent or student not found");
+                }
+
+                var parentStudent = new ParentStudent
+                {
+                    ParentId = parentId,
+                    StudentId = studentId,
+                    Relation = parent.Relation
+
+                };
+
+                await _parentStudentRepository.AddAsync(parentStudent);
+                await _unitOfWork.SaveChangesAsync();
+
+
+                return ServiceResult<bool>.Ok(true, "Student added to existing parent successfully");
+            }
+            catch (Exception)
+            {
+                return ServiceResult<bool>.Fail("An error occurred while adding student to existing parent");
+            }
+        }
+
     }
 }

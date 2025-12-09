@@ -1,4 +1,9 @@
 ﻿using Domain.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Application.DTOs.ParentDTOs
 {
@@ -10,6 +15,7 @@ namespace Application.DTOs.ParentDTOs
         public string ContactInfo { get; set; } = string.Empty;
         public string AppUserId { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
-        public ProfileStatus ProfileStatus { get; set; }
+        public string? Relation { get; set; }
+        public AccountStatus AccountStatus { get; set; }
     }
 }

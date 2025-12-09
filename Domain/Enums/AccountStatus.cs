@@ -2,8 +2,9 @@
 {
     public enum AccountStatus
     {
-        PendingApproval,
+        Pending,
         Active,
-        Blocked
+        Blocked,
+        Rejected,
     }
 }

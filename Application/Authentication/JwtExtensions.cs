@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Domain.Entities;
+using Domain.Enums;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -17,14 +18,13 @@ namespace Application.Authentication
         {
             var claims = new List<Claim>
             {
-                // Use "sub" as the user ID — standard and consistent with validation
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!),
                 new Claim(JwtRegisteredClaimNames.Name, user.FullName),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!) // Optional: for display
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!),
+                new Claim("AccountStatus", user.AccountStatus.ToString())
             };
 
-            // Use ClaimTypes.Role for role mapping consistency
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));

@@ -20,6 +20,7 @@
   <ItemGroup>
     <Folder Include="Templates\" />
     <Folder Include="wwwroot\" />
+    <Folder Include="wwwroot\uploads\parents\pdf\" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Fonts\arial.ttf">
