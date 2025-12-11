@@ -15,8 +15,12 @@ namespace Application.DTOs.StudentDTOs
         public string? CurriculumId { get; set; } = string.Empty; // Add this
         public int? Age { get; set; }
         public string? ClassId { get; set; } = string.Empty;
+<<<<<<< HEAD
         public string? ClassYear { get; set; } = string.Empty; // Add this
         public string ProfileStatus { get; set; } = string.Empty;
+=======
+        public string AccountStatus { get; set; } = string.Empty;
+>>>>>>> 103a6977b420bef1cbbc6beeffefa4218bd1bafa
         public List<ParentStudent>? Parents { get; set; } = new();
     }
 }

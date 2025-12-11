@@ -40,8 +40,13 @@ namespace Application.DependencyInjection
             services.AddScoped<IGpaCalculator, GpaCalculator>();
             services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<IGradeService, GradeService>();
+<<<<<<< HEAD
             services.AddScoped<ICurriculumService, CurriculumService>();
             services.AddScoped<ICertificateService, CertificateService>();
+=======
+            services.AddScoped<IParentService, ParentService>();
+
+>>>>>>> 103a6977b420bef1cbbc6beeffefa4218bd1bafa
             //SignalR
             services.AddSignalR();
             services.AddScoped<INotificationBroadcaster, SignalRNotificationBroadcaster>();

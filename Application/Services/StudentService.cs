@@ -129,6 +129,7 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true, "Student deleted successfully");
         }
+<<<<<<< HEAD
 
         // New method: Get students by curriculum
         public async Task<ServiceResult<IEnumerable<StudentViewDto>>> GetStudentsByCurriculumAsync(string curriculumId)
@@ -179,5 +180,40 @@ namespace Application.Services
             var count = await _studentRepository.GetStudentCountByCurriculumAsync(curriculumId);
             return ServiceResult<int>.Ok(count, $"Total students in curriculum: {count}");
         }
+=======
+        public async Task<ServiceResult<List<StudentSearchResultDto>>> SearchStudentsAsync(string searchTerm)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(searchTerm) || searchTerm.Length < 2)
+                    return ServiceResult<List<StudentSearchResultDto>>.Ok(new List<StudentSearchResultDto>());
+
+                var students = await _studentRepository.FindAllAsync(
+                 s => s.AccountStatus == Domain.Enums.AccountStatus.Active &&
+                 (s.FullName.Contains(searchTerm) ||
+                  s.Email.Contains(searchTerm) ||
+                  s.IqamaNumber.Contains(searchTerm) ||
+                  s.PassportNumber.Contains(searchTerm))
+                );
+
+                var result = students.Select(s => new StudentSearchResultDto
+                {
+                    Id = s.Id,
+                    FullName = s.FullName,
+                    Email = s.Email,
+                    IqamaNumber = s.IqamaNumber,
+                    PassportNumber = s.PassportNumber
+                }).ToList();
+
+                return ServiceResult<List<StudentSearchResultDto>>.Ok(result);
+            }
+            catch (Exception)
+            {
+                return ServiceResult<List<StudentSearchResultDto>>.Fail("An error occurred while searching for students");
+            }
+        }
+
+
+>>>>>>> 103a6977b420bef1cbbc6beeffefa4218bd1bafa
     }
 }

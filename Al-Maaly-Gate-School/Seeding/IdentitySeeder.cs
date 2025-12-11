@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,7 @@ namespace Al_Maaly_Gate_School.Seeding
                     Email = adminEmail,
                     FullName = "System Administrator",
                     EmailConfirmed = true,
+                    AccountStatus = AccountStatus.Active
                 };
 
                 var createResult = await userManager.CreateAsync(adminUser, adminPassword);
@@ -76,7 +78,7 @@ namespace Al_Maaly_Gate_School.Seeding
                     ContactInfo = "",
                     AppUserId = adminUser.Id,
                     Type = "SuperAdmin",
-                    ProfileStatus = Domain.Enums.ProfileStatus.Approved,
+                    AccountStatus = AccountStatus.Active,
                 };
                 ctx.Admins.Add(adminEntity);
                 await ctx.SaveChangesAsync();

@@ -6,8 +6,8 @@ namespace Domain.Entities
     {
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public string ContactInfo { get; set; } = string.Empty;
-        public ProfileStatus ProfileStatus { get; set; } = ProfileStatus.Pending;
+        public string? ContactInfo { get; set; } = string.Empty;
+        public AccountStatus AccountStatus { get; set; } = AccountStatus.Pending;
         public string AppUserId { get; set; } = string.Empty;
         public AppUser AppUser { get; set; } = null!;
     }

@@ -11,18 +11,12 @@ namespace Application.Interfaces
         //Teacher Management
         Task<ServiceResult<int>> GetTeacherCount();
         Task<ServiceResult<IEnumerable<TeacherAdminViewDto>>> GetTeahcerInfo(string subjectName);
-        Task<ServiceResult<bool>> ApproveTeacherAsync(string teacherId, string creatorUserId);
-        Task<ServiceResult<bool>> RejectTeacherAsync(string teacherId, string creatorUserId);
-        Task<ServiceResult<bool>> BlockUserAsync(
-            string appUserId,
-            string creatorUserId,
-            string role
-        );
-        Task<ServiceResult<bool>> UnblockUserAsync(
-            string appUserId,
-            string adminUserId,
-            string role
-        );
+
+        Task<ServiceResult<bool>> ApproveUserAsync(string accountId, string adminId, string role);
+        Task<ServiceResult<bool>> BlockUserAsync(string accountId, string adminId, string role);
+        Task<ServiceResult<bool>> UnblockUserAsync(string accountId, string adminId, string role);
+        Task<ServiceResult<bool>> RejectUserAsync(string accountId, string adminId, string role);
+
         Task<ServiceResult<IEnumerable<TeacherAdminViewDto>>> GetTeachersByClassAsync(
             string classId
         );
@@ -40,11 +34,6 @@ namespace Application.Interfaces
         Task<ServiceResult<IEnumerable<ClassResultDto>>> GetClassResultsAsync(string classId);
         Task<ServiceResult<IEnumerable<TeacherAdminViewDto>>> GetPendingTeachersAsync();
 
-        //Student Management
-        Task<ServiceResult<bool>> ApproveStudentAsync(string studentId, string adminUserId);
-        Task<ServiceResult<bool>> RejectStudentAsync(string studentId, string adminUserId);
-        Task<ServiceResult<bool>> BlockStudentAsync(string appUserId, string adminUserId);
-        Task<ServiceResult<bool>> UnblockStudentAsync(string appUserId, string adminUserId);
         Task<ServiceResult<IEnumerable<StudentViewDto>>> GetPendingStudentsAsync();
         Task<ServiceResult<bool>> MoveStudentToAnotherClassAsync(
             string studentId,
@@ -52,14 +41,15 @@ namespace Application.Interfaces
             string adminUserId
         );
 
-        //Parent
-        Task<ServiceResult<bool>> ApproveParentAsync(string parentId, string adminUserId);
-        Task<ServiceResult<bool>> RejectParentAsync(string parentId, string adminUserId);
-        Task<ServiceResult<bool>> BlockParentAsync(string appUserId, string adminUserId);
-        Task<ServiceResult<bool>> UnblockParentAsync(string appUserId, string adminUserId);
-        Task<ServiceResult<IEnumerable<ParentViewDto>>> GetPendingParentsAsync();
+        Task<ServiceResult<IEnumerable<ParentViewWithChildrenDto>>> GetPendingParentsAsync();
 
         Task<ServiceResult<bool>> UnassignTeacherFromClassAsync(string teacherId, string classId);
         Task<ServiceResult<bool>> BulkAssignTeachersAsync(BulkAssignTeachersDto dto);
+
+        Task<ServiceResult<bool>> ApproveParentWithStudent(RelationParentWithStudentRequest relationRequest);
+        Task<ServiceResult<bool>> ApproveParentBulk(ParentApprovalBulkDto bulkDto);
+        Task<ServiceResult<bool>> AddStudentToParent(string parentId, ParentStudentApprovalDto studentDto);
+        Task<ServiceResult<bool>> RemoveStudentFromParent(string parentId, string studentId);
+        Task<ServiceResult<bool>> AddStudentToExistingParent(string parentId , string studentId );
     }
 }
