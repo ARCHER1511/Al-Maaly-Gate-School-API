@@ -9,8 +9,7 @@
         public List<Choices>? Choices { get; set; } = new ();
         public ChoiceAnswer? ChoiceAnswer { get; set; }
         public bool? TrueAndFalses { get; set; }
-        public string? ExamId { get; set; }
-        public Exam? Exam { get; set; }
+        public List<ExamQuestion> ExamQuestions { get; set; } = new();
         public string TeacherId { get; set; } = string.Empty;
         public Teacher Teacher { get; set; } = null!;
     }

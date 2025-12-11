@@ -135,30 +135,117 @@ public class ClassAppointmentService : IClassAppointmentService
 
         public async Task<ServiceResult<IEnumerable<StudentClassAppointmentDto>>> GetAppointmentsForStudentByClassIdAsync(string ClassId)
         {
-            var result = await _classAppointmentRepository.AsQueryable()
-                    .Where(c => c.ClassId == ClassId)
+            Console.WriteLine($"=== DEBUG: GetAppointmentsForStudentByClassIdAsync called ===");
+            Console.WriteLine($"ClassId: {ClassId}");
+
+            try
+            {
+                // 1. First check if the class exists
+                var classExists = await _unitOfWork.Repository<Class>().AsQueryable()
+                    .AnyAsync(c => c.Id == ClassId);
+                Console.WriteLine($"Class exists in database: {classExists}");
+
+                // 2. Check appointments without includes first
+                var appointmentsQuery = _classAppointmentRepository.AsQueryable()
+                    .Where(c => c.ClassId == ClassId);
+
+                var appointmentCount = await appointmentsQuery.CountAsync();
+                Console.WriteLine($"Found {appointmentCount} appointments with ClassId: {ClassId}");
+
+                // 3. Get appointments with includes
+                var result = await appointmentsQuery
                     .Include(c => c.Subject)
                     .Include(c => c.Teacher)
                     .ToListAsync();
-            if (result == null) return ServiceResult<IEnumerable<StudentClassAppointmentDto>>.Fail("Appointments not found");
 
-            bool isChanged = false;
-            foreach (var appointment in result)
-            {
-                var newStatus = GetStatus(appointment.StartTime, appointment.EndTime);
-                if (appointment.Status != newStatus)
+                Console.WriteLine($"After Include, retrieved {result?.Count ?? 0} appointments");
+
+                if (result == null || !result.Any())
                 {
-                    appointment.Status = newStatus;
-                    _classAppointmentRepository.Update(appointment);
-                    isChanged = true;
+                    // Check if there are ANY appointments in the system
+                    var totalAppointments = await _classAppointmentRepository.AsQueryable().CountAsync();
+                    Console.WriteLine($"Total appointments in database: {totalAppointments}");
+
+                    // Check what appointments exist in database
+                    var allAppointments = await _classAppointmentRepository.AsQueryable()
+                        .Take(10)
+                        .Select(c => new { c.Id, c.ClassId, c.StartTime, c.EndTime })
+                        .ToListAsync();
+
+                    Console.WriteLine("Sample appointments in database:");
+                    foreach (var app in allAppointments)
+                    {
+                        Console.WriteLine($"  - ID: {app.Id}, ClassId: {app.ClassId}, Start: {app.StartTime}, End: {app.EndTime}");
+                    }
+
+                    return ServiceResult<IEnumerable<StudentClassAppointmentDto>>.Ok(
+                        new List<StudentClassAppointmentDto>(),
+                        "No appointments found for this class"
+                    );
                 }
+
+                // 4. Log details about found appointments
+                Console.WriteLine("Found appointments details:");
+                foreach (var appointment in result)
+                {
+                    Console.WriteLine($"  - ID: {appointment.Id}");
+                    Console.WriteLine($"    StartTime: {appointment.StartTime}");
+                    Console.WriteLine($"    EndTime: {appointment.EndTime}");
+                    Console.WriteLine($"    SubjectId: {appointment.SubjectId}");
+                    Console.WriteLine($"    Subject: {(appointment.Subject != null ? appointment.Subject.SubjectName : "NULL")}");
+                    Console.WriteLine($"    TeacherId: {appointment.TeacherId}");
+                    Console.WriteLine($"    Teacher: {(appointment.Teacher != null ? appointment.Teacher.FullName : "NULL")}");
+                }
+
+                // 5. Check status updates
+                bool isChanged = false;
+                foreach (var appointment in result)
+                {
+                    var newStatus = GetStatus(appointment.StartTime, appointment.EndTime);
+                    if (appointment.Status != newStatus)
+                    {
+                        Console.WriteLine($"Updating status for appointment {appointment.Id}: {appointment.Status} -> {newStatus}");
+                        appointment.Status = newStatus;
+                        _classAppointmentRepository.Update(appointment);
+                        isChanged = true;
+                    }
+                }
+
+                if (isChanged)
+                {
+                    await _unitOfWork.SaveChangesAsync();
+                    Console.WriteLine("Saved status updates to database");
+                }
+
+                // 6. Test mapping manually
+                Console.WriteLine("Testing manual mapping...");
+                var manualDtos = result.Select(appointment => new StudentClassAppointmentDto
+                {
+                    Id = appointment.Id,
+                    StartTime = appointment.StartTime,
+                    EndTime = appointment.EndTime,
+                    Link = appointment.Link,
+                    Status = appointment.Status,
+                    SubjectId = appointment.SubjectId,
+                    SubjectName = appointment.Subject?.SubjectName ?? string.Empty,
+                    TeacherId = appointment.TeacherId,
+                    TeacherName = appointment.Teacher?.FullName ?? string.Empty
+                }).ToList();
+
+                Console.WriteLine($"Manual mapping created {manualDtos.Count} DTOs");
+
+                // 7. Test AutoMapper
+                var autoMapperDtos = _mapper.Map<IEnumerable<StudentClassAppointmentDto>>(result).ToList();
+                Console.WriteLine($"AutoMapper created {autoMapperDtos.Count} DTOs");
+
+                return ServiceResult<IEnumerable<StudentClassAppointmentDto>>.Ok(autoMapperDtos, "Appointments retrieved successfully");
             }
-            if (isChanged)
-                await _unitOfWork.SaveChangesAsync();
-
-            var resultDto = _mapper.Map<IEnumerable<StudentClassAppointmentDto>>(result);
-
-            return ServiceResult<IEnumerable<StudentClassAppointmentDto>>.Ok(resultDto, "Appointment retrieved successfully");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ERROR: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                return ServiceResult<IEnumerable<StudentClassAppointmentDto>>.Fail($"Error: {ex.Message}");
+            }
         }
     }
 }

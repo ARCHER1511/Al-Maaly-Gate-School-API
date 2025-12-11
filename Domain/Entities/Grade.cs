@@ -11,6 +11,10 @@ namespace Domain.Entities
         public string GradeName { get; set; }
         public string Description { get; set; }
 
+        // Link to Curriculum
+        public string CurriculumId { get; set; }
+        public Curriculum Curriculum { get; set; }
+
         public List<Class> Classes { get; set; }
         public List<Subject> Subjects { get; set; }
     }

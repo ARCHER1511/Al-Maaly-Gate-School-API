@@ -129,21 +129,50 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        // Override base methods to include details
-        public new async Task<IEnumerable<Grade>> GetAllAsync()
+        public async Task<Grade?> GetByNameAndCurriculumAsync(string gradeName, string curriculumId)
         {
-            return await _dbSet
-                .Include(g => g.Classes)
-                .Include(g => g.Subjects)
+            return await _context.Grades
+                .FirstOrDefaultAsync(g => g.GradeName.ToLower() == gradeName.ToLower()
+                                       && g.CurriculumId == curriculumId);
+        }
+
+        public async Task<Grade?> GetByIdWithCurriculumAsync(string id)
+        {
+            return await _context.Grades
+                .Include(g => g.Curriculum)
+                .FirstOrDefaultAsync(g => g.Id == id);
+        }
+
+        public async Task<Grade?> GetByNameWithCurriculumAsync(string name)
+        {
+            return await _context.Grades
+                .Include(g => g.Curriculum)
+                .FirstOrDefaultAsync(g => g.GradeName.ToLower() == name.ToLower());
+        }
+
+        public async Task<IEnumerable<Grade>> GetGradesByCurriculumAsync(string curriculumId)
+        {
+            return await _context.Grades
+                .Include(g => g.Curriculum)
+                .Where(g => g.CurriculumId == curriculumId)
                 .ToListAsync();
         }
 
-        public new async Task<Grade?> GetByIdAsync(string id)
+
+        // Override GetAllAsync to include Curriculum
+        public override async Task<IEnumerable<Grade>> GetAllAsync()
         {
-            return await _dbSet
-                .Include(g => g.Classes)
-                .Include(g => g.Subjects)
-                .FirstOrDefaultAsync(g => g.Id == id);
+            return await _context.Grades
+                .Include(g => g.Curriculum)
+                .ToListAsync();
+        }
+
+        // Override GetByIdAsync to include Curriculum
+        public override async Task<Grade?> GetByIdAsync(object id)
+        {
+            return await _context.Grades
+                .Include(g => g.Curriculum)
+                .FirstOrDefaultAsync(g => g.Id == (string)id);
         }
     }
 }

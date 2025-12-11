@@ -24,5 +24,7 @@ namespace Infrastructure.Interfaces
 
         IQueryable<T> AsQueryable(Expression<Func<T, bool>>? predicate = null);
         IQueryable<T> AsQueryable();
+
+        Task<int> GetCountAsync(Expression<Func<T, bool>> predicate);
     }
 }

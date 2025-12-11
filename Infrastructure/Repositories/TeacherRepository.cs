@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class TeacherRepository : GenericRepository<Teacher>,ITeacherRepository
+    public class TeacherRepository : GenericRepository<Teacher>, ITeacherRepository
     {
         private new readonly AlMaalyGateSchoolContext _context;
         private new readonly DbSet<Teacher> _dbSet;
@@ -15,9 +15,18 @@ namespace Infrastructure.Repositories
             _context = context;
             _dbSet = context.Set<Teacher>();
         }
+
         public async Task<Teacher?> GetByAppUserIdAsync(string appUserId)
         {
             return await _dbSet.FirstOrDefaultAsync(t => t.AppUserId == appUserId);
+        }
+
+        // Add this method for curriculum queries
+        public async Task<IEnumerable<Teacher>> GetTeachersWithCurriculaAsync()
+        {
+            return await _dbSet
+                .Include(t => t.SpecializedCurricula)
+                .ToListAsync();
         }
     }
 }

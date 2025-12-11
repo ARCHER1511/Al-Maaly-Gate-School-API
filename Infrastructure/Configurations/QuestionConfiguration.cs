@@ -10,15 +10,16 @@ namespace Infrastructure.Configurations
         {
             builder.ToTable("Questions", "Academics");
 
-            builder.HasOne(q => q.Exam)
-                   .WithMany(e => e.Questions)
-                   .HasForeignKey(q => q.ExamId)
-                   .OnDelete(DeleteBehavior.NoAction);
+            // Remove the old foreign key configuration
+            // builder.HasOne(q => q.Exam)
+            //        .WithMany(e => e.Questions)
+            //        .HasForeignKey(q => q.ExamId)
+            //        .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(q => q.Teacher)
-                  .WithMany(e => e.Questions)
-                  .HasForeignKey(q => q.TeacherId)
-                  .OnDelete(DeleteBehavior.Cascade);
+                   .WithMany(e => e.Questions)
+                   .HasForeignKey(q => q.TeacherId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(q => q.Choices)
                    .WithOne(c => c.Question)
@@ -32,6 +33,11 @@ namespace Infrastructure.Configurations
 
             builder.Property(q => q.Degree).HasPrecision(5, 2);
 
+            // Configure the many-to-many relationship through ExamQuestion
+            builder.HasMany(q => q.ExamQuestions)
+                   .WithOne(eq => eq.Question)
+                   .HasForeignKey(eq => eq.QuestionId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -34,5 +34,7 @@ namespace Application.Interfaces
         Task<ServiceResult<GradeWithDetailsDto>> GetGradeWithDetailsAsync(string id);
 
         Task<ServiceResult<bool>> BulkMoveClassesAsync(BulkMoveClassesDto dto);
+
+        Task<ServiceResult<IEnumerable<GradeViewDto>>> GetGradesByCurriculumAsync(string curriculumId);
     }
 }

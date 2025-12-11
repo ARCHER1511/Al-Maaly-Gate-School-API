@@ -23,7 +23,8 @@ namespace Infrastructure.Repositories
                 .Include(q => q.Choices)
                 .Include(q => q.ChoiceAnswer)
                 //.Include(q => q.TextAnswer)
-                .Include(q => q.Exam)
+                .Include(e => e.ExamQuestions)
+                .ThenInclude(eq => eq.Exam)
                 .ToListAsync();
         }
 

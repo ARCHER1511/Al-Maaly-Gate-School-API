@@ -41,6 +41,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IStudentExamAnswerRepository, StudentExamAnswerRepository>();
             services.AddScoped<IStudentExamResultRepository, StudentExamResultRepository>();
             services.AddScoped<IGradeRepository, GradeRepository>();
+            services.AddScoped<ICurriculumRepository, CurriculumRepository>();
             return services;
         }
 

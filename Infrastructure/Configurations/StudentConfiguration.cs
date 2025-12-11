@@ -29,6 +29,13 @@ namespace Infrastructure.Configurations
                    .OnDelete(DeleteBehavior.Restrict)
                    .IsRequired(false);
 
+            // Add Curriculum relationship
+            builder.HasOne(s => s.Curriculum)
+                   .WithMany(c => c.Students)
+                   .HasForeignKey(s => s.CurriculumId)
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired(false);
+
             builder.ToTable("Students", "Academics");
         }
     }

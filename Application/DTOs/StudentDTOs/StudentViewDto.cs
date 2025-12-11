@@ -11,8 +11,11 @@ namespace Application.DTOs.StudentDTOs
         public string? ContactInfo { get; set; } = string.Empty;
         public string? AppUserId { get; set; } = string.Empty;
         public string? GradeName { get; set; } = string.Empty;
+        public string? CurriculumName { get; set; } = string.Empty; // Add this
+        public string? CurriculumId { get; set; } = string.Empty; // Add this
         public int? Age { get; set; }
         public string? ClassId { get; set; } = string.Empty;
+        public string? ClassYear { get; set; } = string.Empty; // Add this
         public string ProfileStatus { get; set; } = string.Empty;
         public List<ParentStudent>? Parents { get; set; } = new();
     }

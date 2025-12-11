@@ -17,15 +17,15 @@ namespace Infrastructure.Repositories
             _dbSet = context.Set<T>();
         }
 
-        // 🔹 Ordinary methods
-        public async Task<T?> GetByIdAsync(object id) => await _dbSet.FindAsync(id);
-        public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
-        public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
-        public void Update(T entity) => _dbSet.Update(entity);
-        public void Delete(T entity) => _dbSet.Remove(entity);
+        // 🔹 Ordinary methods - Make these virtual
+        public virtual async Task<T?> GetByIdAsync(object id) => await _dbSet.FindAsync(id);
+        public virtual async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
+        public virtual async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
+        public virtual void Update(T entity) => _dbSet.Update(entity);
+        public virtual void Delete(T entity) => _dbSet.Remove(entity);
 
-        // 🔹 LINQ-powered methods
-        public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate,
+        // 🔹 LINQ-powered methods - Make these virtual too
+        public virtual async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate,
                                        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null)
         {
             IQueryable<T> query = _dbSet;
@@ -33,7 +33,7 @@ namespace Infrastructure.Repositories
             return await query.FirstOrDefaultAsync(predicate);
         }
 
-        public async Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>>? predicate = null,
+        public virtual async Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>>? predicate = null,
                                                       Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
                                                       Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
                                                       int? skip = null,
@@ -50,10 +50,16 @@ namespace Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
-        public IQueryable<T> AsQueryable(Expression<Func<T, bool>>? predicate = null)
+        public virtual IQueryable<T> AsQueryable(Expression<Func<T, bool>>? predicate = null)
         {
             return predicate != null ? _dbSet.Where(predicate) : _dbSet;
         }
-        public IQueryable<T> AsQueryable() => _dbSet.AsQueryable();
+
+        public virtual IQueryable<T> AsQueryable() => _dbSet.AsQueryable();
+
+        public virtual async Task<int> GetCountAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.CountAsync(predicate);
+        }
     }
 }

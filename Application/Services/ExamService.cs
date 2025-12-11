@@ -26,6 +26,7 @@ namespace Application.Services
         {
             var examRepo = _unitOfWork.Repository<Exam>();
             var questionRepo = _unitOfWork.Repository<Question>();
+            var examQuestionRepo = _unitOfWork.Repository<ExamQuestion>();
 
             // Fetch existing questions by IDs
             var questions = await questionRepo.FindAllAsync(q => dto.QuestionIds.Contains(q.Id));
@@ -33,7 +34,7 @@ namespace Application.Services
             if (!questions.Any())
                 return ServiceResult<ExamDetailsViewDto>.Fail("No valid questions found for this exam.");
 
-            // Create exam and assign questions
+            // Create exam
             var exam = new Exam
             {
                 ExamName = dto.ExamName,
@@ -45,23 +46,35 @@ namespace Application.Services
                 MinMark = dto.MinMark,
                 FullMark = dto.FullMark,
                 Status = dto.Status,
-                Questions = questions.ToList()
+                ExamQuestions = new List<ExamQuestion>()
             };
 
+            // Create ExamQuestion join entities
+            foreach (var question in questions)
+            {
+                var examQuestion = new ExamQuestion
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Exam = exam,
+                    Question = question
+                };
+                exam.ExamQuestions.Add(examQuestion);
+            }
 
             await examRepo.AddAsync(exam);
             await _unitOfWork.SaveChangesAsync();
 
             // Reload exam with full related data
             var loadedExam = await examRepo.AsQueryable(e => e.Id == exam.Id)
-                .Include(e => e.Questions)
-                    .ThenInclude(q => q.Choices)
-                .Include(e => e.Questions)
+                .Include(e => e.ExamQuestions)
+                    .ThenInclude(eq => eq.Question)
+                        .ThenInclude(q => q.Choices)
+                .Include(e => e.Subject)
+                .Include(e => e.Class)
                 .FirstOrDefaultAsync();
 
             var result = _mapper.Map<ExamDetailsViewDto>(loadedExam);
             return ServiceResult<ExamDetailsViewDto>.Ok(result, "Exam created successfully with questions.");
-
         }
 
         public async Task<ServiceResult<ExamDetailsViewDto>> GetExamWithQuestionsAsync(string examId)
@@ -71,16 +84,16 @@ namespace Application.Services
             var exam = await examRepo.AsQueryable(e => e.Id == examId)
                 .Include(e => e.Subject)
                 .Include(e => e.Class)
-                .Include(e => e.Questions)
-                    .ThenInclude(q => q.Choices)
+                .Include(e => e.ExamQuestions)
+                    .ThenInclude(eq => eq.Question)
+                        .ThenInclude(q => q.Choices)
                 .FirstOrDefaultAsync();
-
 
             if (exam == null)
                 return ServiceResult<ExamDetailsViewDto>.Fail("Exam not found.");
 
             var result = _mapper.Map<ExamDetailsViewDto>(exam);
-            return ServiceResult<ExamDetailsViewDto>.Ok(result,"Exam Retrived Succesfully");
+            return ServiceResult<ExamDetailsViewDto>.Ok(result, "Exam Retrieved Successfully");
         }
 
         public async Task<ServiceResult<IEnumerable<ExamViewDto>>> GetAllAsync()
@@ -106,7 +119,8 @@ namespace Application.Services
             var exam = await repo.AsQueryable(e => e.Id == id)
                 .Include(e => e.Subject)
                 .Include(e => e.Class)
-                .Include(e => e.Questions)
+                .Include(e => e.ExamQuestions)
+                    .ThenInclude(eq => eq.Question)
                     .ThenInclude(q => q.Choices)
                 .FirstOrDefaultAsync();
 
@@ -161,27 +175,26 @@ namespace Application.Services
         public async Task<ServiceResult<bool>> DeleteAsync(string id)
         {
             var examRepo = _unitOfWork.Repository<Exam>();
-            var questionRepo = _unitOfWork.Repository<Question>();
+            var examQuestionRepo = _unitOfWork.Repository<ExamQuestion>();
 
-            var exam = await examRepo.GetByIdAsync(id);
+            var exam = await examRepo.AsQueryable(e => e.Id == id)
+                .Include(e => e.ExamQuestions)
+                .FirstOrDefaultAsync();
+
             if (exam == null)
                 return ServiceResult<bool>.Fail("Exam not found");
 
-            // Get all questions related to this exam and set their ExamId to null
-            var questions = await questionRepo.FindAllAsync(
-                predicate: q => q.ExamId == id,
-                include: null // Add include if you need related entities
-            );
-
-            foreach (var question in questions)
+            // Delete all ExamQuestion join entities first
+            foreach (var examQuestion in exam.ExamQuestions.ToList())
             {
-                question.ExamId = null; // This will break the relationship
-                questionRepo.Update(question);
+                examQuestionRepo.Delete(examQuestion);
             }
 
+            // Then delete the exam
             examRepo.Delete(exam);
             await _unitOfWork.SaveChangesAsync();
-            return ServiceResult<bool>.Ok(true);
+
+            return ServiceResult<bool>.Ok(true, "Exam deleted successfully");
         }
     }
 }

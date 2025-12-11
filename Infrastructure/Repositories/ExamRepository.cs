@@ -19,7 +19,8 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<Exam>> GetByTeacherIdAsync(string teacherId)
         {
             return await _dbSet
-                .Include(e => e.Questions)
+                .Include(e => e.ExamQuestions)
+                .ThenInclude(eq => eq.Question)
                 .Where(e => e.TeacherId == teacherId)
                 .ToListAsync();
         }
@@ -27,7 +28,8 @@ namespace Infrastructure.Repositories
         public async Task<Exam?> GetByIdWithQuestionsAsync(string examId)
         {
             return await _dbSet
-                .Include(e => e.Questions)
+                .Include(e => e.ExamQuestions)
+                .ThenInclude(eq => eq.Question)
                 .FirstOrDefaultAsync(e => e.Id == examId);
         }
     }

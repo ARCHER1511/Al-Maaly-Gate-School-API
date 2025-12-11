@@ -12,6 +12,8 @@ namespace Application.DTOs.TeacherDTOs
         public ProfileStatus ProfileStatus { get; set; }
         public List<string> Subjects { get; set; } = new();
         public List<string> ClassNames { get; set; } = new();
+        public List<string> SpecializedCurricula { get; set; } = new(); // Add this
+        public List<string> SpecializedCurriculumIds { get; set; } = new(); // Add this
     }
 
 }

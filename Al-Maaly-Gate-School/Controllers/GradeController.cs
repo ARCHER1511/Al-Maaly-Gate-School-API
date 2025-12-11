@@ -60,6 +60,17 @@ namespace Al_Maaly_Gate_School.Controllers
             return Ok(ApiResponse<GradeWithDetailsDto>.Ok(result.Data!, result.Message));
         }
 
+        // NEW ENDPOINT: Get grades by curriculum
+        [HttpGet("curriculum/{curriculumId}")]
+        public async Task<IActionResult> GetByCurriculum(string curriculumId)
+        {
+            var result = await _gradeService.GetGradesByCurriculumAsync(curriculumId);
+            if (!result.Success)
+                return NotFound(ApiResponse<IEnumerable<GradeViewDto>>.Fail(result.Message!));
+
+            return Ok(ApiResponse<IEnumerable<GradeViewDto>>.Ok(result.Data!, result.Message));
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateGradeDto dto)
         {
@@ -200,7 +211,7 @@ namespace Al_Maaly_Gate_School.Controllers
             return Ok(ApiResponse<bool>.Ok(result.Data!, result.Message));
         }
 
-        // Add to GradeController
+        // Bulk Operations
         [HttpPost("bulk-move-classes")]
         public async Task<IActionResult> BulkMoveClasses([FromBody] BulkMoveClassesDto dto)
         {

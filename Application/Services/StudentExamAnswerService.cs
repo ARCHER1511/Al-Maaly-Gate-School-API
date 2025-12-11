@@ -68,8 +68,9 @@ namespace Application.Services
                 .Include(e => e.Subject)
                  .ThenInclude(s => s.TeacherSubjects)!
                   .ThenInclude(ts => ts.Teacher)
-                .Include(e => e.Questions)
-                    .ThenInclude(q => q.Choices)
+                .Include(e => e.ExamQuestions)
+                    .ThenInclude(eq => eq.Question)
+                        .ThenInclude(q => q.Choices)
                 .FirstOrDefaultAsync(e => e.Id == submission.ExamId);
 
             if (exam == null)
@@ -85,10 +86,14 @@ namespace Application.Services
 
             var savedAnswers = new List<StudentExamAnswer>();
 
+            // Use ExamQuestions to get questions instead of Questions property
             foreach (var dto in submission.Answers)
             {
-                var question = exam.Questions.FirstOrDefault(q => q.Id == dto.QuestionId);
-                if (question == null) continue;
+                // Get the question from ExamQuestions
+                var examQuestion = exam.ExamQuestions.FirstOrDefault(eq => eq.Question?.Id == dto.QuestionId);
+                if (examQuestion?.Question == null) continue;
+
+                var question = examQuestion.Question;
 
                 var studentAnswer = existingAnswers.FirstOrDefault(a => a.QuestionId == dto.QuestionId)
                                     ?? new StudentExamAnswer
@@ -110,12 +115,14 @@ namespace Application.Services
 
                         if (correctChoice != null && !string.IsNullOrEmpty(dto.ChoiceId))
                         {
-                            if (Guid.TryParse(correctChoice.Id, out var correctChoiceGuid) &&
-                                Guid.TryParse(dto.ChoiceId, out var choiceGuid))
+                            // Direct string comparison since both are strings
+                            if (correctChoice.Id == dto.ChoiceId)
                             {
-                                studentAnswer.Mark = (correctChoiceGuid == choiceGuid)
-                                    ? Math.Round((decimal)question.Degree, 2)
-                                    : 0;
+                                studentAnswer.Mark = Math.Round((decimal)question.Degree, 2);
+                            }
+                            else
+                            {
+                                studentAnswer.Mark = 0;
                             }
                         }
                         else
@@ -158,8 +165,17 @@ namespace Application.Services
                         break;
 
                     case QuestionTypes.TrueOrFalse:
-                        if (question.TrueAndFalses == dto.TrueAndFalseAnswer)
+                        // FIXED: Handle null values properly
+                        if (dto.TrueAndFalseAnswer.HasValue &&
+                            question.TrueAndFalses.HasValue &&
+                            question.TrueAndFalses.Value == dto.TrueAndFalseAnswer.Value)
+                        {
                             studentAnswer.Mark = Math.Round((decimal)question.Degree, 2);
+                        }
+                        else
+                        {
+                            studentAnswer.Mark = 0;
+                        }
                         break;
 
                     case QuestionTypes.Complete:
@@ -182,7 +198,6 @@ namespace Application.Services
                             }
                             break;
                         }
-
                 }
 
                 if (existingAnswers.Any(a => a.QuestionId == dto.QuestionId))
@@ -202,15 +217,13 @@ namespace Application.Services
             var existingResult = await _studentExamResultRepository.AsQueryable()
                 .FirstOrDefaultAsync(r => r.StudentId == submission.StudentId && r.ExamId == submission.ExamId);
 
-            Guid teacherGuid;
-            if (!Guid.TryParse(submission.TeacherId, out teacherGuid))
-            {
-                teacherGuid = Guid.Empty; 
-            }
+            // Find the teacher
+            var teacher = exam.Subject.TeacherSubjects?
+                .FirstOrDefault(t => t.TeacherId == submission.TeacherId)?
+                .Teacher;
 
-            var teacher = exam.Subject.TeacherSubjects?.FirstOrDefault(t => t.TeacherId == submission.TeacherId)?.Teacher;
             if (teacher == null)
-                return ServiceResult<List<StudentExamAnswerDto>>.Fail("teacher not found.");
+                return ServiceResult<List<StudentExamAnswerDto>>.Fail("Teacher not found.");
 
             if (existingResult != null)
             {
@@ -310,7 +323,8 @@ namespace Application.Services
         {
             var exam = await _ExamRepository.AsQueryable()
                 .Include(e => e.Subject)
-                .Include(e => e.Questions)
+                .Include(e => e.ExamQuestions)
+                .ThenInclude(eq => eq.Question)
                     .ThenInclude(q => q.Choices)
                 .FirstOrDefaultAsync(e => e.Id == examId);
 

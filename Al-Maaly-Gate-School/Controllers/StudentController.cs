@@ -12,54 +12,85 @@ namespace Al_Maaly_Gate_School.Controllers
     [AllowAnonymous]
     public class StudentController : ControllerBase
     {
-        private readonly IStudentService _StudentService;
+        private readonly IStudentService _studentService;
+
         public StudentController(IStudentService studentService)
         {
-            _StudentService = studentService;
+            _studentService = studentService;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _StudentService.GetAllAsync();
-            if (!result.Success) return NotFound(ApiResponse<IEnumerable<StudentViewDto>>.Fail(result.Message!));
+            var result = await _studentService.GetAllAsync();
+            if (!result.Success)
+                return NotFound(ApiResponse<IEnumerable<StudentViewDto>>.Fail(result.Message!));
+
             return Ok(ApiResponse<IEnumerable<StudentViewDto>>.Ok(result.Data!, result.Message));
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            var result = await _StudentService.GetByIdAsync(id);
+            var result = await _studentService.GetByIdAsync(id);
             if (!result.Success)
                 return NotFound(ApiResponse<StudentViewDto>.Fail(result.Message!));
 
             return Ok(ApiResponse<StudentViewDto>.Ok(result.Data!, result.Message));
         }
 
+        // NEW ENDPOINT: Get students by curriculum
+        [HttpGet("curriculum/{curriculumId}")]
+        public async Task<IActionResult> GetByCurriculum(string curriculumId)
+        {
+            var result = await _studentService.GetStudentsByCurriculumAsync(curriculumId);
+            if (!result.Success)
+                return NotFound(ApiResponse<IEnumerable<StudentViewDto>>.Fail(result.Message!));
+
+            return Ok(ApiResponse<IEnumerable<StudentViewDto>>.Ok(result.Data!, result.Message));
+        }
+
+        // NEW ENDPOINT: Get student count by curriculum
+        [HttpGet("curriculum/{curriculumId}/count")]
+        public async Task<IActionResult> GetCountByCurriculum(string curriculumId)
+        {
+            var result = await _studentService.GetStudentCountByCurriculumAsync(curriculumId);
+            return Ok(ApiResponse<int>.Ok(result.Data!, result.Message));
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] StudentViewDto dto)
+        public async Task<IActionResult> Create([FromBody] CreateStudentDto dto) // Changed parameter type
         {
             if (!ModelState.IsValid)
-                return BadRequest(ApiResponse<Student>.Fail("Invalid Student data."));
+                return BadRequest(ApiResponse<CreateStudentDto>.Fail("Invalid Student data."));
 
-            var result = await _StudentService.CreateAsync(dto);
+            var result = await _studentService.CreateAsync(dto);
 
             if (!result.Success)
-                return BadRequest(ApiResponse<Student>.Fail(result.Message!));
+                return BadRequest(ApiResponse<StudentViewDto>.Fail(result.Message!));
 
             return Ok(ApiResponse<StudentViewDto>.Ok(result.Data!, result.Message));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] StudentViewDto dto)
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateStudentDto dto) // Changed parameter type
         {
-            if (id != dto.Id)
-                return BadRequest(ApiResponse<StudentViewDto>.Fail("ID in URL does not match ID in body."));
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponse<UpdateStudentDto>.Fail("Invalid Student data."));
 
-            var exists = await _StudentService.GetByIdAsync(id);
-            if (!exists.Success)
-                return NotFound(ApiResponse<StudentViewDto>.Fail(exists.Message!));
+            var result = await _studentService.UpdateAsync(id, dto);
 
-            var result = await _StudentService.UpdateAsync(dto);
+            if (!result.Success)
+                return BadRequest(ApiResponse<StudentViewDto>.Fail(result.Message!));
 
+            return Ok(ApiResponse<StudentViewDto>.Ok(result.Data!, result.Message));
+        }
+
+        // NEW ENDPOINT: Move student to different curriculum
+        [HttpPut("{studentId}/move-to-curriculum/{curriculumId}")]
+        public async Task<IActionResult> MoveToCurriculum(string studentId, string curriculumId)
+        {
+            var result = await _studentService.MoveStudentToCurriculumAsync(studentId, curriculumId);
             if (!result.Success)
                 return BadRequest(ApiResponse<StudentViewDto>.Fail(result.Message!));
 
@@ -69,12 +100,12 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var result = await _StudentService.DeleteAsync(id);
+            var result = await _studentService.DeleteAsync(id);
 
             if (!result.Success)
-                return NotFound(ApiResponse<string>.Fail(result.Message!));
+                return NotFound(ApiResponse<bool>.Fail(result.Message!));
 
-            return Ok(ApiResponse<string>.Ok("Student deleted successfully."));
+            return Ok(ApiResponse<bool>.Ok(result.Data!, result.Message));
         }
     }
 }

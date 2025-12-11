@@ -40,6 +40,7 @@ namespace Infrastructure.Data
         public DbSet<Degree> Degrees { get; set; }
         public DbSet<Certificate> Certificates { get; set; }
         public DbSet<Grade> Grades { get; set; }
+        public DbSet<Curriculum> Curriculums { get; set; }
 
         //On model creating with configuration and Factory On using onion architecture
         protected override void OnModelCreating(ModelBuilder builder)

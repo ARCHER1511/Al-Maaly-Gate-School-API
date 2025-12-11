@@ -24,6 +24,12 @@ namespace Infrastructure.Configurations
             builder.Property(g => g.Description)
                    .HasMaxLength(500);
 
+            // Add Curriculum relationship
+            builder.HasOne(g => g.Curriculum)
+                   .WithMany(c => c.Grades)
+                   .HasForeignKey(g => g.CurriculumId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
             // One Grade has many Classes
             builder.HasMany(g => g.Classes)
                    .WithOne(c => c.Grade)

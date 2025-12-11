@@ -18,19 +18,26 @@ namespace Infrastructure.Configurations
                    .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(e => e.Teacher)
-                 .WithMany(t => t.Exams)
-                 .HasForeignKey(e => e.TeacherId)
-                 .OnDelete(DeleteBehavior.Restrict);
+                   .WithMany(t => t.Exams)
+                   .HasForeignKey(e => e.TeacherId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(e => e.Class)
-                 .WithMany(c => c.Exams)
-                 .HasForeignKey(e => e.ClassId)
-                 .OnDelete(DeleteBehavior.Restrict);
+                   .WithMany(c => c.Exams)
+                   .HasForeignKey(e => e.ClassId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(e => e.Questions)
-                   .WithOne(q => q.Exam)
-                   .HasForeignKey(q => q.ExamId)
-                   .OnDelete(DeleteBehavior.NoAction);
+            // Remove the old one-to-many configuration
+            // builder.HasMany(e => e.Questions)
+            //        .WithOne(q => q.Exam)
+            //        .HasForeignKey(q => q.ExamId)
+            //        .OnDelete(DeleteBehavior.NoAction);
+
+            // Configure the many-to-many relationship through ExamQuestion
+            builder.HasMany(e => e.ExamQuestions)
+                   .WithOne(eq => eq.Exam)
+                   .HasForeignKey(eq => eq.ExamId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(e => e.MinMark)
                    .HasPrecision(5, 2);

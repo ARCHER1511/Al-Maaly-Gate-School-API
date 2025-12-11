@@ -18,6 +18,7 @@ namespace Application.DTOs.ExamDTOS
         public string ClassName { get; set; } = string.Empty;
 
         public string TeacherId { get; set; } = string.Empty;
+        public int QuestionCount { get; set; }
 
         public DateTime Start { get; set; }
         public DateTime End { get; set; }

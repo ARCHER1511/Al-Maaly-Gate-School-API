@@ -24,6 +24,9 @@ namespace Al_Maaly_Gate_School
             var configuration = builder.Configuration;
 
             // Add services to the container.
+
+            builder.Services.AddHttpContextAccessor();
+
             builder.Services.AddDatabase(builder.Configuration);
             builder.Services.AddIdentitySetup(builder.Configuration);
             builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -82,6 +85,10 @@ namespace Al_Maaly_Gate_School
                         },
                     }
                 );
+            });
+            builder.Services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = 1073741824; // 1GB
             });
 
             var app = builder.Build();
