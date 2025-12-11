@@ -132,7 +132,6 @@ namespace Application.Mappings
             #endregion
 
             #region Student
-<<<<<<< HEAD
             CreateMap<CreateStudentDto, Student>()
     .ForMember(dest => dest.CurriculumId, opt => opt.MapFrom(src => src.CurriculumId));
 
@@ -154,7 +153,6 @@ namespace Application.Mappings
                     opt => opt.MapFrom(src => src.CurriculumId))
                 .ForMember(dest => dest.ClassYear,
                     opt => opt.MapFrom(src => src.ClassYear));
-=======
             CreateMap<Student, StudentViewDto>().IgnoreUnmapped();
             CreateMap<StudentViewDto, Student>()
                 .IgnoreUnmapped()
@@ -169,7 +167,6 @@ namespace Application.Mappings
             CreateMap<Student, StudentSearchResultDto>().IgnoreUnmapped();
             CreateMap<StudentSearchResultDto, Student>().IgnoreUnmapped();
 
->>>>>>> 103a6977b420bef1cbbc6beeffefa4218bd1bafa
             #endregion
 
             #region Classes Mappings

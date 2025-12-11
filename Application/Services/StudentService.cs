@@ -129,7 +129,6 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true, "Student deleted successfully");
         }
-<<<<<<< HEAD
 
         // New method: Get students by curriculum
         public async Task<ServiceResult<IEnumerable<StudentViewDto>>> GetStudentsByCurriculumAsync(string curriculumId)
@@ -180,7 +179,6 @@ namespace Application.Services
             var count = await _studentRepository.GetStudentCountByCurriculumAsync(curriculumId);
             return ServiceResult<int>.Ok(count, $"Total students in curriculum: {count}");
         }
-=======
         public async Task<ServiceResult<List<StudentSearchResultDto>>> SearchStudentsAsync(string searchTerm)
         {
             try
@@ -214,6 +212,5 @@ namespace Application.Services
         }
 
 
->>>>>>> 103a6977b420bef1cbbc6beeffefa4218bd1bafa
     }
 }

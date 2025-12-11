@@ -191,7 +191,7 @@ namespace Application.Services
                 Email = t.Email ?? string.Empty,
                 ContactInfo = t.ContactInfo ?? string.Empty,
                 AppUserId = t.AppUserId ?? string.Empty,
-                ProfileStatus = t.ProfileStatus,
+                AccountStatus = t.AccountStatus,
                 Subjects = t.TeacherSubjects?.Select(ts => ts.Subject?.SubjectName ?? "[Unknown]").ToList()
                            ?? new List<string>(),
                 ClassNames = t.TeacherClasses?.Select(tc => tc.Class?.ClassName ?? "[Unknown]").ToList()
@@ -296,7 +296,7 @@ namespace Application.Services
                 Email = teacher.Email ?? string.Empty,
                 ContactInfo = teacher.ContactInfo ?? string.Empty,
                 AppUserId = teacher.AppUserId ?? string.Empty,
-                ProfileStatus = teacher.ProfileStatus,
+                AccountStatus = teacher.AccountStatus,
                 Subjects = teacher.TeacherSubjects?.Select(ts => ts.Subject?.SubjectName ?? "[Unknown]").ToList()
                     ?? new List<string>(),
                 ClassNames = teacher.TeacherClasses?.Select(tc => tc.Class?.ClassName ?? "[Unknown]").ToList()

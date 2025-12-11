@@ -10,14 +10,11 @@ namespace Application.Interfaces
         Task<ServiceResult<StudentViewDto>> CreateAsync(CreateStudentDto dto); // Changed parameter
         Task<ServiceResult<StudentViewDto>> UpdateAsync(string id, UpdateStudentDto dto); // Changed parameters
         Task<ServiceResult<bool>> DeleteAsync(object id);
-<<<<<<< HEAD
 
         // New methods for curriculum
         Task<ServiceResult<IEnumerable<StudentViewDto>>> GetStudentsByCurriculumAsync(string curriculumId);
         Task<ServiceResult<StudentViewDto>> MoveStudentToCurriculumAsync(string studentId, string newCurriculumId);
         Task<ServiceResult<int>> GetStudentCountByCurriculumAsync(string curriculumId);
-=======
         Task<ServiceResult<List<StudentSearchResultDto>>> SearchStudentsAsync(string searchTerm);
->>>>>>> 103a6977b420bef1cbbc6beeffefa4218bd1bafa
     }
 }

@@ -20,7 +20,6 @@ namespace Infrastructure.Repositories
         {
             return await _dbSet.FirstOrDefaultAsync(t => t.AppUserId == appUserId);
         }
-<<<<<<< HEAD
 
         // Add this method for curriculum queries
         public async Task<IEnumerable<Teacher>> GetTeachersWithCurriculaAsync()
@@ -29,7 +28,6 @@ namespace Infrastructure.Repositories
                 .Include(t => t.SpecializedCurricula)
                 .ToListAsync();
         }
-=======
         public async Task<Teacher?> GetTeacherWithSubjectsByUserIdAsync(string userId)
         {
             return await _dbSet
@@ -38,6 +36,5 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(t => t.AppUserId == userId);
         }
 
->>>>>>> 103a6977b420bef1cbbc6beeffefa4218bd1bafa
     }
 }

@@ -139,7 +139,7 @@ namespace Application.Services
                     ClassId = s.ClassId,
                     ContactInfo = s.ContactInfo,
                     GradeName = s.Class?.Grade?.GradeName ?? "Not Assigned",
-                    ProfileStatus = s.ProfileStatus.ToString(),
+                    AccountStatus = s.AccountStatus.ToString(),
                 }).ToList() ?? new(),
                 Teachers = curriculum.Teachers?.Select(t => new TeacherViewDto
                 {

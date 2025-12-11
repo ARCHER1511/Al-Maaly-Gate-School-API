@@ -111,7 +111,7 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpGet("searchTerm")]
         public async Task<IActionResult> SearchStudents([FromQuery] string searchTerm)
         {
-            var result = await _StudentService.SearchStudentsAsync(searchTerm);
+            var result = await _studentService.SearchStudentsAsync(searchTerm);
             if (!result.Success)
                 return NotFound(ApiResponse<List<StudentSearchResultDto>>.Fail(result.Message!));
 
