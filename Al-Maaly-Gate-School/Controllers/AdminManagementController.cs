@@ -265,18 +265,18 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpPost("remove-student-from-parent")]
-        public async Task<IActionResult> RemoveStudentFromParent(string parentId, string studentId)
+        public async Task<IActionResult> RemoveStudentFromParent([FromBody] RemoveStudentFromParentRequest unRelationRequest)
         {
-            var result = await _adminManagementService.RemoveStudentFromParent(parentId,studentId);
+            var result = await _adminManagementService.RemoveStudentFromParent(unRelationRequest);
             return result.Success
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));
         }
 
         [HttpPost("add-student-toExisting-parent")]
-        public async Task<IActionResult> AddStudentToExistingParent(string parentId, string studentId)
+        public async Task<IActionResult> AddStudentToExistingParent([FromBody] RelationParentWithStudentRequest relationRequest)
         {
-            var result = await _adminManagementService.AddStudentToExistingParent( parentId, studentId);
+            var result = await _adminManagementService.AddStudentToExistingParent(relationRequest);
             return result.Success
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));

@@ -1,20 +1,26 @@
-﻿using Application.DTOs.StudentDTOs;
+﻿using Application.DTOs.ParentDTOs;
+using Application.DTOs.StudentDTOs;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
+using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Application.Services
 {
     public class StudentService : IStudentService
     {
         private readonly IStudentRepository _studentRepository;
+        private readonly IParentStudentRepository _ParentStudentRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public StudentService(IStudentRepository studentRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public StudentService(IStudentRepository studentRepository, IUnitOfWork unitOfWork, IParentStudentRepository parentStudentRepository, IMapper mapper)
         {
             _studentRepository = studentRepository;
+            _ParentStudentRepository = parentStudentRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -69,29 +75,47 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true, "Student deleted successfully");
         }
-        public async Task<ServiceResult<List<StudentSearchResultDto>>> SearchStudentsAsync(string searchTerm)
+        public async Task<ServiceResult<List<StudentSearchResultDto>>> SearchStudentsAsync(SearchTermDto dto)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(searchTerm) || searchTerm.Length < 2)
+                if (string.IsNullOrWhiteSpace(dto.SearchTerm) || dto.SearchTerm.Length < 2)
                     return ServiceResult<List<StudentSearchResultDto>>.Ok(new List<StudentSearchResultDto>());
 
                 var students = await _studentRepository.FindAllAsync(
-                 s => s.AccountStatus == Domain.Enums.AccountStatus.Active &&
-                 (s.FullName.Contains(searchTerm) ||
-                  s.Email.Contains(searchTerm) ||
-                  s.IqamaNumber.Contains(searchTerm) ||
-                  s.PassportNumber.Contains(searchTerm))
+                    s => s.AccountStatus == Domain.Enums.AccountStatus.Active &&
+                    (s.FullName.Contains(dto.SearchTerm) ||
+                     s.Email.Contains(dto.SearchTerm) ||
+                     s.IqamaNumber.Contains(dto.SearchTerm) ||
+                     s.PassportNumber.Contains(dto.SearchTerm))
                 );
 
-                var result = students.Select(s => new StudentSearchResultDto
+                if (students == null || !students.Any())
+                    return ServiceResult<List<StudentSearchResultDto>>.Ok(new List<StudentSearchResultDto>());
+
+                var studentIds = students.Select(s => s.Id).ToList();
+
+                var parentRelationships = await _ParentStudentRepository
+                    .FindAllAsync(ps => ps.ParentId == dto.ParentId && studentIds.Contains(ps.StudentId));
+
+                var relatedStudentIds = new HashSet<string>(parentRelationships.Select(pr => pr.StudentId));
+
+                var result = new List<StudentSearchResultDto>();
+
+                foreach (var student in students)
                 {
-                    Id = s.Id,
-                    FullName = s.FullName,
-                    Email = s.Email,
-                    IqamaNumber = s.IqamaNumber,
-                    PassportNumber = s.PassportNumber
-                }).ToList();
+                    var ResultDto = new StudentSearchResultDto
+                    {
+                        Id = student.Id,
+                        FullName = student.FullName,
+                        Email = student.Email,
+                        IqamaNumber = student.IqamaNumber,
+                        PassportNumber = student.PassportNumber,
+                        IsInRelation = relatedStudentIds.Contains(student.Id)
+                    };
+
+                    result.Add(ResultDto);
+                }
 
                 return ServiceResult<List<StudentSearchResultDto>>.Ok(result);
             }
@@ -100,7 +124,5 @@ namespace Application.Services
                 return ServiceResult<List<StudentSearchResultDto>>.Fail("An error occurred while searching for students");
             }
         }
-
-
     }
 }

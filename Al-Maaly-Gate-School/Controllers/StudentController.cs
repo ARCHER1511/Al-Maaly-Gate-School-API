@@ -1,4 +1,5 @@
-﻿using Application.DTOs.StudentDTOs;
+﻿using Application.DTOs.ParentDTOs;
+using Application.DTOs.StudentDTOs;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Wrappers;
@@ -78,9 +79,9 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpGet("searchTerm")]
-        public async Task<IActionResult> SearchStudents([FromQuery] string searchTerm)
+        public async Task<IActionResult> SearchStudents([FromQuery] SearchTermDto dto)
         {
-            var result = await _StudentService.SearchStudentsAsync(searchTerm);
+            var result = await _StudentService.SearchStudentsAsync(dto);
             if (!result.Success)
                 return NotFound(ApiResponse<List<StudentSearchResultDto>>.Fail(result.Message!));
 
