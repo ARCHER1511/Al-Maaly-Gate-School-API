@@ -49,7 +49,7 @@ namespace Application.Interfaces
         Task<ServiceResult<bool>> ApproveParentWithStudent(RelationParentWithStudentRequest relationRequest);
         Task<ServiceResult<bool>> ApproveParentBulk(ParentApprovalBulkDto bulkDto);
         Task<ServiceResult<bool>> AddStudentToParent(string parentId, ParentStudentApprovalDto studentDto);
-        Task<ServiceResult<bool>> RemoveStudentFromParent(string parentId, string studentId);
-        Task<ServiceResult<bool>> AddStudentToExistingParent(string parentId , string studentId );
+        Task<ServiceResult<bool>> RemoveStudentFromParent(RemoveStudentFromParentRequest unRelationRequest);
+        Task<ServiceResult<bool>> AddStudentToExistingParent(RelationParentWithStudentRequest relationRequest);
     }
 }
