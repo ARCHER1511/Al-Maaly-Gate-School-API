@@ -441,7 +441,7 @@ namespace Application.Mappings
                                Id = ps.Student.Id,
                                FullName = ps.Student.FullName,
                                StudentId = ps.Student.Id,
-                               Relation = src.Relation
+                               Relation = ps.Relation
                            })));
 
             CreateMap<ParentViewWithChildrenDto, Parent>();

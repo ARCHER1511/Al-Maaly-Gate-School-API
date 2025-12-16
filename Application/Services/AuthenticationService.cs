@@ -11,7 +11,6 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
-using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
@@ -99,7 +98,7 @@ namespace Application.Services
                 }
 
                 fileRecord.Id = parentId;
-              
+
                 await _fileRecordRepository.UpdateAsync(fileRecord);
             }
 
@@ -305,7 +304,7 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
             if (normalizedRole == "teacher")
             {
-                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsByUserIdAsync(user.Id);
+                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsAndClassesByUserIdAsync(user.Id);
             }
             return ServiceResult<AuthResponse>.Ok(response, "Registration successful.");
         }
@@ -322,7 +321,7 @@ namespace Application.Services
             Teacher? teacherEntity = null;
             if (roles.Contains("Teacher"))
             {
-                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsByUserIdAsync(user.Id);
+                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsAndClassesByUserIdAsync(user.Id);
             }
             response.UserId = user.Id;
             response.ProfileImageUrl = user.ProfileImagePath;
@@ -544,7 +543,7 @@ namespace Application.Services
             Teacher? teacherEntity = null;
             if (roles.Contains("Teacher"))
             {
-                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsByUserIdAsync(userId);
+                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsAndClassesByUserIdAsync(userId);
             }
 
             var newJwt = JwtExtensions.GenerateJwtToken(user!, teacherEntity, roles, _config);

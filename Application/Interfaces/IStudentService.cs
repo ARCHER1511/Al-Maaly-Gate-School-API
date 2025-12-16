@@ -1,4 +1,5 @@
-﻿using Application.DTOs.StudentDTOs;
+﻿using Application.DTOs.ParentDTOs;
+using Application.DTOs.StudentDTOs;
 using Domain.Wrappers;
 
 namespace Application.Interfaces
@@ -14,6 +15,7 @@ namespace Application.Interfaces
         Task<ServiceResult<int>> GetStudentCountByCurriculumAsync(string curriculumId);
         Task<ServiceResult<IEnumerable<StudentViewDto>>> GetStudentsByCurriculumAsync(string curriculumId);
         Task<ServiceResult<StudentViewDto>> MoveStudentToCurriculumAsync(string studentId, string newCurriculumId);
-        Task<ServiceResult<List<StudentSearchResultDto>>> SearchStudentsAsync(string searchTerm);
+        //Task<ServiceResult<List<StudentSearchResultDto>>> SearchStudentsAsync(string searchTerm);
+        Task<ServiceResult<List<StudentSearchResultDto>>> SearchStudentsAsync(SearchTermDto dto);
     }
 }

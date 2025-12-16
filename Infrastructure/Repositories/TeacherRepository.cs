@@ -28,11 +28,14 @@ namespace Infrastructure.Repositories
                 .Include(t => t.SpecializedCurricula)
                 .ToListAsync();
         }
-        public async Task<Teacher?> GetTeacherWithSubjectsByUserIdAsync(string userId)
+        public async Task<Teacher?> GetTeacherWithSubjectsAndClassesByUserIdAsync(string userId)
         {
-            return await _dbSet
+            return await _dbSet.Where(t => t.AppUserId == userId)
                 .Include(t => t.TeacherSubjects)!
                     .ThenInclude(ts => ts.Subject)
+                .Include(t => t.TeacherClasses)
+                    .ThenInclude(t => t.Class)
+                    .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.AppUserId == userId);
         }
 

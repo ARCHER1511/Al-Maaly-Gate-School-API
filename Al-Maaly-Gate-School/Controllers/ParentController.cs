@@ -79,7 +79,7 @@ namespace Al_Maaly_Gate_School.Controllers
             return Ok(ApiResponse<string>.Ok("Student deleted successfully."));
         }
 
-        [HttpGet("parent/view/{id}")]
+        [HttpGet("view/{id}")]
         public async Task<IActionResult> GetParentWithChildrenAsync(string id)
         {
             var result = await _ParentService.GetParentWithChildrenAsync(id);

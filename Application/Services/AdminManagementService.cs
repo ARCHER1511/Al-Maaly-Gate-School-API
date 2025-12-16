@@ -1078,7 +1078,7 @@ namespace Application.Services
 
                 if (parent.AccountStatus == AccountStatus.Active)
                 {
-                    return await AddStudentToExistingParent(relationRequest.ParentId, relationRequest.StudentId);
+                    return await AddStudentToExistingParent(relationRequest);
                 }
 
                 var existingRelationship = await _parentStudentRepository
@@ -1090,18 +1090,13 @@ namespace Application.Services
                     {
                         ParentId = relationRequest.ParentId,
                         StudentId = relationRequest.StudentId,
-                        Relation = relationRequest.Relation ?? parent.Relation
+                        // Use the request relation, only fallback if it's empty
+                        Relation = !string.IsNullOrEmpty(relationRequest.Relation)
+                            ? relationRequest.Relation
+                            : parent.Relation
                     };
 
                     await _parentStudentRepository.AddAsync(parentStudent);
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(relationRequest.Relation))
-                    {
-                        existingRelationship.Relation = relationRequest.Relation;
-                        _parentStudentRepository.Update(existingRelationship);
-                    }
                 }
 
                 _parentRepository.Update(parent);
@@ -1223,20 +1218,20 @@ namespace Application.Services
                 return ServiceResult<bool>.Fail("An error occurred while adding student to parent");
             }
         }
-        public async Task<ServiceResult<bool>> RemoveStudentFromParent(string parentId, string studentId)
+        public async Task<ServiceResult<bool>> RemoveStudentFromParent(RemoveStudentFromParentRequest request)
         {
             try
             {
                 var relationship = await _parentStudentRepository
-                    .FirstOrDefaultAsync(ps => ps.ParentId == parentId && ps.StudentId == studentId);
+                    .FirstOrDefaultAsync(ps => ps.ParentId == request.ParentId && ps.StudentId == request.StudentId);
 
                 if (relationship == null)
                 {
                     return ServiceResult<bool>.Fail("Relationship not found");
                 }
 
-                var parent = await _parentRepository.GetByIdAsync(parentId);
-                var student = await _studentRepository.GetByIdAsync(studentId);
+                var parent = await _parentRepository.GetByIdAsync(request.ParentId);
+                var student = await _studentRepository.GetByIdAsync(request.StudentId);
 
                 _parentStudentRepository.Delete(relationship);
                 await _unitOfWork.SaveChangesAsync();
@@ -1248,20 +1243,20 @@ namespace Application.Services
                 return ServiceResult<bool>.Fail("An error occurred while removing student from parent");
             }
         }
-        public async Task<ServiceResult<bool>> AddStudentToExistingParent(string parentId, string studentId)
+        public async Task<ServiceResult<bool>> AddStudentToExistingParent(RelationParentWithStudentRequest relationParentRequest)
         {
             try
             {
                 var existingRelationship = await _parentStudentRepository
-                    .FirstOrDefaultAsync(ps => ps.ParentId == parentId && ps.StudentId == studentId);
+                    .FirstOrDefaultAsync(ps => ps.ParentId == relationParentRequest.ParentId && ps.StudentId == relationParentRequest.StudentId);
 
                 if (existingRelationship != null)
                 {
                     return ServiceResult<bool>.Fail("Student is already linked to this parent");
                 }
 
-                var parent = await _parentRepository.GetByIdAsync(parentId);
-                var student = await _studentRepository.GetByIdAsync(studentId);
+                var parent = await _parentRepository.GetByIdAsync(relationParentRequest.ParentId);
+                var student = await _studentRepository.GetByIdAsync(relationParentRequest.StudentId);
 
                 if (parent == null || student == null)
                 {
@@ -1270,15 +1265,14 @@ namespace Application.Services
 
                 var parentStudent = new ParentStudent
                 {
-                    ParentId = parentId,
-                    StudentId = studentId,
-                    Relation = parent.Relation
-
+                    ParentId = relationParentRequest.ParentId,
+                    StudentId = relationParentRequest.StudentId,
+                    // Use the provided relation, fallback to parent.Relation if needed
+                    Relation = !string.IsNullOrEmpty(relationParentRequest.Relation) ? relationParentRequest.Relation : parent.Relation
                 };
 
                 await _parentStudentRepository.AddAsync(parentStudent);
                 await _unitOfWork.SaveChangesAsync();
-
 
                 return ServiceResult<bool>.Ok(true, "Student added to existing parent successfully");
             }
@@ -1287,6 +1281,5 @@ namespace Application.Services
                 return ServiceResult<bool>.Fail("An error occurred while adding student to existing parent");
             }
         }
-
     }
 }
