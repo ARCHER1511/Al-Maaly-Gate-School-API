@@ -744,20 +744,23 @@ namespace Application.Services
         }
 
         public async Task<ServiceResult<bool>> MoveStudentToAnotherClassAsync(
-            string studentId,
-            string? newClassId,
-            string adminUserId
-)
+    string studentId,
+    string? newClassId,
+    string adminUserId)
         {
             Console.WriteLine($"Moving student {studentId} to class {newClassId ?? "NULL"}");
 
             var studentRepo = _unitOfWork.Repository<Student>();
             var classRepo = _unitOfWork.Repository<Class>();
+            var curriculumRepo = _unitOfWork.Repository<Curriculum>();
 
             // Check if student exists
             var student = await studentRepo.FirstOrDefaultAsync(
                 s => s.Id == studentId,
-                q => q.Include(s => s.Class).Include(s => s.AppUser)
+                q => q.Include(s => s.Class)
+                      .ThenInclude(c => c.Grade)
+                      .Include(c => c.Curriculum)
+                      .Include(s => s.AppUser)
             );
 
             if (student == null)
@@ -769,17 +772,24 @@ namespace Application.Services
             Console.WriteLine($"Found student: {student.AppUser.FullName}");
 
             string? oldClassName = student.Class?.ClassName;
+            Curriculum? oldCurriculum = student.Class?.Grade.Curriculum;
 
             // If newClassId is null or empty → unassign the student
             if (string.IsNullOrEmpty(newClassId))
             {
                 Console.WriteLine("Unassigning student from class");
                 student.ClassId = null!;
+                student.CurriculumId = null; // Also remove curriculum
             }
             else
             {
                 Console.WriteLine($"Looking for class with ID: {newClassId}");
-                var newClass = await classRepo.FirstOrDefaultAsync(c => c.Id == newClassId);
+                // Load class with its curriculum
+                var newClass = await classRepo.FirstOrDefaultAsync(
+                    c => c.Id == newClassId,
+                    q => q.Include(g => g.Grade)
+                    .ThenInclude(c => c.Curriculum)
+                );
 
                 if (newClass == null)
                 {
@@ -795,19 +805,35 @@ namespace Application.Services
                 Console.WriteLine($"Found class: {newClass.ClassName}");
                 student.ClassId = newClassId;
                 student.Class = newClass;
+
+                // Set curriculum from the class
+                if (newClass.Grade.CurriculumId != null)
+                {
+                    student.CurriculumId = newClass.Grade.CurriculumId;
+                    Console.WriteLine($"Setting curriculum to: {newClass.Grade.CurriculumId}");
+                }
+                else
+                {
+                    student.CurriculumId = null;
+                    Console.WriteLine("Warning: Class has no curriculum assigned");
+                }
             }
 
             studentRepo.Update(student);
             await _unitOfWork.SaveChangesAsync();
             Console.WriteLine("Student moved successfully");
-            await _unitOfWork.SaveChangesAsync();
 
             // Build notification message
             string message;
             if (string.IsNullOrEmpty(newClassId))
+            {
                 message = $"Dear {student.AppUser.FullName}, you have been unassigned from your previous class ({oldClassName ?? "N/A"}).";
+            }
             else
-                message = $"Dear {student.AppUser.FullName}, you have been moved to class {student.Class?.ClassName ?? "N/A"} successfully.";
+            {
+                var curriculumName = student.Class?.Grade.Curriculum?.Name ?? "N/A";
+                message = $"Dear {student.AppUser.FullName}, you have been moved to class {student.Class?.ClassName ?? "N/A"} with curriculum {curriculumName}.";
+            }
 
             await _notificationService.CreateNotificationAsync(
                 title: "Class Assignment Updated",
@@ -819,6 +845,95 @@ namespace Application.Services
             );
 
             return ServiceResult<bool>.Ok(true, "Student moved successfully.");
+        }
+
+        public async Task<ServiceResult<bool>> UpdateStudentCurriculumAsync(
+            string studentId,
+            string curriculumId,
+            string adminUserId)
+        {
+            var studentRepo = _unitOfWork.Repository<Student>();
+            var curriculumRepo = _unitOfWork.Repository<Curriculum>();
+
+            var student = await studentRepo.FirstOrDefaultAsync(
+                s => s.Id == studentId,
+                q => q.Include(s => s.AppUser)
+                      .Include(s => s.Class)
+            );
+
+            if (student == null)
+                return ServiceResult<bool>.Fail("Student not found.");
+
+            // Validate curriculum exists
+            var curriculum = await curriculumRepo.GetByIdAsync(curriculumId);
+            if (curriculum == null)
+                return ServiceResult<bool>.Fail("Curriculum not found.");
+
+            student.CurriculumId = curriculumId;
+            studentRepo.Update(student);
+            await _unitOfWork.SaveChangesAsync();
+
+            await _notificationService.CreateNotificationAsync(
+                title: "Curriculum Updated",
+                message: $"Dear {student.AppUser.FullName}, your curriculum has been updated to {curriculum.Name}.",
+                type: "Curriculum Change",
+                creatorUserId: adminUserId,
+                targetUserIds: new[] { student.AppUserId },
+                role: "Student"
+            );
+
+            return ServiceResult<bool>.Ok(true, "Student curriculum updated successfully.");
+        }
+
+        public async Task<ServiceResult<bool>> BulkUpdateCurriculumForClassAsync(
+            string classId,
+            string curriculumId,
+            string adminUserId)
+        {
+            var classRepo = _unitOfWork.Repository<Class>();
+            var studentRepo = _unitOfWork.Repository<Student>();
+            var curriculumRepo = _unitOfWork.Repository<Curriculum>();
+
+            // Validate curriculum exists
+            var curriculum = await curriculumRepo.GetByIdAsync(curriculumId);
+            if (curriculum == null)
+                return ServiceResult<bool>.Fail("Curriculum not found.");
+
+            // Update class curriculum
+            var classEntity = await classRepo.GetByIdAsync(classId);
+            if (classEntity == null)
+                return ServiceResult<bool>.Fail("Class not found.");
+
+            classEntity.Grade.CurriculumId = curriculumId;
+            classRepo.Update(classEntity);
+
+            // Update all students in the class
+            var students = await studentRepo.FindAllAsync(
+                s => s.ClassId == classId,
+                q => q.Include(s => s.AppUser)
+            );
+
+            foreach (var student in students)
+            {
+                student.CurriculumId = curriculumId;
+                studentRepo.Update(student);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            // Send notifications
+            var studentIds = students.Select(s => s.AppUserId).ToList();
+            await _notificationService.CreateNotificationAsync(
+                title: "Class Curriculum Updated",
+                message: $"The curriculum for your class {classEntity.ClassName} has been updated to {curriculum.Name}.",
+                type: "Curriculum Change",
+                creatorUserId: adminUserId,
+                targetUserIds: studentIds,
+                role: "Student"
+            );
+
+            return ServiceResult<bool>.Ok(true,
+                $"Updated curriculum for class {classEntity.ClassName} and {students.Count()} students.");
         }
 
         public async Task<ServiceResult<IEnumerable<ParentViewWithChildrenDto>>> GetPendingParentsAsync()

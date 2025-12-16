@@ -208,6 +208,33 @@ namespace Al_Maaly_Gate_School.Controllers
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));
         }
+        [HttpPut("students/{studentId}/curriculum/{curriculumId}")]
+        public async Task<IActionResult> UpdateStudentCurriculum(
+            string studentId,
+            string curriculumId,
+            [FromQuery] string adminUserId)
+        {
+            var result = await _adminManagementService.UpdateStudentCurriculumAsync(
+                studentId, curriculumId, adminUserId);
+
+            return result.Success
+                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
+
+        [HttpPut("classes/{classId}/curriculum/{curriculumId}")]
+        public async Task<IActionResult> BulkUpdateCurriculumForClass(
+            string classId,
+            string curriculumId,
+            [FromQuery] string adminUserId)
+        {
+            var result = await _adminManagementService.BulkUpdateCurriculumForClassAsync(
+                classId, curriculumId, adminUserId);
+
+            return result.Success
+                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
         // Parents
         [HttpGet("pending-parents")]
         public async Task<IActionResult> GetPendingParents()

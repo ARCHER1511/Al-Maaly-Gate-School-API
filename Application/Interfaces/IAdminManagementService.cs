@@ -41,6 +41,18 @@ namespace Application.Interfaces
             string adminUserId
         );
 
+        Task<ServiceResult<bool>> UpdateStudentCurriculumAsync(
+            string studentId,
+            string curriculumId,
+            string adminUserId
+         );
+
+        Task<ServiceResult<bool>> BulkUpdateCurriculumForClassAsync(
+            string classId,
+            string curriculumId,
+            string adminUserId
+         );
+
         Task<ServiceResult<IEnumerable<ParentViewWithChildrenDto>>> GetPendingParentsAsync();
 
         Task<ServiceResult<bool>> UnassignTeacherFromClassAsync(string teacherId, string classId);

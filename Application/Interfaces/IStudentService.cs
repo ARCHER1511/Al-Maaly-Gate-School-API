@@ -11,10 +11,9 @@ namespace Application.Interfaces
         Task<ServiceResult<StudentViewDto>> UpdateAsync(string id, UpdateStudentDto dto); // Changed parameters
         Task<ServiceResult<bool>> DeleteAsync(object id);
 
-        // New methods for curriculum
+        Task<ServiceResult<int>> GetStudentCountByCurriculumAsync(string curriculumId);
         Task<ServiceResult<IEnumerable<StudentViewDto>>> GetStudentsByCurriculumAsync(string curriculumId);
         Task<ServiceResult<StudentViewDto>> MoveStudentToCurriculumAsync(string studentId, string newCurriculumId);
-        Task<ServiceResult<int>> GetStudentCountByCurriculumAsync(string curriculumId);
         Task<ServiceResult<List<StudentSearchResultDto>>> SearchStudentsAsync(string searchTerm);
     }
 }

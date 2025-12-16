@@ -41,7 +41,6 @@ namespace Application.DependencyInjection
             services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<IGradeService, GradeService>();
             services.AddScoped<ICurriculumService, CurriculumService>();
-            services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<IParentService, ParentService>();
 
             //SignalR
