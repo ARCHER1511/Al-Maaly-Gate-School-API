@@ -30,12 +30,15 @@ namespace Application.Authentication
             claims.Add(new Claim("AccountStatus", user.AccountStatus.ToString()));
             if (roles.Contains("Teacher"))
             {
-                //claims.Add(new Claim("TeacherSubjects",teacher.TeacherSubjects!.ToString()!));\
                 if (teacher != null &&teacher!.TeacherSubjects != null && teacher.TeacherSubjects.Any())
                 {
                     var subjectIdentifiers = teacher.TeacherSubjects.Select(ts => ts.Subject.SubjectName).ToList();
                     var subjectJson = JsonSerializer.Serialize(subjectIdentifiers);
                     claims.Add(new Claim("TeacherSubjects",subjectJson));
+
+                    var classIdentifier = teacher!.TeacherClasses.Select(tc => tc.Class.ClassName).ToList();
+                    var classJson = JsonSerializer.Serialize(classIdentifier);
+                    claims.Add(new Claim("TeacherClasses",classJson));
                 }
             }
 
