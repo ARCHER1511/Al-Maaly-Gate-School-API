@@ -58,5 +58,8 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id) =>
             await this.HandleAsync(() => _teacherService.DeleteAsync(id));
+        [HttpGet("not-assigned/subject/{subjectId}")]
+        public async Task<IActionResult> GetTeachersNotAssignedToSubject(string subjectId)
+            => await this.HandleAsync(() => _teacherService.GetTeachersNotAssignedToThisSubject(subjectId));
     }
 }
