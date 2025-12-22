@@ -11,5 +11,6 @@ namespace Application.Interfaces
         Task<ServiceResult<SubjectViewDto>> Create(SubjectCreateDto dto);
         Task<ServiceResult<SubjectViewDto>> Update(SubjectUpdateDto dto);
         Task<ServiceResult<bool>> Delete(string id);
+        Task<ServiceResult<int>> GetSubjectCountAsync();
     }
 }

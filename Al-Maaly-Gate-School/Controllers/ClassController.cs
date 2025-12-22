@@ -146,5 +146,15 @@ namespace Al_Maaly_Gate_School.Controllers
             return File(result.Data!, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 $"all_classes_data_{DateTime.Now:yyyyMMdd}.xlsx");
         }
+
+        [HttpGet("count")]
+        public async Task<IActionResult> GetClassCount()
+        {
+            var result = await _classService.GetClassCountAsync();
+            if (!result.Success)
+                return BadRequest(ApiResponse<int>.Fail(result.Message!));
+
+            return Ok(ApiResponse<int>.Ok(result.Data!, result.Message));
+        }
     }
 }

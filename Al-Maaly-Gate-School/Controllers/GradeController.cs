@@ -221,5 +221,15 @@ namespace Al_Maaly_Gate_School.Controllers
 
             return Ok(ApiResponse<bool>.Ok(result.Data!, result.Message));
         }
+
+        [HttpGet("count")]
+        public async Task<IActionResult> GetGradeCount()
+        {
+            var result = await _gradeService.GetGradeCountAsync();
+            if (!result.Success)
+                return BadRequest(ApiResponse<int>.Fail(result.Message!));
+
+            return Ok(ApiResponse<int>.Ok(result.Data!, result.Message));
+        }
     }
 }

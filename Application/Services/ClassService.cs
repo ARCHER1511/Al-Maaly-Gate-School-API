@@ -349,5 +349,19 @@ namespace Application.Services
             style.Fill.SetPattern(PatternValues.Solid, System.Drawing.Color.LightGray, System.Drawing.Color.LightGray);
             return style;
         }
+
+        public async Task<ServiceResult<int>> GetClassCountAsync()
+        {
+            try
+            {
+                var allClasses = await _classRepository.FindAllAsync();
+                var count = allClasses.Count();
+                return ServiceResult<int>.Ok(count, $"Total classes: {count}");
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<int>.Fail($"Error counting classes: {ex.Message}");
+            }
+        }
     }
 }

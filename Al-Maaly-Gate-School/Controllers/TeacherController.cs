@@ -61,5 +61,29 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpGet("not-assigned/subject/{subjectId}")]
         public async Task<IActionResult> GetTeachersNotAssignedToSubject(string subjectId)
             => await this.HandleAsync(() => _teacherService.GetTeachersNotAssignedToThisSubject(subjectId));
+
+        [HttpGet("not-assigned/class/{classId}")]
+        public async Task<IActionResult> GetTeachersNotAssignedToClass(string classId) =>
+            await this.HandleAsync(() => _teacherService.GetTeachersNotAssignedToClassAsync(classId));
+
+        // In TeacherController.cs - Add this endpoint
+        [HttpPost("{teacherId}/assign-to-class/{classId}")]
+        public async Task<IActionResult> AssignTeacherToClass(string teacherId, string classId)
+        {
+            // You'll need to create this method in ITeacherService and TeacherService
+            return await this.HandleAsync(() => _teacherService.AssignTeacherToClassAsync(teacherId, classId));
+        }
+
+        [HttpGet("{teacherId}/subjects")]
+        public async Task<IActionResult> GetTeacherSubjects(string teacherId)
+        {
+            return await this.HandleAsync(() => _teacherService.GetTeacherSubjectsAsync(teacherId));
+        }
+
+        [HttpGet("{teacherId}/classes")]
+        public async Task<IActionResult> GetTeacherClasses(string teacherId)
+        {
+            return await this.HandleAsync(() => _teacherService.GetTeacherClassesAsync(teacherId));
+        }
     }
 }

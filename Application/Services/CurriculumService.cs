@@ -1,14 +1,12 @@
 ﻿using Application.DTOs.CurriculumDTOs;
-using Application.DTOs.GradeDTOs;
-using Application.DTOs.StudentDTOs;
-using Application.DTOs.TeacherDTOs;
 using Application.Interfaces;
+using AutoMapper;
 using Domain.Entities;
+using Domain.Wrappers;
 using Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Services
@@ -17,165 +15,166 @@ namespace Application.Services
     {
         private readonly ICurriculumRepository _curriculumRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public CurriculumService(ICurriculumRepository curriculumRepository, IUnitOfWork unitOfWork)
+        public CurriculumService(ICurriculumRepository curriculumRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _curriculumRepository = curriculumRepository;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public async Task<CurriculumDto?> GetByIdAsync(string id)
+        public async Task<ServiceResult<CurriculumDto>> GetByIdAsync(string id)
         {
             var curriculum = await _curriculumRepository.GetByIdAsync(id);
-            if (curriculum == null) return null;
+            if (curriculum == null)
+                return ServiceResult<CurriculumDto>.Fail($"Curriculum with ID '{id}' not found.");
 
-            return MapToDto(curriculum);
+            var dto = _mapper.Map<CurriculumDto>(curriculum);
+            return ServiceResult<CurriculumDto>.Ok(dto, "Curriculum retrieved successfully");
         }
 
-        public async Task<IEnumerable<CurriculumDto>> GetAllAsync()
+        public async Task<ServiceResult<IEnumerable<CurriculumDto>>> GetAllAsync()
         {
             var curricula = await _curriculumRepository.GetAllAsync();
-            return curricula.Select(MapToDto);
+            var dtos = _mapper.Map<IEnumerable<CurriculumDto>>(curricula);
+            return ServiceResult<IEnumerable<CurriculumDto>>.Ok(dtos, "Curricula retrieved successfully");
         }
 
-        public async Task<CurriculumDto> CreateAsync(CreateCurriculumDto dto)
+        public async Task<ServiceResult<CurriculumDto>> CreateAsync(CreateCurriculumDto dto)
         {
-            // Check if curriculum with same name already exists
-            var exists = await _curriculumRepository.ExistsByNameAsync(dto.Name);
-            if (exists)
-                throw new InvalidOperationException($"Curriculum with name '{dto.Name}' already exists.");
-
-            var curriculum = new Curriculum
+            try
             {
-                Name = dto.Name,
-                Code = dto.Code,
-                Description = dto.Description,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            await _curriculumRepository.AddAsync(curriculum);
-            await _unitOfWork.SaveChangesAsync();
-
-            return MapToDto(curriculum);
-        }
-
-        public async Task<CurriculumDto?> UpdateAsync(string id, UpdateCurriculumDto dto)
-        {
-            var curriculum = await _curriculumRepository.GetByIdAsync(id);
-            if (curriculum == null) return null;
-
-            // Check if new name conflicts with existing curriculum
-            if (curriculum.Name != dto.Name)
-            {
+                // Check if curriculum with same name already exists
                 var exists = await _curriculumRepository.ExistsByNameAsync(dto.Name);
                 if (exists)
-                    throw new InvalidOperationException($"Curriculum with name '{dto.Name}' already exists.");
+                    return ServiceResult<CurriculumDto>.Fail($"Curriculum with name '{dto.Name}' already exists.");
+
+                var curriculum = _mapper.Map<Curriculum>(dto);
+                curriculum.Id = Guid.NewGuid().ToString(); // Generate new ID
+                curriculum.CreatedAt = DateTime.UtcNow;
+
+                await _curriculumRepository.AddAsync(curriculum);
+                await _unitOfWork.SaveChangesAsync();
+
+                var resultDto = _mapper.Map<CurriculumDto>(curriculum);
+                return ServiceResult<CurriculumDto>.Ok(resultDto, "Curriculum created successfully");
             }
-
-            curriculum.Name = dto.Name;
-            curriculum.Code = dto.Code;
-            curriculum.Description = dto.Description;
-            curriculum.UpdatedAt = DateTime.UtcNow;
-
-            _curriculumRepository.Update(curriculum);
-            await _unitOfWork.SaveChangesAsync();
-
-            return MapToDto(curriculum);
+            catch (Exception ex)
+            {
+                return ServiceResult<CurriculumDto>.Fail($"Error creating curriculum: {ex.Message}");
+            }
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        public async Task<ServiceResult<CurriculumDto>> UpdateAsync(string id, UpdateCurriculumDto dto)
+        {
+            try
+            {
+                var curriculum = await _curriculumRepository.GetByIdAsync(id);
+                if (curriculum == null)
+                    return ServiceResult<CurriculumDto>.Fail($"Curriculum with ID '{id}' not found.");
+
+                // Check if new name conflicts with existing curriculum
+                if (curriculum.Name != dto.Name)
+                {
+                    var exists = await _curriculumRepository.ExistsByNameAsync(dto.Name);
+                    if (exists)
+                        return ServiceResult<CurriculumDto>.Fail($"Curriculum with name '{dto.Name}' already exists.");
+                }
+
+                _mapper.Map(dto, curriculum);
+                curriculum.UpdatedAt = DateTime.UtcNow;
+
+                _curriculumRepository.Update(curriculum);
+                await _unitOfWork.SaveChangesAsync();
+
+                var resultDto = _mapper.Map<CurriculumDto>(curriculum);
+                return ServiceResult<CurriculumDto>.Ok(resultDto, "Curriculum updated successfully");
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<CurriculumDto>.Fail($"Error updating curriculum: {ex.Message}");
+            }
+        }
+
+        public async Task<ServiceResult<bool>> DeleteAsync(string id)
+        {
+            try
+            {
+                var curriculum = await _curriculumRepository.GetByIdAsync(id);
+                if (curriculum == null)
+                    return ServiceResult<bool>.Fail($"Curriculum with ID '{id}' not found.");
+
+                // Check if curriculum has students or teachers
+                if (curriculum.Students?.Any() == true)
+                    return ServiceResult<bool>.Fail("Cannot delete curriculum that has students assigned.");
+
+                if (curriculum.Teachers?.Any() == true)
+                    return ServiceResult<bool>.Fail("Cannot delete curriculum that has teachers specialized.");
+
+                _curriculumRepository.Delete(curriculum);
+                await _unitOfWork.SaveChangesAsync();
+                return ServiceResult<bool>.Ok(true, "Curriculum deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<bool>.Fail($"Error deleting curriculum: {ex.Message}");
+            }
+        }
+
+        public async Task<ServiceResult<bool>> ExistsAsync(string id)
         {
             var curriculum = await _curriculumRepository.GetByIdAsync(id);
-            if (curriculum == null) return false;
-
-            // Check if curriculum has students or teachers
-            if (curriculum.Students?.Any() == true)
-                throw new InvalidOperationException("Cannot delete curriculum that has students assigned.");
-
-            if (curriculum.Teachers?.Any() == true)
-                throw new InvalidOperationException("Cannot delete curriculum that has teachers specialized.");
-
-            _curriculumRepository.Delete(curriculum);
-            await _unitOfWork.SaveChangesAsync();
-            return true;
+            return ServiceResult<bool>.Ok(curriculum != null,
+                curriculum != null ? "Curriculum exists" : "Curriculum does not exist");
         }
 
-        public async Task<bool> ExistsAsync(string id)
-        {
-            var curriculum = await _curriculumRepository.GetByIdAsync(id);
-            return curriculum != null;
-        }
-
-        public async Task<CurriculumDetailsDto?> GetWithDetailsAsync(string id)
+        public async Task<ServiceResult<CurriculumDetailsDto>> GetWithDetailsAsync(string id)
         {
             var curriculum = await _curriculumRepository.GetWithDetailsAsync(id);
-            if (curriculum == null) return null;
+            if (curriculum == null)
+                return ServiceResult<CurriculumDetailsDto>.Fail($"Curriculum with ID '{id}' not found.");
 
-            return new CurriculumDetailsDto
-            {
-                Id = curriculum.Id,
-                Name = curriculum.Name,
-                Code = curriculum.Code,
-                Description = curriculum.Description,
-                GradeCount = curriculum.Grades?.Count ?? 0,
-                StudentCount = curriculum.Students?.Count ?? 0,
-                TeacherCount = curriculum.Teachers?.Count ?? 0,
-                CreatedAt = curriculum.CreatedAt,
-                UpdatedAt = curriculum.UpdatedAt,
-                Grades = curriculum.Grades?.Select(g => new GradeViewDto
-                {
-                    Id = g.Id,
-                    GradeName = g.GradeName,
-                    ClassCount = g.Classes?.Count ?? 0,
-                    SubjectCount = g.Subjects?.Count ?? 0
-                }).ToList() ?? new(),
-                Students = curriculum.Students?.Select(s => new StudentViewDto
-                {
-                    Id = s.Id,
-                    FullName = s.FullName, // Use the existing FullName property
-                    Email = s.Email,
-                    ClassName = s.Class?.ClassName ?? "Not Assigned",
-                    Age = s.Age,
-                    ClassId = s.ClassId,
-                    ContactInfo = s.ContactInfo,
-                    GradeName = s.Class?.Grade?.GradeName ?? "Not Assigned",
-                    AccountStatus = s.AccountStatus.ToString(),
-                }).ToList() ?? new(),
-                Teachers = curriculum.Teachers?.Select(t => new TeacherViewDto
-                {
-                    Id = t.Id,
-                    FullName = t.FullName, // Use the existing FullName property
-                    Email = t.Email
-                }).ToList() ?? new()
-            };
+            var detailsDto = _mapper.Map<CurriculumDetailsDto>(curriculum);
+            return ServiceResult<CurriculumDetailsDto>.Ok(detailsDto, "Curriculum details retrieved successfully");
         }
 
-        public async Task<bool> HasStudentsAsync(string curriculumId)
+        public async Task<ServiceResult<bool>> HasStudentsAsync(string curriculumId)
         {
             var curriculum = await _curriculumRepository.GetByIdAsync(curriculumId);
-            return curriculum?.Students?.Any() == true;
+            if (curriculum == null)
+                return ServiceResult<bool>.Fail($"Curriculum with ID '{curriculumId}' not found.");
+
+            return ServiceResult<bool>.Ok(
+                curriculum.Students?.Any() == true,
+                curriculum.Students?.Any() == true ? "Curriculum has students" : "Curriculum has no students"
+            );
         }
 
-        public async Task<bool> HasTeachersAsync(string curriculumId)
+        public async Task<ServiceResult<bool>> HasTeachersAsync(string curriculumId)
         {
             var curriculum = await _curriculumRepository.GetByIdAsync(curriculumId);
-            return curriculum?.Teachers?.Any() == true;
+            if (curriculum == null)
+                return ServiceResult<bool>.Fail($"Curriculum with ID '{curriculumId}' not found.");
+
+            return ServiceResult<bool>.Ok(
+                curriculum.Teachers?.Any() == true,
+                curriculum.Teachers?.Any() == true ? "Curriculum has teachers" : "Curriculum has no teachers"
+            );
         }
 
-        private CurriculumDto MapToDto(Curriculum curriculum)
+        public async Task<ServiceResult<int>> GetCountAsync()
         {
-            return new CurriculumDto
+            try
             {
-                Id = curriculum.Id,
-                Name = curriculum.Name,
-                Code = curriculum.Code,
-                Description = curriculum.Description,
-                GradeCount = curriculum.Grades?.Count ?? 0,
-                StudentCount = curriculum.Students?.Count ?? 0,
-                TeacherCount = curriculum.Teachers?.Count ?? 0,
-                CreatedAt = curriculum.CreatedAt,
-                UpdatedAt = curriculum.UpdatedAt
-            };
+                var allCurricula = await _curriculumRepository.GetAllAsync();
+                var count = allCurricula.Count();
+                return ServiceResult<int>.Ok(count, $"Total curricula: {count}");
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<int>.Fail($"Error counting curricula: {ex.Message}");
+            }
         }
     }
 }

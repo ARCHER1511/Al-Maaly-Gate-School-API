@@ -1,4 +1,6 @@
-﻿using Application.DTOs.TeacherDTOs;
+﻿using Application.DTOs.ClassDTOs;
+using Application.DTOs.SubjectDTOs;
+using Application.DTOs.TeacherDTOs;
 using Domain.Entities;
 using Domain.Wrappers;
 
@@ -17,5 +19,13 @@ namespace Application.Interfaces
         Task<ServiceResult<int>> GetTeacherCountByCurriculumAsync(string curriculumId);
         Task<ServiceResult<TeacherDetailsDto>> GetTeacherDetailsAsync(string id);
         Task<ServiceResult<IEnumerable<TeacherViewDto>>> GetTeachersNotAssignedToThisSubject(string subjectId);
+
+        Task<ServiceResult<IEnumerable<TeacherViewDto>>> GetTeachersNotAssignedToClassAsync(string classId);
+
+        Task<ServiceResult<bool>> AssignTeacherToClassAsync(string teacherId, string classId);
+        Task<ServiceResult<bool>> UnassignTeacherFromClassAsync(string teacherId, string classId);
+
+        Task<ServiceResult<IEnumerable<SubjectViewDto>>> GetTeacherSubjectsAsync(string teacherId);
+        Task<ServiceResult<IEnumerable<ClassViewDto>>> GetTeacherClassesAsync(string teacherId);
     }
 }

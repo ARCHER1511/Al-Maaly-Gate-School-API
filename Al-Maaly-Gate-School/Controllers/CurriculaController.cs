@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.CurriculumDTOs;
 using Application.Interfaces;
+using Domain.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Al_Maaly_Gate_School.Controllers
@@ -16,99 +17,107 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CurriculumDto>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var curricula = await _curriculumService.GetAllAsync();
-            return Ok(curricula);
+            var result = await _curriculumService.GetAllAsync();
+            if (!result.Success)
+                return NotFound(ApiResponse<IEnumerable<CurriculumDto>>.Fail(result.Message!));
+
+            return Ok(ApiResponse<IEnumerable<CurriculumDto>>.Ok(result.Data!, result.Message));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<CurriculumDto>> GetById(string id)
+        public async Task<IActionResult> GetById(string id)
         {
-            var curriculum = await _curriculumService.GetByIdAsync(id);
-            if (curriculum == null)
-                return NotFound(new { message = $"Curriculum with ID '{id}' not found." });
+            var result = await _curriculumService.GetByIdAsync(id);
+            if (!result.Success)
+                return NotFound(ApiResponse<CurriculumDto>.Fail(result.Message!));
 
-            return Ok(curriculum);
+            return Ok(ApiResponse<CurriculumDto>.Ok(result.Data!, result.Message));
         }
 
         [HttpGet("{id}/details")]
-        public async Task<ActionResult<CurriculumDetailsDto>> GetWithDetails(string id)
+        public async Task<IActionResult> GetWithDetails(string id)
         {
-            var curriculum = await _curriculumService.GetWithDetailsAsync(id);
-            if (curriculum == null)
-                return NotFound(new { message = $"Curriculum with ID '{id}' not found." });
+            var result = await _curriculumService.GetWithDetailsAsync(id);
+            if (!result.Success)
+                return NotFound(ApiResponse<CurriculumDetailsDto>.Fail(result.Message!));
 
-            return Ok(curriculum);
+            return Ok(ApiResponse<CurriculumDetailsDto>.Ok(result.Data!, result.Message));
         }
 
         [HttpPost]
-        public async Task<ActionResult<CurriculumDto>> Create([FromBody] CreateCurriculumDto dto)
+        public async Task<IActionResult> Create([FromBody] CreateCurriculumDto dto)
         {
-            try
-            {
-                var curriculum = await _curriculumService.CreateAsync(dto);
-                return CreatedAtAction(nameof(GetById), new { id = curriculum.Id }, curriculum);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { message = ex.Message });
-            }
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponse<CurriculumDto>.Fail("Invalid curriculum data."));
+
+            var result = await _curriculumService.CreateAsync(dto);
+            if (!result.Success)
+                return BadRequest(ApiResponse<CurriculumDto>.Fail(result.Message!));
+
+            return CreatedAtAction(nameof(GetById), new { id = result.Data!.Id },
+                ApiResponse<CurriculumDto>.Ok(result.Data, result.Message));
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<CurriculumDto>> Update(string id, [FromBody] UpdateCurriculumDto dto)
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateCurriculumDto dto)
         {
-            try
-            {
-                var curriculum = await _curriculumService.UpdateAsync(id, dto);
-                if (curriculum == null)
-                    return NotFound(new { message = $"Curriculum with ID '{id}' not found." });
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponse<CurriculumDto>.Fail("Invalid curriculum data."));
 
-                return Ok(curriculum);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { message = ex.Message });
-            }
+            var result = await _curriculumService.UpdateAsync(id, dto);
+            if (!result.Success)
+                return NotFound(ApiResponse<CurriculumDto>.Fail(result.Message!));
+
+            return Ok(ApiResponse<CurriculumDto>.Ok(result.Data!, result.Message));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            try
-            {
-                var deleted = await _curriculumService.DeleteAsync(id);
-                if (!deleted)
-                    return NotFound(new { message = $"Curriculum with ID '{id}' not found." });
+            var result = await _curriculumService.DeleteAsync(id);
+            if (!result.Success)
+                return NotFound(ApiResponse<bool>.Fail(result.Message!));
 
-                return NoContent();
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            return Ok(ApiResponse<bool>.Ok(true, "Curriculum deleted successfully"));
         }
 
         [HttpGet("exists/{id}")]
-        public async Task<ActionResult<bool>> Exists(string id)
+        public async Task<IActionResult> Exists(string id)
         {
-            var exists = await _curriculumService.ExistsAsync(id);
-            return Ok(exists);
+            var result = await _curriculumService.ExistsAsync(id);
+            return Ok(ApiResponse<bool>.Ok(result.Data!, result.Message));
         }
 
         [HttpGet("{id}/has-students")]
-        public async Task<ActionResult<bool>> HasStudents(string id)
+        public async Task<IActionResult> HasStudents(string id)
         {
-            var hasStudents = await _curriculumService.HasStudentsAsync(id);
-            return Ok(hasStudents);
+            var result = await _curriculumService.HasStudentsAsync(id);
+            if (!result.Success)
+                return NotFound(ApiResponse<bool>.Fail(result.Message!));
+
+            return Ok(ApiResponse<bool>.Ok(result.Data!, result.Message));
         }
 
         [HttpGet("{id}/has-teachers")]
-        public async Task<ActionResult<bool>> HasTeachers(string id)
+        public async Task<IActionResult> HasTeachers(string id)
         {
-            var hasTeachers = await _curriculumService.HasTeachersAsync(id);
-            return Ok(hasTeachers);
+            var result = await _curriculumService.HasTeachersAsync(id);
+            if (!result.Success)
+                return NotFound(ApiResponse<bool>.Fail(result.Message!));
+
+            return Ok(ApiResponse<bool>.Ok(result.Data!, result.Message));
+        }
+
+        [HttpGet("count")]
+        public async Task<IActionResult> GetCount()
+        {
+            var result = await _curriculumService.GetCountAsync();
+            if (!result.Success)
+                return BadRequest(ApiResponse<int>.Fail(result.Message!));
+
+            return Ok(ApiResponse<int>.Ok(result.Data!, result.Message));
         }
     }
 }
