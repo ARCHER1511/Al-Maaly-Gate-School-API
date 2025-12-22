@@ -594,5 +594,27 @@ namespace Application.Services
                 $"Found {classes.Count} classes for teacher"
             );
         }
+
+        public async Task<ServiceResult<IEnumerable<TeacherViewDto>>> GetTeachersAssignedToThisSubject(string subjectId)
+        {
+            if (string.IsNullOrWhiteSpace(subjectId))
+                return ServiceResult<IEnumerable<TeacherViewDto>>.Fail("SubjectId is required");
+            var subjectExists = await _subjectRepo.AnyAsync(s => s.Id == subjectId);
+
+            if (!subjectExists)
+                return ServiceResult<IEnumerable<TeacherViewDto>>.Fail("Subject not found");
+
+            var teachers = await _teacherRepo.FindAllAsync(t =>
+                t.TeacherSubjects == null || t.TeacherSubjects.Any(ts => ts.SubjectId == subjectId)
+            );
+
+            var mapped = _mapper.Map<IEnumerable<TeacherViewDto>>(teachers);
+            return ServiceResult<IEnumerable<TeacherViewDto>>.Ok(
+                mapped,
+                mapped.Any()
+                    ? $"Teachers not assigned to subject {subjectId} loaded"
+                    : "No unassigned teachers found"
+            );
+        }
     }
 }

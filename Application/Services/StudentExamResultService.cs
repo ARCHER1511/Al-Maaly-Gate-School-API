@@ -24,10 +24,12 @@ namespace Application.Services
         public async Task<ServiceResult<IEnumerable<StudentExamResultDto>>> GetAllResultsByStudentIdAsync(object Id)
         {
             var result = await _StudentExamResultRepository.AsQueryable().Where(s => s.StudentId == (string)Id).ToListAsync();
-            if (result == null || !result.Any()) return ServiceResult<IEnumerable<StudentExamResultDto>>.Fail("Student Exams Results not found");
 
-            var resultDto = _mapper.Map<IEnumerable<StudentExamResultDto>>(result);
-            return ServiceResult<IEnumerable<StudentExamResultDto>>.Ok(resultDto, "Student Exams Results retrieved successfully");
+            var resultDto = _mapper.Map<IEnumerable<StudentExamResultDto>>(result ?? new List<StudentExamResult>());
+
+            var message = result?.Any() == true ? $"تم العثور على {result.Count} نتيجة" : "لا توجد نتائج امتحانات لهذا الطالب";
+
+            return ServiceResult<IEnumerable<StudentExamResultDto>>.Ok(resultDto, message);
         }
         public async Task<ServiceResult<IEnumerable<StudentExamResultDto>>> GetAllAsync()
         {

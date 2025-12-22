@@ -85,5 +85,8 @@ namespace Al_Maaly_Gate_School.Controllers
         {
             return await this.HandleAsync(() => _teacherService.GetTeacherClassesAsync(teacherId));
         }
+        [HttpGet("assigned/subject/{subjectId}")]
+        public async Task<IActionResult> GetTeachersAssignedToSubject(string subjectId)
+            => await this.HandleAsync(() => _teacherService.GetTeachersAssignedToThisSubject(subjectId));
     }
 }

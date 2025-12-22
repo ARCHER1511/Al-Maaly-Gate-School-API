@@ -135,7 +135,15 @@ namespace Al_Maaly_Gate_School.Controllers
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));
         }
-
+        //UnAssign Teacher From Subject
+        [HttpPost("teachers/unassign-subject/")]
+        public async Task<IActionResult> UnAssignTeacherFromSubject([FromQuery] string teacherId, [FromQuery] string subjectId)
+        {
+            var result = await _adminManagementService.UnAssignTeacherFromSubjectAsync(teacherId, subjectId);
+            return result.Success
+                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
         //Unassign Teacher
         [HttpDelete("teachers/unassign/{teacherId}")]
         public async Task<IActionResult> UnassignTeacher(string teacherId, string adminUserId)
@@ -183,7 +191,7 @@ namespace Al_Maaly_Gate_School.Controllers
                 ? Ok(ApiResponse<IEnumerable<StudentViewDto>>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<IEnumerable<StudentViewDto>>.Fail(result.Message!));
         }
-        
+
         [HttpGet("student-count")]
         public async Task<IActionResult> GetStudentCountAsync()
         {
@@ -244,7 +252,7 @@ namespace Al_Maaly_Gate_School.Controllers
                 ? Ok(ApiResponse<IEnumerable<ParentViewWithChildrenDto>>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<IEnumerable<ParentViewWithChildrenDto>>.Fail(result.Message!));
         }
-       
+
         // Add to AdminManagementController
         [HttpDelete("teachers/unassign-from-class")]
         public async Task<IActionResult> UnassignTeacherFromClass([FromQuery] string teacherId, [FromQuery] string classId)

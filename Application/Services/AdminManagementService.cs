@@ -425,7 +425,7 @@ namespace Application.Services
                 Id = t.Id,
                 FullName = t.AppUser.FullName,
                 Email = t.Email,
-                ContactInfo = t.ContactInfo,
+                ContactInfo = t.ContactInfo!,
                 Subjects = t.TeacherSubjects!.Select(ts => ts.Subject.SubjectName).ToList(),
                 ClassNames = t.TeacherClasses.Select(tc => tc.Class.ClassName).ToList(),
                 ProfileStatus = t.AccountStatus.ToString(),
@@ -664,6 +664,32 @@ namespace Application.Services
 
             return ServiceResult<bool>.Ok(true, "Teacher assigned to subject successfully.");
         }
+        //unassign from subject
+        public async Task<ServiceResult<bool>> UnAssignTeacherFromSubjectAsync(string teacherId, string subjectId)
+        {
+            var teacher = await _unitOfWork
+        .Repository<Teacher>()
+        .FirstOrDefaultAsync(
+            t => t.Id == teacherId,
+            q => q.Include(t => t.TeacherSubjects!)
+        );
+
+            if (teacher == null)
+                return ServiceResult<bool>.Fail("Teacher not found.");
+
+            var teacherSubject = teacher.TeacherSubjects!
+                .FirstOrDefault(ts => ts.SubjectId == subjectId);
+
+            if (teacherSubject == null)
+                return ServiceResult<bool>.Fail("Teacher is not assigned to this subject.");
+
+            teacher.TeacherSubjects!.Remove(teacherSubject);
+
+            _unitOfWork.Repository<Teacher>().Update(teacher);
+            await _unitOfWork.SaveChangesAsync();
+
+            return ServiceResult<bool>.Ok(true, "Teacher unassigned from subject successfully.");
+        }
 
         // Unassign Teacher
         public async Task<ServiceResult<bool>> UnassignTeacherAsync(
@@ -789,7 +815,7 @@ namespace Application.Services
                 predicate: s => s.AccountStatus == AccountStatus.Pending,
                 include: q => q.Include(s => s.AppUser)
                                .Include(s => s.Class) // Include class
-                               .ThenInclude(c => c.Grade) // Include grade for grade name
+                               .ThenInclude(c => c!.Grade) // Include grade for grade name
             );
 
             if (!pendingStudents.Any())
@@ -829,7 +855,7 @@ namespace Application.Services
             var student = await studentRepo.FirstOrDefaultAsync(
                 s => s.Id == studentId,
                 q => q.Include(s => s.Class)
-                      .ThenInclude(c => c.Grade)
+                      .ThenInclude(c => c!.Grade)
                       .Include(c => c.Curriculum)
                       .Include(s => s.AppUser)
             );
@@ -929,7 +955,7 @@ namespace Application.Services
             var student = await studentRepo.FirstOrDefaultAsync(
                 s => s.Id == studentId,
                 q => q.Include(s => s.AppUser)
-                      .Include(s => s.Class)
+                      .Include(s => s.Class)!
             );
 
             if (student == null)

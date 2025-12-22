@@ -27,5 +27,6 @@ namespace Application.Interfaces
 
         Task<ServiceResult<IEnumerable<SubjectViewDto>>> GetTeacherSubjectsAsync(string teacherId);
         Task<ServiceResult<IEnumerable<ClassViewDto>>> GetTeacherClassesAsync(string teacherId);
+        Task<ServiceResult<IEnumerable<TeacherViewDto>>> GetTeachersAssignedToThisSubject(string subjectId);
     }
 }
