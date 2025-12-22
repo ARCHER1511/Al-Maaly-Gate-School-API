@@ -21,8 +21,7 @@ namespace Al_Maaly_Gate_School.Controllers
         public async Task<IActionResult> GetAllResultsByStudentId(string Id)
         {
             var result = await _StudentExamResultService.GetAllResultsByStudentIdAsync(Id);
-            if (!result.Success || result.Data == null) return NotFound(ApiResponse<IEnumerable<StudentExamResultDto>>.Fail(result.Message!));
-            return Ok(ApiResponse<IEnumerable<StudentExamResultDto>>.Ok(result.Data!, result.Message));
+            return Ok(ApiResponse<IEnumerable<StudentExamResultDto>>.Ok(result.Data ?? Enumerable.Empty<StudentExamResultDto>(),result.Message));
         }
 
         [HttpGet]
