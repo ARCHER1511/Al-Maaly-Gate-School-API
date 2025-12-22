@@ -61,5 +61,8 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpGet("not-assigned/subject/{subjectId}")]
         public async Task<IActionResult> GetTeachersNotAssignedToSubject(string subjectId)
             => await this.HandleAsync(() => _teacherService.GetTeachersNotAssignedToThisSubject(subjectId));
+        [HttpGet("assigned/subject/{subjectId}")]
+        public async Task<IActionResult> GetTeachersAssignedToSubject(string subjectId)
+            => await this.HandleAsync(() => _teacherService.GetTeachersAssignedToThisSubject(subjectId));
     }
 }

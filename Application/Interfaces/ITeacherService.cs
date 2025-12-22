@@ -17,5 +17,6 @@ namespace Application.Interfaces
         Task<ServiceResult<int>> GetTeacherCountByCurriculumAsync(string curriculumId);
         Task<ServiceResult<TeacherDetailsDto>> GetTeacherDetailsAsync(string id);
         Task<ServiceResult<IEnumerable<TeacherViewDto>>> GetTeachersNotAssignedToThisSubject(string subjectId);
+        Task<ServiceResult<IEnumerable<TeacherViewDto>>> GetTeachersAssignedToThisSubject(string subjectId);
     }
 }

@@ -29,6 +29,7 @@ namespace Application.Interfaces
         );
         Task<ServiceResult<bool>> AssignTeacherToClassAsync(string teacherId, string classId);
         Task<ServiceResult<bool>> AssignTeacherToSubjectAsync(string teacherId, string subjectId);
+        Task<ServiceResult<bool>> UnAssignTeacherFromSubjectAsync(string teacherId, string subjectId);
         Task<ServiceResult<bool>> UnassignTeacherAsync(string teacherId, string adminUserId);
         Task<ServiceResult<IEnumerable<TeacherAdminViewDto>>> GetDuplicateTeacherAssignmentsAsync();
         Task<ServiceResult<IEnumerable<ClassResultDto>>> GetClassResultsAsync(string classId);
