@@ -14,7 +14,6 @@ using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
-
 namespace Application.Services
 {
     public class AuthenticationService : IAuthenticationService
@@ -58,36 +57,47 @@ namespace Application.Services
             _fileRecordRepository = fileRecordRepository;
         }
 
-        private async Task CleanupUploadedFiles(List<string> filePaths)
+        private async Task CleanupUploadedFiles(List<string> filePaths, string userId)
         {
             foreach (var path in filePaths)
             {
                 try
                 {
-                    await _fileService.DeleteFileAsync(path);
+                    await _fileService.DeleteFileAsync(path, userId);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine( $"Failed to cleanup file during rollback: {path} information: {ex}");
+                    Console.WriteLine(
+                        $"Failed to cleanup file during rollback: {path} information: {ex}"
+                    );
                 }
             }
         }
 
-        private async Task LinkFilesToParent(string parentId, List<string> filePaths, string identityDocumentName)
+        private async Task LinkFilesToParent(
+            string parentId,
+            List<string> filePaths,
+            string identityDocumentName,
+            string userId
+        )
         {
             bool identityDocumentProcessed = false;
 
             foreach (var filePath in filePaths)
             {
                 // Get the FileRecord
-                var fileRecordResult = await _fileService.GetFileByPathAsync(filePath);
+                var fileRecordResult = await _fileService.GetFileByPathAsync(filePath, userId);
                 if (!fileRecordResult.Success || fileRecordResult.Data == null)
                     continue;
 
                 var fileRecord = fileRecordResult.Data;
 
-                if (!identityDocumentProcessed ||
-                    fileRecord.FileName.Contains(Path.GetFileNameWithoutExtension(identityDocumentName)))
+                if (
+                    !identityDocumentProcessed
+                    || fileRecord.FileName.Contains(
+                        Path.GetFileNameWithoutExtension(identityDocumentName)
+                    )
+                )
                 {
                     fileRecord.FileType = "identity";
                     identityDocumentProcessed = true;
@@ -106,92 +116,61 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        private async Task<List<DocumentInfo>> GetUploadedDocumentInfos(List<string> filePaths)
+        private async Task<List<DocumentInfo>> GetUploadedDocumentInfos(
+            List<string> filePaths,
+            string userId
+        )
         {
             var documentInfos = new List<DocumentInfo>();
 
             foreach (var path in filePaths)
             {
-                var fileResult = await _fileService.GetFileByPathAsync(path);
+                var fileResult = await _fileService.GetFileByPathAsync(path, userId);
                 if (fileResult.Success && fileResult.Data != null)
                 {
-                    documentInfos.Add(new DocumentInfo
-                    {
-                        Id = fileResult.Data.Id,
-                        Path = fileResult.Data.RelativePath,
-                        Type = fileResult.Data.FileType ?? "unknown",
-                        OriginalFileName = fileResult.Data.FileName,
-                        FileSize = fileResult.Data.FileSize,
-                        UploadedAt = fileResult.Data.UploadedAt
-                    });
+                    documentInfos.Add(
+                        new DocumentInfo
+                        {
+                            Id = fileResult.Data.Id,
+                            Path = fileResult.Data.RelativePath,
+                            Type = fileResult.Data.FileType ?? "unknown",
+                            OriginalFileName = fileResult.Data.FileName,
+                            FileSize = fileResult.Data.FileSize,
+                            UploadedAt = fileResult.Data.UploadedAt,
+                        }
+                    );
                 }
             }
 
             return documentInfos;
         }
 
-        public async Task<ServiceResult<ParentRegistrationResponse>> RegisterParentWithDocumentsAsync(ParentRegisterRequest request)
+        public async Task<ServiceResult<ParentRegistrationResponse>> RegisterParentAsync(
+    ParentRegisterRequest request
+)
         {
-            List<string> uploadedFilePaths = new List<string>();
-
             try
             {
-                if (request.IdentityDocument == null || request.IdentityDocument.Length == 0)
-                    return ServiceResult<ParentRegistrationResponse>.Fail("Identity document is required");
-
-                var allFiles = new List<IFormFile> { request.IdentityDocument };
-                if (request.AdditionalDocuments != null && request.AdditionalDocuments.Any())
-                    allFiles.AddRange(request.AdditionalDocuments);
-
-                var uploadResult = await _fileService.UploadFilesAsync(allFiles, "parents");
-                if (!uploadResult.Success)
-                    return ServiceResult<ParentRegistrationResponse>.Fail(uploadResult.Message);
-
-                uploadedFilePaths = uploadResult.Data!;
-
+                // Map to base RegisterRequest and force role
                 var baseRequest = _mapper.Map<RegisterRequest>(request);
-                baseRequest.Role = "parent"; // Force role to parent
+                baseRequest.Role = "parent";
 
+                // Register user
                 var authResult = await RegisterAsync(baseRequest);
                 if (!authResult.Success)
-                {
-                    await CleanupUploadedFiles(uploadedFilePaths);
                     return ServiceResult<ParentRegistrationResponse>.Fail(authResult.Message);
-                }
 
-                var existingParent = await _parentRepo.GetByAppUserIdAsync(authResult.Data!.UserId);
+                // Create Parent entity
+                var parent = _mapper.Map<Parent>(request);
+                parent.AppUserId = authResult.Data!.UserId;
 
-                Parent newParent;
-
-                if (existingParent != null)
-                {
-                    existingParent.Relation = request.Relation;
-                    existingParent.ContactInfo = request.ContactInfo ?? "Not Provided";
-                    newParent = existingParent;
-                    _parentRepo.Update(newParent);
-                }
-                else
-                {
-                    newParent = _mapper.Map<Parent>(request);
-                    newParent.AppUserId = authResult.Data!.UserId;
-                    await _parentRepo.AddAsync(newParent);
-                }
-
+                await _parentRepo.AddAsync(parent);
                 await _unitOfWork.SaveChangesAsync();
 
-                var documentInfos = await GetUploadedDocumentInfos(uploadedFilePaths);
-
-
-                var parentProfile = new ParentProfileDto
-                {
-                    Id = newParent.Id,
-                    RelationshipToStudent = newParent.Relation ?? string.Empty,
-                    DocumentCount = documentInfos.Count
-                };
-
+                // Build response
                 var response = new ParentRegistrationResponse
                 {
-                    UserId = authResult.Data!.UserId,
+                    UserId = authResult.Data.UserId,
                     Email = authResult.Data.Email,
                     FullName = authResult.Data.FullName,
                     Token = authResult.Data.Token,
@@ -199,18 +178,24 @@ namespace Application.Services
                     ProfileImageUrl = authResult.Data.ProfileImageUrl,
                     RoleEntityIds = authResult.Data.RoleEntityIds,
 
-                    UploadedDocuments = documentInfos,
-                    ParentProfile = parentProfile
+                    ParentProfile = new ParentProfileDto
+                    {
+                        Id = parent.Id,
+                        RelationshipToStudent = parent.Relation ?? string.Empty,
+                        DocumentCount = 0, // no documents yet
+                    },
                 };
 
-                return ServiceResult<ParentRegistrationResponse>.Ok(response, "Parent registered successfully with documents");
+                return ServiceResult<ParentRegistrationResponse>.Ok(
+                    response,
+                    "Parent registered successfully"
+                );
             }
             catch (Exception ex)
             {
-                // Cleanup on any exception
-                if (uploadedFilePaths.Any())
-                    await CleanupUploadedFiles(uploadedFilePaths);
-                return ServiceResult<ParentRegistrationResponse>.Fail($"Registration failed: {ex.Message}");
+                return ServiceResult<ParentRegistrationResponse>.Fail(
+                    $"Registration failed: {ex.Message}"
+                );
             }
         }
 
@@ -293,18 +278,23 @@ namespace Application.Services
             var response = _mapper.Map<AuthResponse>(user);
             response.UserId = user.Id;
             response.Roles = roles;
-            response.Token = JwtExtensions.GenerateJwtToken(user,teacherEntity,roles, _config);
+            response.Token = JwtExtensions.GenerateJwtToken(user, teacherEntity, roles, _config);
             response.ProfileImageUrl = user.ProfileImagePath ?? "/uploads/users/default.png";
             response.RoleEntityIds = new Dictionary<string, string?>
             {
-                { $"{char.ToUpper(normalizedRole[0]) + normalizedRole.Substring(1)}Id", roleEntityId }
+                {
+                    $"{char.ToUpper(normalizedRole[0]) + normalizedRole.Substring(1)}Id",
+                    roleEntityId
+                },
             }!;
 
             await _userRepo.UpdateAsync(user);
             await _unitOfWork.SaveChangesAsync();
             if (normalizedRole == "teacher")
             {
-                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsAndClassesByUserIdAsync(user.Id);
+                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsAndClassesByUserIdAsync(
+                    user.Id
+                );
             }
             return ServiceResult<AuthResponse>.Ok(response, "Registration successful.");
         }
@@ -321,12 +311,14 @@ namespace Application.Services
             Teacher? teacherEntity = null;
             if (roles.Contains("Teacher"))
             {
-                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsAndClassesByUserIdAsync(user.Id);
+                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsAndClassesByUserIdAsync(
+                    user.Id
+                );
             }
             response.UserId = user.Id;
             response.ProfileImageUrl = user.ProfileImagePath;
             response.RoleEntityIds = await BuildRoleEntityIdMap(user);
-            response.Token = JwtExtensions.GenerateJwtToken(user,teacherEntity, roles, _config);
+            response.Token = JwtExtensions.GenerateJwtToken(user, teacherEntity, roles, _config);
 
             var refreshToken = new RefreshToken
             {
@@ -543,7 +535,9 @@ namespace Application.Services
             Teacher? teacherEntity = null;
             if (roles.Contains("Teacher"))
             {
-                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsAndClassesByUserIdAsync(userId);
+                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsAndClassesByUserIdAsync(
+                    userId
+                );
             }
 
             var newJwt = JwtExtensions.GenerateJwtToken(user!, teacherEntity, roles, _config);
@@ -681,7 +675,7 @@ namespace Application.Services
             if (user == null)
                 return ServiceResult<AuthResponse>.Fail("User not found");
 
-            var upload = await _fileService.UploadFileAsync(file, "AfterAuthentication"); // controllerName "users"
+            var upload = await _fileService.UploadFileAsync(file, "AfterAuthentication", userId); // controllerName "users"
             if (!upload.Success)
                 return ServiceResult<AuthResponse>.Fail(upload.Message);
 

@@ -10,5 +10,7 @@ namespace Domain.Entities
         public string FileType { get; set; } = string.Empty;
         public long FileSize { get; set; }
         public DateTime UploadedAt { get; set; } = DateTime.Now;
+        public string UserId { get; set; } = string.Empty;
+        public AppUser User { get; set; } = default!;
     }
 }

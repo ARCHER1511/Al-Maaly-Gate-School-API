@@ -19,10 +19,11 @@ namespace Al_Maaly_Gate_School.Controllers
             _authService = authService;
         }
 
-        [HttpPost("register/parentWithFiles")]
-        public async Task<IActionResult> RegisterParentWithDocuments(ParentRegisterRequest request)
+        [HttpPost("register/parent")]
+        public async Task<IActionResult> RegisterParent(ParentRegisterRequest request)
         {
-            var result = await _authService.RegisterParentWithDocumentsAsync(request);
+            var result = await _authService.RegisterParentAsync(request);
+
             return result.Success
                 ? Ok(ApiResponse<ParentRegistrationResponse>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<ParentRegistrationResponse>.Fail(result.Message!));
