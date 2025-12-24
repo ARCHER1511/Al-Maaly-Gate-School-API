@@ -3,22 +3,29 @@ using System.Linq.Expressions;
 
 namespace Infrastructure.Interfaces
 {
-    public interface IFileRecordRepository
+    public interface IFileRecordRepository:IGenericRepository<FileRecord>
     {
-        Task<FileRecord> AddAsync(FileRecord record);
-        Task<IEnumerable<FileRecord>> AddRangeAsync(IEnumerable<FileRecord> entities);
+        // CREATE
+        new Task<FileRecord> AddAsync(FileRecord record);
+        Task<IEnumerable<FileRecord>> AddRangeAsync(IEnumerable<FileRecord> records);
+
+        // READ (user-scoped)
+        Task<FileRecord?> GetByIdAsync(string fileId, string userId);
+        Task<FileRecord?> GetByPathAsync(string relativePath, string userId);
+
+        Task<IEnumerable<FileRecord>> GetFilesByUserIdAsync(string userId);
+        Task<IEnumerable<FileRecord>> GetRecentFilesByUserAsync(string userId, int count = 10);
+
+        Task<IEnumerable<FileRecord>> GetByControllerAsync(string controllerName, string userId);
+        Task<IEnumerable<FileRecord>> GetByTypeAsync(string fileType, string userId);
+
+        Task<bool> ExistsAsync(string relativePath, string userId);
+
+        // UPDATE
         Task UpdateAsync(FileRecord record);
-        Task DeleteAsync(FileRecord record);
-        Task<FileRecord?> GetByIdAsync(string id);
-        Task<FileRecord?> GetByPathAsync(string relativePath);
-        Task<IEnumerable<FileRecord>> GetAllAsync();
-        Task<IEnumerable<FileRecord>> FindAsync(Expression<Func<FileRecord, bool>> predicate);
 
-
-        Task<IEnumerable<FileRecord>> GetByControllerAsync(string controllerName);
-        Task<IEnumerable<FileRecord>> GetByTypeAsync(string fileType);
-        Task<IEnumerable<FileRecord>> GetRecentFilesAsync(int count = 10);
-        Task<bool> ExistsAsync(string relativePath);
-        Task DeleteByControllerAsync(string controllerName);
+        // DELETE (user-scoped)
+        Task DeleteAsync(string fileId, string userId);
+        Task DeleteByControllerAsync(string controllerName, string userId);
     }
 }

@@ -6,20 +6,41 @@ namespace Application.Interfaces
 {
     public interface IFileService
     {
-        Task<ServiceResult<string>> UploadFileAsync(IFormFile file,string controllerName);
-        Task<ServiceResult<List<string>>> UploadFilesAsync(IEnumerable<IFormFile> files,string controllerName);
-        Task<ServiceResult<string>> ReplaceFileAsync(IFormFile newFile,string existingFilePath,string controllerName);
-        Task<ServiceResult<bool>> DeleteFileAsync(string filePath);
+        // ===================== UPLOAD =====================
 
+        Task<ServiceResult<string>> UploadFileAsync(
+            IFormFile file,
+            string controllerName,
+            string userId
+        );
 
-        Task<ServiceResult<FileRecord?>> GetFileByIdAsync(string id);
-        Task<ServiceResult<FileRecord?>> GetFileByPathAsync(string relativePath);
-        Task<ServiceResult<IEnumerable<FileRecord>>> GetAllFilesAsync();
-        Task<ServiceResult<IEnumerable<FileRecord>>> GetFilesByControllerAsync(string controllerName);
-        Task<ServiceResult<IEnumerable<FileRecord>>> GetFilesByTypeAsync(string fileType);
-        Task<ServiceResult<IEnumerable<FileRecord>>> GetRecentFilesAsync(int days = 7);
-        Task<ServiceResult<long>> GetTotalStorageUsedAsync();
-        Task<ServiceResult<int>> DeleteFilesByControllerAsync(string controllerName);
-        Task<ServiceResult<(byte[] FileBytes, string FileName, string ContentType)>> DownloadFileAsync(string filePath);
+        Task<ServiceResult<List<string>>> UploadFilesAsync(
+            IEnumerable<IFormFile> files,
+            string controllerName,
+            string userId
+        );
+
+        // ===================== DOWNLOAD =====================
+
+        Task<
+            ServiceResult<(byte[] FileBytes, string FileName, string ContentType)>
+        > DownloadFileAsync(string filePath, string userId);
+
+        // ===================== DELETE =====================
+
+        Task<ServiceResult<bool>> DeleteFileAsync(string filePath, string userId);
+
+        // ===================== READ =====================
+
+        Task<ServiceResult<FileRecord?>> GetFileByIdAsync(string fileId, string userId);
+
+        Task<ServiceResult<FileRecord?>> GetFileByPathAsync(string relativePath, string userId);
+
+        Task<ServiceResult<IEnumerable<FileRecord>>> GetFilesByUserAsync(string userId);
+
+        // ===================== STORAGE =====================
+
+        Task<ServiceResult<long>> GetTotalStorageUsedAsync(string userId);
+        Task<ServiceResult<IEnumerable<FileRecord>>> GetPDFFilesByUserAsync(string userId);
     }
 }

@@ -3,6 +3,7 @@ using Application.DTOs.ParentDTOs;
 using Application.DTOs.StudentDTOs;
 using Application.DTOs.TeacherDTOs;
 using Application.Interfaces;
+using Application.Services;
 using Domain.Entities;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Authorization;
@@ -17,9 +18,11 @@ namespace Al_Maaly_Gate_School.Controllers
     public class AdminManagementController : ControllerBase
     {
         private readonly IAdminManagementService _adminManagementService;
-        public AdminManagementController(IAdminManagementService adminManagementService)
+        private readonly IFileService _fileService;
+        public AdminManagementController(IAdminManagementService adminManagementService,IFileService fileService)
         {
             _adminManagementService = adminManagementService;
+            _fileService = fileService;
         }
         // Teachers
 
@@ -316,7 +319,23 @@ namespace Al_Maaly_Gate_School.Controllers
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));
         }
+        [HttpGet("user-files/{userId}")]
+        public async Task<IActionResult> GetFilesByUserId(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest(ApiResponse<IEnumerable<FileRecord>>.Fail("UserId Is Required"));
 
+            var result = await _fileService.GetFilesByUserAsync(userId);
+            return Ok(ApiResponse<IEnumerable<FileRecord>>.Ok(result.Data!,result.Message));
+        }
+        [HttpGet("user-pdf-files/{userId}")]
+        public async Task<IActionResult> GetPDFFilesByUserId(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest(ApiResponse<IEnumerable<FileRecord>>.Fail("UserId Is Required"));
 
+            var result = await _fileService.GetPDFFilesByUserAsync(userId);
+            return Ok(ApiResponse<IEnumerable<FileRecord>>.Ok(result.Data!, result.Message));
+        }
     }
 }
