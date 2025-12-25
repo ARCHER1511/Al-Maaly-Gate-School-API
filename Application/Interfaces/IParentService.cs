@@ -1,6 +1,9 @@
-﻿using Application.DTOs.ParentDTOs;
+﻿using Application.DTOs.FileRequestDTOs;
+using Application.DTOs.ParentDTOs;
 using Application.DTOs.StudentDTOs;
+using Domain.Entities;
 using Domain.Wrappers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -18,5 +21,6 @@ namespace Application.Interfaces
         Task<ServiceResult<ParentCreateUpdateDto>> UpdateAsync(ParentCreateUpdateDto admin);
         Task<ServiceResult<bool>> DeleteAsync(object id);
         Task<ServiceResult<ParentViewWithChildrenDto>> GetParentWithChildrenAsync(string id);
+        Task<ServiceResult<List<string>>> UploadParentDocs(IEnumerable<IFormFile> files, string controllerName, string userId);
     }
 }
