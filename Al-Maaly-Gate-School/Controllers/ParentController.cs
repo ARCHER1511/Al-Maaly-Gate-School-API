@@ -6,6 +6,7 @@ using Domain.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
@@ -88,6 +89,18 @@ namespace Al_Maaly_Gate_School.Controllers
 
             return Ok(ApiResponse<ParentViewWithChildrenDto>.Ok(result.Data!, result.Message));
         }
-
+        [Authorize]
+        [HttpPost("files")]
+        public async Task<IActionResult> ParentUploadDocs(IEnumerable<IFormFile> files)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            const string controllerName = "Parent";
+            var result = await _ParentService.UploadParentDocs(files, controllerName, userId!);
+            if (!result.Success)
+            {
+                return BadRequest(ApiResponse<List<string>>.Fail(result.Message!));
+            }
+            return Ok(ApiResponse<List<string>>.Ok(result.Data!,result.Message));
+        }
     }
 }
