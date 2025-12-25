@@ -1,7 +1,9 @@
 ﻿using Application.DTOs.AuthDTOs;
 using Application.DTOs.ParentDTOs;
 using Application.Interfaces;
+using Domain.Entities;
 using Domain.Wrappers;
+using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +15,12 @@ namespace Al_Maaly_Gate_School.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authService;
+        private readonly IAppUserRepository _userRepo;
 
-        public AuthenticationController(IAuthenticationService authService)
+        public AuthenticationController(IAuthenticationService authService, IAppUserRepository userRepo)
         {
             _authService = authService;
+            _userRepo = userRepo;
         }
 
         [HttpPost("register/parentWithFiles")]
@@ -102,6 +106,26 @@ namespace Al_Maaly_Gate_School.Controllers
                 return BadRequest(ApiResponse<string>.Fail("Invalid input data."));
 
             var result = await _authService.ResetPasswordAsync(request);
+
+            return result.Success
+                ? Ok(ApiResponse<string>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<string>.Fail(result.Message!));
+        }
+
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(ConfirmEmailRequest request)
+        {
+            var result = await _authService.ConfirmEmailAsync(request.Token, request.UserId, request.ConfirmationNumber, request.Email);
+
+            return result.Success
+                ? Ok(ApiResponse<string>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<string>.Fail(result.Message!));
+        }
+
+        [HttpPost("resend-confirmation")]
+        public async Task<IActionResult> ResendConfirmation([FromBody] string Email)
+        {
+            var result = await _authService.ResendConfirmationAsync(Email);
 
             return result.Success
                 ? Ok(ApiResponse<string>.Ok(result.Data!, result.Message))

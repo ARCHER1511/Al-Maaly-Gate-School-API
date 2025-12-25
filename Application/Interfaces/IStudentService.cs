@@ -10,6 +10,8 @@ namespace Application.Interfaces
         Task<ServiceResult<StudentViewDto>> GetByIdAsync(object id);
         Task<ServiceResult<StudentViewDto>> CreateAsync(CreateStudentDto dto); // Changed parameter
         Task<ServiceResult<StudentViewDto>> UpdateAsync(string id, UpdateStudentDto dto); // Changed parameters
+        Task<ServiceResult<StudentViewDto>> UpdateStudentAdditionalInfoAsync(string id, UpdateStudentDto dto);
+        
         Task<ServiceResult<bool>> DeleteAsync(object id);
 
         Task<ServiceResult<int>> GetStudentCountByCurriculumAsync(string curriculumId);

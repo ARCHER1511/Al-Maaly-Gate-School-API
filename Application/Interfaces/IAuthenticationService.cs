@@ -22,5 +22,7 @@ namespace Application.Interfaces
         Task<ServiceResult<string>> DeleteAccountAsync(string userId);
         Task<ServiceResult<AuthResponse>> UpdateProfileAsync(string userId, UpdateProfileRequest request);
         Task<ServiceResult<AuthResponse>> UploadProfilePhotoAsync(string userId, IFormFile file);
-    }   
+        Task<ServiceResult<string>> ConfirmEmailAsync(string? token, string? userId, string? code, string? email);
+        Task<ServiceResult<string>> ResendConfirmationAsync(string email);
+    }
 }

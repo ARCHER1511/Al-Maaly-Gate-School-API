@@ -126,6 +126,12 @@ namespace Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ConfirmationNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ConfirmationTokenExpiry")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ContactInfo")
                         .IsRequired()
                         .HasMaxLength(512)
@@ -134,6 +140,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("EmailConfirmationToken")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -158,6 +167,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PendingRole")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")

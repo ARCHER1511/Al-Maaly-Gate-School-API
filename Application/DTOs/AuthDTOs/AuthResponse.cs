@@ -12,5 +12,6 @@
         public string? ProfileImageUrl { get; set; } // e.g. "/uploads/users/images/xxx.jpg"
         public Dictionary<string, string>? RoleEntityIds { get; set; }
         public string AccountStatus { get; set; } = string.Empty;
+        public bool RequiresConfirmation { get; set; }
     }
 }
