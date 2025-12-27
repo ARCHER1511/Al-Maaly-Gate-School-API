@@ -29,6 +29,7 @@ namespace Application.Services
         private readonly IMapper _mapper;
         private readonly IFileService _fileService;
         private readonly IFileRecordRepository _fileRecordRepository;
+        private readonly IEmailService _emailService;
 
         public AuthenticationService(
             IAppUserRepository userRepo,
@@ -41,7 +42,8 @@ namespace Application.Services
             IConfiguration config,
             IMapper mapper,
             IFileService fileService,
-            IFileRecordRepository fileRecordRepository
+            IFileRecordRepository fileRecordRepository,
+            IEmailService emailService
         )
         {
             _userRepo = userRepo;
@@ -55,6 +57,7 @@ namespace Application.Services
             _mapper = mapper;
             _fileService = fileService;
             _fileRecordRepository = fileRecordRepository;
+            _emailService = emailService;
         }
 
         private async Task CleanupUploadedFiles(List<string> filePaths, string userId)
@@ -201,103 +204,173 @@ namespace Application.Services
 
         public async Task<ServiceResult<AuthResponse>> RegisterAsync(RegisterRequest request)
         {
-            // 1️⃣ Password confirmation
             if (request.Password != request.ConfirmPassword)
                 return ServiceResult<AuthResponse>.Fail("Passwords do not match.");
 
-            // 2️⃣ Check for existing user
             var existingUser = await _userRepo.GetByEmailAsync(request.Email);
             if (existingUser != null)
                 return ServiceResult<AuthResponse>.Fail("Email already registered.");
 
-            // 3️⃣ Validate role
             if (string.IsNullOrWhiteSpace(request.Role))
                 return ServiceResult<AuthResponse>.Fail("Role is required.");
 
-            string normalizedRole = request.Role.Trim().ToLowerInvariant();
+            var role = request.Role.Trim().ToLowerInvariant();
             var validRoles = new[] { "admin", "teacher", "student", "parent" };
-            if (!validRoles.Contains(normalizedRole))
-                return ServiceResult<AuthResponse>.Fail($"Invalid role '{request.Role}'.");
+            if (!validRoles.Contains(role))
+                return ServiceResult<AuthResponse>.Fail("Invalid role.");
 
-            // 4️⃣ Create AppUser
             var user = _mapper.Map<AppUser>(request);
-            if (string.IsNullOrEmpty(user.Id))
-                user.Id = Guid.NewGuid().ToString();
+            user.Id = Guid.NewGuid().ToString();
+            user.EmailConfirmed = false;
+            user.PendingRole = role; //
+            user.ConfirmationNumber = GenerateConfirmationNumber();
+            user.EmailConfirmationToken = GenerateEmailToken();
+            user.ConfirmationTokenExpiry = DateTime.UtcNow.AddHours(24);
 
-            var createResult = await _userRepo.CreateAsync(user, request.Password);
-            if (!createResult.Succeeded)
+            var result = await _userRepo.CreateAsync(user, request.Password);
+            if (!result.Succeeded)
+                return ServiceResult<AuthResponse>.Fail(
+                    string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            await SendConfirmationEmail(user);
+
+            return ServiceResult<AuthResponse>.Ok(new AuthResponse
             {
-                var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
-                return ServiceResult<AuthResponse>.Fail($"User creation failed: {errors}");
-            }
+                UserId = user.Id,
+                Email = user.Email!,
+                RequiresConfirmation = true
+            }, "Registration successful. Please confirm your email.");
+        }
 
-            // 5️⃣ Assign role
-            await _userRepo.AddToRoleAsync(user, normalizedRole);
+        public async Task<ServiceResult<string>> ConfirmEmailAsync(ConfirmEmailRequest request)
+        {
+            AppUser? user = null;
 
-            // 6️⃣ Create role-specific entity
-            string roleEntityId = string.Empty;
-            Teacher? teacherEntity = null;
+            if (!string.IsNullOrEmpty(request.Token) && !string.IsNullOrEmpty(request.UserId))
+                user = await _userRepo.GetByIdAsync(request.UserId);
+            else if (!string.IsNullOrEmpty(request.ConfirmationNumber) && !string.IsNullOrEmpty(request.Email))
+                user = await _userRepo.GetByEmailAsync(request.Email);
 
-            switch (normalizedRole)
+            if (user == null)
+                return ServiceResult<string>.Fail("User not found.");
+
+            if (user.EmailConfirmed)
+                return ServiceResult<string>.Ok("Email already confirmed.");
+
+            if (user.ConfirmationTokenExpiry < DateTime.UtcNow)
+                return ServiceResult<string>.Fail("Confirmation expired.");
+
+            if (user.EmailConfirmationToken != request.Token &&
+                user.ConfirmationNumber != request.ConfirmationNumber)
+                return ServiceResult<string>.Fail("Invalid confirmation data.");
+
+            // ✅ CONFIRM EMAIL
+            user.EmailConfirmed = true;
+            user.ConfirmationNumber = null;
+            user.EmailConfirmationToken = null;
+            user.ConfirmationTokenExpiry = null;
+
+            // ✅ ASSIGN ROLE
+            var role = user.PendingRole!;
+            await _userRepo.AddToRoleAsync(user, role);
+
+            // ✅ CREATE ROLE ENTITY
+            await CreateRoleEntities(user, role);
+
+            user.PendingRole = null;
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return ServiceResult<string>.Ok("Account activated successfully.");
+        }
+        private async Task CreateRoleEntities(AppUser user, string role)
+        {
+            switch (role)
             {
                 case "admin":
-                    var admin = _mapper.Map<Admin>(request);
-                    admin.AppUserId = user.Id;
-                    await _adminRepo.AddAsync(admin);
-                    roleEntityId = admin.Id;
+                    await _adminRepo.AddAsync(
+                        new Admin 
+                        { 
+                            AppUserId = user.Id,
+                            AccountStatus = AccountStatus.Pending,
+                            ContactInfo = user.ContactInfo,
+                            Email = user.Email!,
+                            FullName = user.FullName,
+                            
+                        });
                     break;
 
                 case "teacher":
-                    var teacher = _mapper.Map<Teacher>(request);
-                    teacher.AppUserId = user.Id;
-                    await _teacherRepo.AddAsync(teacher);
-                    roleEntityId = teacher.Id;
-                    teacherEntity = teacher;
+                    await _teacherRepo.AddAsync(new Teacher {
+                            AppUserId = user.Id,
+                            AccountStatus = AccountStatus.Pending,
+                            ContactInfo = user.ContactInfo,
+                            Email = user.Email!,
+                            FullName = user.FullName,
+                            
+                        });
                     break;
 
                 case "student":
-                    var student = _mapper.Map<Student>(request);
-                    student.AppUserId = user.Id;
-                    await _studentRepo.AddAsync(student);
-                    roleEntityId = student.Id;
+                    await _studentRepo.AddAsync(new Student {
+                            AppUserId = user.Id,
+                            AccountStatus = AccountStatus.Pending,
+                            ContactInfo = user.ContactInfo,
+                            Email = user.Email!,
+                            FullName = user.FullName,
+                        });
                     break;
 
                 case "parent":
-                    var parent = _mapper.Map<Parent>(request);
-                    parent.AppUserId = user.Id;
-                    await _parentRepo.AddAsync(parent);
-                    roleEntityId = parent.Id;
+                    await _parentRepo.AddAsync(new Parent {
+                            AppUserId = user.Id,
+                            AccountStatus = AccountStatus.Pending,
+                            ContactInfo = user.ContactInfo,
+                            Email = user.Email!,
+                            FullName = user.FullName,
+                        });
                     break;
             }
+        }
+        public async Task<ServiceResult<string>> ResendConfirmationAsync(ResendConfirmationRequest request)
+        {
+            var user = await _userRepo.GetByEmailAsync(request.Email);
+            if (user == null)
+                return ServiceResult<string>.Fail("User not found.");
 
-            // 7️⃣ Commit all changes once
-            await _unitOfWork.SaveChangesAsync();
+            if (user.EmailConfirmed)
+                return ServiceResult<string>.Fail("Email already confirmed.");
 
-            // 8️⃣ Prepare response data
-            var roles = await _userRepo.GetRolesAsync(user);
-            var response = _mapper.Map<AuthResponse>(user);
-            response.UserId = user.Id;
-            response.Roles = roles;
-            response.Token = JwtExtensions.GenerateJwtToken(user, teacherEntity, roles, _config);
-            response.ProfileImageUrl = user.ProfileImagePath ?? "/uploads/users/default.png";
-            response.RoleEntityIds = new Dictionary<string, string?>
-            {
-                {
-                    $"{char.ToUpper(normalizedRole[0]) + normalizedRole.Substring(1)}Id",
-                    roleEntityId
-                },
-            }!;
+            user.ConfirmationNumber = GenerateConfirmationNumber();
+            user.EmailConfirmationToken = GenerateEmailToken();
+            user.ConfirmationTokenExpiry = DateTime.UtcNow.AddHours(24);
 
             await _userRepo.UpdateAsync(user);
-            await _unitOfWork.SaveChangesAsync();
-            if (normalizedRole == "teacher")
-            {
-                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsAndClassesByUserIdAsync(
-                    user.Id
-                );
-            }
-            return ServiceResult<AuthResponse>.Ok(response, "Registration successful.");
+            await SendConfirmationEmail(user);
+
+            return ServiceResult<string>.Ok("Confirmation email resent.");
         }
+        private async Task SendConfirmationEmail(AppUser user)
+        {
+            var link =
+                $"{_config["App:BaseUrl"]}/api/auth/confirm-email?token={user.EmailConfirmationToken}&userId={user.Id}";
+
+                    var body = $@"
+            <h3>Email Confirmation</h3>
+            <p>Your confirmation code: <b>{user.ConfirmationNumber}</b></p>
+            <a href='{link}'>Confirm Email</a>
+            <p>Expires in 24 hours</p>";
+
+            await _emailService.SendAsync(user.Email, "Confirm Email", body, true);
+        }
+
+        private string GenerateConfirmationNumber()
+            => Random.Shared.Next(100000, 999999).ToString();
+        private string GenerateEmailToken()
+            => Convert.ToBase64String(Guid.NewGuid().ToByteArray())
+                .Replace("/", "_")
+                .Replace("+", "-")
+                    .Replace("=", "");
 
         public async Task<ServiceResult<AuthResponse>> LoginAsync(LoginRequest request)
         {
@@ -305,7 +378,11 @@ namespace Application.Services
             if (user == null || !await _userRepo.CheckPasswordAsync(user, request.Password))
                 return ServiceResult<AuthResponse>.Fail("Invalid credentials");
 
+            if (!user.EmailConfirmed)
+                return ServiceResult<AuthResponse>.Fail("Please confirm your email first.");
+
             var roles = await _userRepo.GetRolesAsync(user);
+
             var response = _mapper.Map<AuthResponse>(user);
             response.Roles = roles;
             Teacher? teacherEntity = null;

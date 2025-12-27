@@ -89,6 +89,24 @@ namespace Application.Services
             return ServiceResult<StudentViewDto>.Ok(viewDto, "Student created successfully");
         }
 
+        public async Task<ServiceResult<StudentViewDto>> UpdateStudentAdditionalInfoAsync(string id, UpdateStudentDto dto)
+        {
+            var existingStudent = await _studentRepository.GetByIdAsync(id);
+            if (existingStudent == null)
+                return ServiceResult<StudentViewDto>.Fail("Student not found");
+
+            existingStudent.PassportNumber = dto.PassportNumber;
+            existingStudent.Nationality = dto.Nationality;
+            existingStudent.IqamaNumber = dto.IqamaNumber;
+
+            _studentRepository.Update(existingStudent);
+            await _unitOfWork.SaveChangesAsync();
+
+            var updatedStudent = await _studentRepository.GetByIdWithDetailsAsync(id);
+            var viewDto = _mapper.Map<StudentViewDto>(updatedStudent ?? existingStudent);
+            return ServiceResult<StudentViewDto>.Ok(viewDto, "Student additional info updated successfully");
+        }
+
         public async Task<ServiceResult<StudentViewDto>> UpdateAsync(string id, UpdateStudentDto dto) // Changed parameters
         {
             var existingStudent = await _studentRepository.GetByIdAsync(id);

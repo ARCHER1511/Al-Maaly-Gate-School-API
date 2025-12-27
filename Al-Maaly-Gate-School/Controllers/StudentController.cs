@@ -73,8 +73,22 @@ namespace Al_Maaly_Gate_School.Controllers
             return Ok(ApiResponse<StudentViewDto>.Ok(result.Data!, result.Message));
         }
 
+        [HttpPut("{id}/additional-info")]
+        public async Task<IActionResult> UpdateAdditionalInfo(string id, [FromBody] UpdateStudentDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ApiResponse<UpdateStudentDto>.Fail("Invalid data."));
+
+            var result = await _studentService.UpdateStudentAdditionalInfoAsync(id, dto);
+
+            if (!result.Success)
+                return BadRequest(ApiResponse<StudentViewDto>.Fail(result.Message!));
+
+            return Ok(ApiResponse<StudentViewDto>.Ok(result.Data!, result.Message));
+        }
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] UpdateStudentDto dto) // Changed parameter type
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateStudentDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ApiResponse<UpdateStudentDto>.Fail("Invalid Student data."));

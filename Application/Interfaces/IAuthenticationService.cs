@@ -30,5 +30,7 @@ namespace Application.Interfaces
             UpdateProfileRequest request
         );
         Task<ServiceResult<AuthResponse>> UploadProfilePhotoAsync(string userId, IFormFile file);
+        Task<ServiceResult<string>> ConfirmEmailAsync(ConfirmEmailRequest request);
+        Task<ServiceResult<string>> ResendConfirmationAsync(ResendConfirmationRequest request);
     }
 }
