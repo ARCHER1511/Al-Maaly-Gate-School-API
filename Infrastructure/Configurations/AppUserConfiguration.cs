@@ -19,6 +19,13 @@ namespace Infrastructure.Configurations
             builder.Property(u => u.ProfileImagePath)
                    .HasMaxLength(300);
 
+            builder.Property(u => u.Gender)
+               .HasMaxLength(20)
+               .IsRequired(true);
+
+            builder.Property(u => u.Age)
+                   .IsRequired(true);
+
             //Enum as string
             builder.Property(u => u.AccountStatus)
                 .HasConversion(v => v.ToString(),
