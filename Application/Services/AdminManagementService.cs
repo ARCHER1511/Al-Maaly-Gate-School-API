@@ -4,12 +4,10 @@ using Application.DTOs.StudentDTOs;
 using Application.DTOs.TeacherDTOs;
 using Application.Interfaces;
 using AutoMapper;
-using DocumentFormat.OpenXml.InkML;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services

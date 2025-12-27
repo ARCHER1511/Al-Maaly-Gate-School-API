@@ -46,6 +46,19 @@ namespace Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            const string IDENTITY_SCHEMA = "Identity";
+
+            builder.HasDefaultSchema(IDENTITY_SCHEMA);
+
+            builder.Entity<AppUser>().ToTable("Users");
+            builder.Entity<AppRole>().ToTable("Roles");
+
+            builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
+            builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
+            builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+
+            builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
+            builder.Entity<AppUserRole>().ToTable("UserRoles");
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }
