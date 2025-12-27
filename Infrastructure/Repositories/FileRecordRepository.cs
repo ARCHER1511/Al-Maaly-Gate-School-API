@@ -2,31 +2,100 @@
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace Infrastructure.Repositories
 {
-    public class FileRecordRepository : IFileRecordRepository
+    public class FileRecordRepository : GenericRepository<FileRecord>, IFileRecordRepository
     {
-        private readonly AlMaalyGateSchoolContext _context;
-        private readonly DbSet<FileRecord> _dbSet;
+        private new readonly DbSet<FileRecord> _dbSet;
 
-        public FileRecordRepository(AlMaalyGateSchoolContext context)
+        public FileRecordRepository(AlMaalyGateSchoolContext context) :base (context)
         {
-            _context = context;
             _dbSet = context.Set<FileRecord>();
         }
 
-        public async Task<FileRecord> AddAsync(FileRecord record)
+        public async new Task<FileRecord> AddAsync(FileRecord record)
         {
             await _dbSet.AddAsync(record);
             return record;
         }
 
-        public async Task<IEnumerable<FileRecord>> AddRangeAsync(IEnumerable<FileRecord> entities)
+        public async Task<IEnumerable<FileRecord>> AddRangeAsync(
+            IEnumerable<FileRecord> records)
         {
-            await _dbSet.AddRangeAsync(entities);
-            return entities;
+            await _dbSet.AddRangeAsync(records);
+            return records;
+        }
+
+        public async Task<FileRecord?> GetByIdAsync(
+            string fileId,
+            string userId)
+        {
+            return await _dbSet.FirstOrDefaultAsync(f =>
+                f.Id.ToString() == fileId &&
+                f.UserId == userId);
+        }
+
+        public async Task<FileRecord?> GetByPathAsync(
+            string relativePath,
+            string userId)
+        {
+            return await _dbSet.FirstOrDefaultAsync(f =>
+                f.RelativePath == relativePath &&
+                f.UserId == userId);
+        }
+
+        public async Task<IEnumerable<FileRecord>> GetFilesByUserIdAsync(
+            string userId)
+        {
+            return await _dbSet
+                .Where(f => f.UserId == userId)
+                .OrderByDescending(f => f.UploadedAt)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<FileRecord>> GetRecentFilesByUserAsync(
+            string userId,
+            int count = 10)
+        {
+            return await _dbSet
+                .Where(f => f.UserId == userId)
+                .OrderByDescending(f => f.UploadedAt)
+                .Take(count)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<FileRecord>> GetByControllerAsync(
+            string controllerName,
+            string userId)
+        {
+            return await _dbSet
+                .Where(f =>
+                    f.ControllerName == controllerName &&
+                    f.UserId == userId)
+                .OrderByDescending(f => f.UploadedAt)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<FileRecord>> GetByTypeAsync(
+            string fileType,
+            string userId)
+        {
+            return await _dbSet
+                .Where(f =>
+                    f.FileType == fileType &&
+                    f.UserId == userId)
+                .OrderByDescending(f => f.UploadedAt)
+                .ToListAsync();
+        }
+
+        public async Task<bool> ExistsAsync(
+            string relativePath,
+            string userId)
+        {
+            return await _dbSet.AnyAsync(f =>
+                f.RelativePath == relativePath &&
+                f.UserId == userId);
         }
 
         public Task UpdateAsync(FileRecord record)
@@ -35,55 +104,25 @@ namespace Infrastructure.Repositories
             return Task.CompletedTask;
         }
 
-        public Task DeleteAsync(FileRecord record)
+        public async Task DeleteAsync(
+            string fileId,
+            string userId)
         {
-            _dbSet.Remove(record);
-            return Task.CompletedTask;
+            var record = await GetByIdAsync(fileId, userId);
+
+            if (record != null)
+                _dbSet.Remove(record);
         }
 
-        public async Task<FileRecord?> GetByIdAsync(string id)
+        public async Task DeleteByControllerAsync(
+            string controllerName,
+            string userId)
         {
-            return await _dbSet.FindAsync(id);
-        }
-
-        public async Task<FileRecord?> GetByPathAsync(string relativePath)
-        {
-            return await _dbSet.FirstOrDefaultAsync(f => f.RelativePath == relativePath);
-        }
-
-        public async Task<IEnumerable<FileRecord>> GetAllAsync()
-        {
-            return await _dbSet.ToListAsync();
-        }
-
-        public async Task<IEnumerable<FileRecord>> FindAsync(Expression<Func<FileRecord, bool>> predicate)
-        {
-            return await _dbSet.Where(predicate).ToListAsync();
-        }
-
-        public async Task<IEnumerable<FileRecord>> GetByControllerAsync(string controllerName)
-        {
-            return await _dbSet.Where(f => f.ControllerName == controllerName).ToListAsync();
-        }
-
-        public async Task<IEnumerable<FileRecord>> GetByTypeAsync(string fileType)
-        {
-            return await _dbSet.Where(f => f.FileType == fileType).ToListAsync();
-        }
-
-        public async Task<bool> ExistsAsync(string relativePath)
-        {
-            return await _dbSet.AnyAsync(f => f.RelativePath == relativePath);
-        }
-
-        public async Task<IEnumerable<FileRecord>> GetRecentFilesAsync(int count = 10)
-        {
-            return await _dbSet.OrderByDescending(f => f.UploadedAt).Take(count).ToListAsync();
-        }
-
-        public async Task DeleteByControllerAsync(string controllerName)
-        {
-            var records = await _dbSet.Where(f => f.ControllerName == controllerName).ToListAsync();
+            var records = await _dbSet
+                .Where(f =>
+                    f.ControllerName == controllerName &&
+                    f.UserId == userId)
+                .ToListAsync();
 
             if (records.Any())
                 _dbSet.RemoveRange(records);

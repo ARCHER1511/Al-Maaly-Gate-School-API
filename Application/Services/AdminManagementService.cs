@@ -466,18 +466,20 @@ namespace Application.Services
 
         // Move Teacher to Another Class
         public async Task<ServiceResult<bool>> MoveTeacherToAnotherClassAsync(
-            string teacherId,
-            string? newClassId,
-            string adminUserId
-        )
+    string teacherId,
+    string? newClassId,
+    string adminUserId
+)
         {
             var teacherRepo = _unitOfWork.Repository<Teacher>();
             var teacherClassRepo = _unitOfWork.Repository<TeacherClass>();
+            var classRepo = _unitOfWork.Repository<Class>();
 
-            // Load teacher with AppUser for notification text
+            // Load teacher with AppUser and SpecializedCurricula
             var teacher = await teacherRepo.FirstOrDefaultAsync(
                 t => t.Id == teacherId,
                 q => q.Include(t => t.AppUser)
+                      .Include(t => t.SpecializedCurricula) // Add this
             );
 
             if (teacher == null)
@@ -494,9 +496,20 @@ namespace Application.Services
                 teacherClassRepo.Delete(assign);
             }
 
+            Curriculum? newCurriculum = null;
+
             // If a new class is provided, add the new relationship
             if (!string.IsNullOrEmpty(newClassId))
             {
+                var newClass = await classRepo.FirstOrDefaultAsync(
+                    c => c.Id == newClassId,
+                    q => q.Include(c => c.Grade)
+                          .ThenInclude(g => g.Curriculum) // Include curriculum
+                );
+
+                if (newClass == null)
+                    return ServiceResult<bool>.Fail("New class not found.");
+
                 var newAssignment = new TeacherClass
                 {
                     TeacherId = teacherId,
@@ -504,17 +517,47 @@ namespace Application.Services
                 };
 
                 await teacherClassRepo.AddAsync(newAssignment);
+
+                // NEW: Update teacher's curriculum specialization
+                if (newClass.Grade?.Curriculum != null)
+                {
+                    teacher.SpecializedCurricula ??= new List<Curriculum>();
+
+                    // Check if teacher is already specialized in this curriculum
+                    var isAlreadySpecialized = teacher.SpecializedCurricula
+                        .Any(c => c.Id == newClass.Grade.CurriculumId);
+
+                    if (!isAlreadySpecialized)
+                    {
+                        teacher.SpecializedCurricula.Add(newClass.Grade.Curriculum);
+                        teacherRepo.Update(teacher);
+                        newCurriculum = newClass.Grade.Curriculum;
+                    }
+                }
+            }
+            else
+            {
+                // If unassigning from all classes, you might want to clear curricula
+                // or keep them if the teacher should remain specialized
+                // teacher.SpecializedCurricula?.Clear(); // Uncomment if you want to clear
             }
 
             // Persist changes
             await _unitOfWork.SaveChangesAsync();
 
-            // Prepare notification message (use AppUser.FullName if available)
+            // Prepare notification message
             var teacherName = teacher.AppUser?.FullName ?? "Teacher";
-            string message =
-                newClassId == null
-                    ? $"Dear {teacherName}, you have been unassigned from all your classes."
-                    : $"Dear {teacherName}, you have been reassigned to a new class successfully.";
+            string message;
+
+            if (newClassId == null)
+            {
+                message = $"Dear {teacherName}, you have been unassigned from all your classes.";
+            }
+            else
+            {
+                var curriculumName = newCurriculum?.Name ?? "the class curriculum";
+                message = $"Dear {teacherName}, you have been assigned to a new class and are now specialized in {curriculumName}.";
+            }
 
             await _notificationService.CreateNotificationAsync(
                 title: "Class Assignment Updated",
@@ -532,19 +575,28 @@ namespace Application.Services
         public async Task<ServiceResult<bool>> AssignTeacherToClassAsync(
     string teacherId,
     string classId
-    )
+)
         {
             var teacherClassRepo = _unitOfWork.Repository<TeacherClass>();
             var teacherRepo = _unitOfWork.Repository<Teacher>();
             var classRepo = _unitOfWork.Repository<Class>();
 
             // Validate teacher exists
-            var teacher = await teacherRepo.GetByIdAsync(teacherId);
+            var teacher = await teacherRepo.FirstOrDefaultAsync(
+                t => t.Id == teacherId,
+                q => q.Include(t => t.SpecializedCurricula) // Add this to include curricula
+            );
+
             if (teacher == null)
                 return ServiceResult<bool>.Fail("Teacher not found.");
 
-            // Validate class exists
-            var classEntity = await classRepo.GetByIdAsync(classId);
+            // Validate class exists with its curriculum
+            var classEntity = await classRepo.FirstOrDefaultAsync(
+                c => c.Id == classId,
+                q => q.Include(g => g.Grade) // Include grade
+                      .ThenInclude(c => c.Curriculum) // Include curriculum
+            );
+
             if (classEntity == null)
                 return ServiceResult<bool>.Fail("Class not found.");
 
@@ -560,6 +612,25 @@ namespace Application.Services
             var teacherClass = new TeacherClass { TeacherId = teacherId, ClassId = classId };
 
             await teacherClassRepo.AddAsync(teacherClass);
+
+            // NEW: Add teacher to class's curriculum if curriculum exists
+            if (classEntity.Grade?.CurriculumId != null &&
+                classEntity.Grade.Curriculum != null)
+            {
+                // Initialize SpecializedCurricula if null
+                teacher.SpecializedCurricula ??= new List<Curriculum>();
+
+                // Check if teacher is already specialized in this curriculum
+                var isAlreadySpecialized = teacher.SpecializedCurricula
+                    .Any(c => c.Id == classEntity.Grade.CurriculumId);
+
+                if (!isAlreadySpecialized)
+                {
+                    teacher.SpecializedCurricula.Add(classEntity.Grade.Curriculum);
+                    teacherRepo.Update(teacher);
+                }
+            }
+
             await _unitOfWork.SaveChangesAsync();
 
             return ServiceResult<bool>.Ok(true, "Teacher assigned to class successfully.");
@@ -1034,13 +1105,22 @@ namespace Application.Services
             if (!dto.TeacherIds.Any() || !dto.ClassIds.Any())
                 return ServiceResult<bool>.Fail("Both TeacherIds and ClassIds are required.");
 
-            // Validate all teachers exist
-            var teachers = await teacherRepo.FindAllAsync(t => dto.TeacherIds.Contains(t.Id));
+            // Validate all teachers exist with curricula
+            var teachers = await teacherRepo.FindAllAsync(
+                t => dto.TeacherIds.Contains(t.Id),
+                q => q.Include(t => t.SpecializedCurricula) // Add this
+            );
+
             if (teachers.Count() != dto.TeacherIds.Count())
                 return ServiceResult<bool>.Fail("One or more teachers not found.");
 
-            // Validate all classes exist
-            var classes = await classRepo.FindAllAsync(c => dto.ClassIds.Contains(c.Id));
+            // Validate all classes exist with their curricula
+            var classes = await classRepo.FindAllAsync(
+                c => dto.ClassIds.Contains(c.Id),
+                q => q.Include(c => c.Grade)
+                      .ThenInclude(g => g.Curriculum) // Add this
+            );
+
             if (classes.Count() != dto.ClassIds.Count())
                 return ServiceResult<bool>.Fail("One or more classes not found.");
 
@@ -1053,37 +1133,71 @@ namespace Application.Services
                 .Select(ea => (ea.TeacherId, ea.ClassId))
                 .ToHashSet();
 
+            // Dictionary to track which teachers need which curricula
+            var teacherCurriculumUpdates = new Dictionary<string, List<Curriculum>>();
+
             // Create new assignments (all combinations of teachers and classes)
             var newAssignmentsCount = 0;
 
-            foreach (var teacherId in dto.TeacherIds)
+            foreach (var teacher in teachers)
             {
-                foreach (var classId in dto.ClassIds)
+                foreach (var classEntity in classes)
                 {
                     // Skip if assignment already exists
-                    if (existingAssignmentKeys.Contains((teacherId, classId)))
+                    if (existingAssignmentKeys.Contains((teacher.Id, classEntity.Id)))
                         continue;
 
                     // Create and add new assignment
                     var newAssignment = new TeacherClass
                     {
-                        TeacherId = teacherId,
-                        ClassId = classId
+                        TeacherId = teacher.Id,
+                        ClassId = classEntity.Id
                     };
 
                     await teacherClassRepo.AddAsync(newAssignment);
                     newAssignmentsCount++;
+
+                    // NEW: Track curriculum assignments
+                    if (classEntity.Grade?.Curriculum != null)
+                    {
+                        // Initialize teacher's curricula if needed
+                        teacher.SpecializedCurricula ??= new List<Curriculum>();
+
+                        // Check if teacher is already specialized in this curriculum
+                        var isAlreadySpecialized = teacher.SpecializedCurricula
+                            .Any(c => c.Id == classEntity.Grade.CurriculumId);
+
+                        if (!isAlreadySpecialized)
+                        {
+                            teacher.SpecializedCurricula.Add(classEntity.Grade.Curriculum);
+
+                            // Track for update
+                            if (!teacherCurriculumUpdates.ContainsKey(teacher.Id))
+                            {
+                                teacherCurriculumUpdates[teacher.Id] = new List<Curriculum>();
+                            }
+                            teacherCurriculumUpdates[teacher.Id].Add(classEntity.Grade.Curriculum);
+                        }
+                    }
                 }
             }
 
             if (newAssignmentsCount == 0)
                 return ServiceResult<bool>.Fail("All teacher-class assignments already exist.");
 
+            // Update teachers with new curricula
+            foreach (var teacherUpdate in teacherCurriculumUpdates)
+            {
+                var teacher = teachers.First(t => t.Id == teacherUpdate.Key);
+                teacherRepo.Update(teacher);
+            }
+
             // Save all changes
             await _unitOfWork.SaveChangesAsync();
 
             return ServiceResult<bool>.Ok(true,
-                $"Successfully created {newAssignmentsCount} teacher-class assignments.");
+                $"Successfully created {newAssignmentsCount} teacher-class assignments " +
+                $"and updated {teacherCurriculumUpdates.Count} teachers with curriculum specializations.");
         }
 
         public async Task<ServiceResult<bool>> ApproveParentWithStudent(RelationParentWithStudentRequest relationRequest)

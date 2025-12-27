@@ -77,18 +77,27 @@ namespace Al_Maaly_Gate_School.Controllers
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));
         }
 
-        // ADDED: New endpoint to get subjects by grade
         [HttpGet("grade/{gradeId}")]
         public async Task<IActionResult> GetSubjectsByGrade(string gradeId)
         {
-            // You'll need to add this method to your ISubjectService and SubjectService
-            // var result = await _subjectService.GetSubjectsByGradeIdAsync(gradeId);
+            var result = await _subjectService.GetSubjectsByGradeIdAsync(gradeId);
 
-            // return result.Success
-            //     ? Ok(ApiResponse<IEnumerable<SubjectViewDto>>.Ok(result.Data!, result.Message))
-            //     : NotFound(ApiResponse<IEnumerable<SubjectViewDto>>.Fail(result.Message!));
-
-            return Ok(ApiResponse<string>.Ok("Endpoint not implemented yet."));
+            return result.Success
+                ? Ok(ApiResponse<IEnumerable<SubjectViewDto>>.Ok(result.Data!, result.Message))
+                : NotFound(ApiResponse<IEnumerable<SubjectViewDto>>.Fail(result.Message!));
         }
+
+        [HttpGet("count")]
+        public async Task<IActionResult> GetSubjectCount()
+        {
+            var result = await _subjectService.GetSubjectCountAsync();
+            if (!result.Success)
+                return BadRequest(ApiResponse<int>.Fail(result.Message!));
+
+            return Ok(ApiResponse<int>.Ok(result.Data!, result.Message));
+        }
+
+
+
     }
 }

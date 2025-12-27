@@ -23,10 +23,11 @@ namespace Al_Maaly_Gate_School.Controllers
             _userRepo = userRepo;
         }
 
-        [HttpPost("register/parentWithFiles")]
-        public async Task<IActionResult> RegisterParentWithDocuments(ParentRegisterRequest request)
+        [HttpPost("register/parent")]
+        public async Task<IActionResult> RegisterParent(ParentRegisterRequest request)
         {
-            var result = await _authService.RegisterParentWithDocumentsAsync(request);
+            var result = await _authService.RegisterParentAsync(request);
+
             return result.Success
                 ? Ok(ApiResponse<ParentRegistrationResponse>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<ParentRegistrationResponse>.Fail(result.Message!));
@@ -113,9 +114,9 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpPost("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(ConfirmEmailRequest request)
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request)
         {
-            var result = await _authService.ConfirmEmailAsync(request.Token, request.UserId, request.ConfirmationNumber, request.Email);
+            var result = await _authService.ConfirmEmailAsync(request);
 
             return result.Success
                 ? Ok(ApiResponse<string>.Ok(result.Data!, result.Message))
@@ -123,9 +124,9 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpPost("resend-confirmation")]
-        public async Task<IActionResult> ResendConfirmation([FromBody] string Email)
+        public async Task<IActionResult> ResendConfirmation([FromBody] ResendConfirmationRequest request)
         {
-            var result = await _authService.ResendConfirmationAsync(Email);
+            var result = await _authService.ResendConfirmationAsync(request);
 
             return result.Success
                 ? Ok(ApiResponse<string>.Ok(result.Data!, result.Message))

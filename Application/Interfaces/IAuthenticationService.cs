@@ -7,7 +7,9 @@ namespace Application.Interfaces
 {
     public interface IAuthenticationService
     {
-        Task<ServiceResult<ParentRegistrationResponse>> RegisterParentWithDocumentsAsync(ParentRegisterRequest request);
+        Task<ServiceResult<ParentRegistrationResponse>> RegisterParentAsync(
+            ParentRegisterRequest request
+        );
         Task<ServiceResult<AuthResponse>> RegisterAsync(RegisterRequest request);
         Task<ServiceResult<AuthResponse>> LoginAsync(LoginRequest request);
         Task<ServiceResult<string>> CreateRoleAsync(CreateRoleRequest roleName);
@@ -16,13 +18,19 @@ namespace Application.Interfaces
         Task<ServiceResult<AuthResponse>> RefreshTokenAsync(RefreshTokenRequest request);
         Task RevokeTokensAsync(string userId);
         Task<ServiceResult<AuthResponse>> GetUserProfileAsync(string userId);
-        Task<ServiceResult<string>> ChangePasswordAsync(string userId, ChangePasswordRequest request);
+        Task<ServiceResult<string>> ChangePasswordAsync(
+            string userId,
+            ChangePasswordRequest request
+        );
         Task<ServiceResult<string>> ForgotPasswordAsync(string email);
         Task<ServiceResult<string>> ResetPasswordAsync(ResetPasswordRequest request);
         Task<ServiceResult<string>> DeleteAccountAsync(string userId);
-        Task<ServiceResult<AuthResponse>> UpdateProfileAsync(string userId, UpdateProfileRequest request);
+        Task<ServiceResult<AuthResponse>> UpdateProfileAsync(
+            string userId,
+            UpdateProfileRequest request
+        );
         Task<ServiceResult<AuthResponse>> UploadProfilePhotoAsync(string userId, IFormFile file);
-        Task<ServiceResult<string>> ConfirmEmailAsync(string? token, string? userId, string? code, string? email);
-        Task<ServiceResult<string>> ResendConfirmationAsync(string email);
+        Task<ServiceResult<string>> ConfirmEmailAsync(ConfirmEmailRequest request);
+        Task<ServiceResult<string>> ResendConfirmationAsync(ResendConfirmationRequest request);
     }
 }

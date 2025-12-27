@@ -199,6 +199,55 @@ namespace Application.Mappings
                 );
             #endregion
 
+            #region curriculum
+            // Curriculum to CurriculumDto
+            CreateMap<Curriculum, CurriculumDto>()
+                .ForMember(dest => dest.GradeCount, opt => opt.MapFrom(src => src.Grades != null ? src.Grades.Count : 0))
+                .ForMember(dest => dest.StudentCount, opt => opt.MapFrom(src => src.Students != null ? src.Students.Count : 0))
+                .ForMember(dest => dest.TeacherCount, opt => opt.MapFrom(src => src.Teachers != null ? src.Teachers.Count : 0));
+
+            // CreateCurriculumDto to Curriculum
+            CreateMap<CreateCurriculumDto, Curriculum>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.Grades, opt => opt.Ignore())
+                .ForMember(dest => dest.Students, opt => opt.Ignore())
+                .ForMember(dest => dest.Teachers, opt => opt.Ignore());
+
+            // UpdateCurriculumDto to Curriculum
+            CreateMap<UpdateCurriculumDto, Curriculum>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.Grades, opt => opt.Ignore())
+                .ForMember(dest => dest.Students, opt => opt.Ignore())
+                .ForMember(dest => dest.Teachers, opt => opt.Ignore());
+
+            // Curriculum to CurriculumDetailsDto
+            CreateMap<Curriculum, CurriculumDetailsDto>()
+                .IncludeBase<Curriculum, CurriculumDto>()
+                .ForMember(dest => dest.Grades, opt => opt.MapFrom(src => src.Grades))
+                .ForMember(dest => dest.Students, opt => opt.MapFrom(src => src.Students))
+                .ForMember(dest => dest.Teachers, opt => opt.MapFrom(src => src.Teachers));
+
+            // Grade to GradeViewDto (if not already mapped elsewhere)
+            CreateMap<Grade, GradeViewDto>()
+                .ForMember(dest => dest.ClassCount, opt => opt.MapFrom(src => src.Classes != null ? src.Classes.Count : 0))
+                .ForMember(dest => dest.SubjectCount, opt => opt.MapFrom(src => src.Subjects != null ? src.Subjects.Count : 0));
+
+            // Student to StudentViewDto (if not already mapped elsewhere)
+            CreateMap<Student, StudentViewDto>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
+                .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.Class != null ? src.Class.ClassName : "Not Assigned"))
+                .ForMember(dest => dest.GradeName, opt => opt.MapFrom(src => src.Class != null && src.Class.Grade != null ? src.Class.Grade.GradeName : "Not Assigned"))
+                .ForMember(dest => dest.AccountStatus, opt => opt.MapFrom(src => src.AccountStatus.ToString()));
+
+            // Teacher to TeacherViewDto (if not already mapped elsewhere)
+            CreateMap<Teacher, TeacherViewDto>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName));
+            #endregion
+
             #region Question Mappings
 
             CreateMap<ChoiceDto, Choices>()

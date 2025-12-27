@@ -5,291 +5,309 @@ using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
-
 namespace Application.Services
 {
     public class FileService : IFileService
     {
         private readonly string _rootPath;
-        private readonly string[] _allowedExtensions =
-        {
-            ".jpg", ".jpeg", ".png", ".gif", ".pdf", ".doc", ".docx"
-        };
         private readonly IFileRecordRepository _recordRepo;
         private readonly IUnitOfWork _unitOfWork;
 
-        public FileService(IWebHostEnvironment env, IFileRecordRepository recordRepo, IUnitOfWork unitOfWork)
+        private static readonly string[] _allowedExtensions =
+        {
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".gif",
+            ".pdf",
+            ".doc",
+            ".docx",
+        };
+
+        public FileService(
+            IWebHostEnvironment env,
+            IFileRecordRepository recordRepo,
+            IUnitOfWork unitOfWork
+        )
         {
             _rootPath = Path.Combine(env.WebRootPath, "uploads");
             _recordRepo = recordRepo;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ServiceResult<string>> UploadFileAsync(IFormFile file, string controllerName)
+        public async Task<ServiceResult<FileRecord?>> GetFileByPathAsync(
+            string relativePath,
+            string userId
+        )
+        {
+            if (string.IsNullOrWhiteSpace(relativePath))
+                return ServiceResult<FileRecord?>.Fail("File path is required");
+
+            if (string.IsNullOrWhiteSpace(userId))
+                return ServiceResult<FileRecord?>.Fail("UserId is required");
+
+            var file = await _recordRepo.GetByPathAsync(relativePath, userId);
+
+            if (file == null)
+                return ServiceResult<FileRecord?>.Fail("File not found");
+
+            return ServiceResult<FileRecord?>.Ok(file, "File retrieved successfully");
+        }
+
+        public async Task<ServiceResult<FileRecord?>> GetFileByIdAsync(string fileId, string userId)
+        {
+            if (string.IsNullOrWhiteSpace(fileId))
+                return ServiceResult<FileRecord?>.Fail("FileId is required");
+
+            if (string.IsNullOrWhiteSpace(userId))
+                return ServiceResult<FileRecord?>.Fail("UserId is required");
+
+            var file = await _recordRepo.GetByIdAsync(fileId, userId);
+
+            if (file == null)
+                return ServiceResult<FileRecord?>.Fail("File not found");
+
+            return ServiceResult<FileRecord?>.Ok(file, "File retrieved successfully");
+        }
+
+        // ===================== UPLOAD SINGLE =====================
+        public async Task<ServiceResult<string>> UploadFileAsync(
+            IFormFile file,
+            string controllerName,
+            string userId
+        )
         {
             if (file == null || file.Length == 0)
                 return ServiceResult<string>.Fail("File cannot be empty.");
 
-            var extension = Path.GetExtension(file!.FileName).ToLowerInvariant();
-            if (!_allowedExtensions.Contains(extension))
+            var extension = ValidateExtension(file.FileName);
+            if (extension == null)
                 return ServiceResult<string>.Fail("File type not supported.");
 
-            string typeFolder = GetFileTypeFolder(extension);
-            string uploadPath = Path.Combine(_rootPath, controllerName, typeFolder);
-            Directory.CreateDirectory(uploadPath);
+            var (relativePath, uniqueFileName) = await SavePhysicalFileAsync(
+                file,
+                controllerName,
+                extension
+            );
 
-            string uniqueFileName = $"{Guid.NewGuid()}{extension}";
-            string fullPath = Path.Combine(uploadPath, uniqueFileName);
-
-            using (var stream = new FileStream(fullPath, FileMode.Create))
-                await file.CopyToAsync(stream);
-
-            string relativePath = Path.Combine("uploads", controllerName, typeFolder, uniqueFileName)
-                .Replace("\\", "/");
-
-            // Create record
-            var record = new FileRecord
-            {
-                FileName = uniqueFileName,
-                RelativePath = relativePath,
-                ControllerName = controllerName,
-                FileType = extension,
-                FileSize = file.Length,
-                UploadedAt = DateTime.Now
-            };
+            var record = CreateFileRecord(
+                file,
+                uniqueFileName,
+                relativePath,
+                controllerName,
+                extension,
+                userId
+            );
 
             await _recordRepo.AddAsync(record);
-            await _unitOfWork.SaveChangesAsync(); // commit DB changes
+            await _unitOfWork.SaveChangesAsync();
 
-            return ServiceResult<string>.Ok(relativePath, "Uploaded Successfully");
+            return ServiceResult<string>.Ok(relativePath, "Uploaded successfully");
         }
 
-        public async Task<ServiceResult<List<string>>> UploadFilesAsync(IEnumerable<IFormFile> files, string controllerName)
+        // ===================== UPLOAD MULTIPLE =====================
+
+        public async Task<ServiceResult<List<string>>> UploadFilesAsync(
+            IEnumerable<IFormFile> files,
+            string controllerName,
+            string userId
+        )
         {
             if (files == null || !files.Any())
-                ServiceResult<List<string>>.Fail("No files provided.");
+                return ServiceResult<List<string>>.Fail("No files provided.");
 
-            var uploadedPaths = new List<string>();
             var records = new List<FileRecord>();
+            var paths = new List<string>();
 
-            foreach (var file in files!)
+            foreach (var file in files)
             {
                 if (file == null || file.Length == 0)
                     continue;
 
-                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-                if (!_allowedExtensions.Contains(extension))
+                var extension = ValidateExtension(file.FileName);
+                if (extension == null)
                     continue;
 
-                string typeFolder = GetFileTypeFolder(extension);
-                string uploadPath = Path.Combine(_rootPath, controllerName, typeFolder);
-                Directory.CreateDirectory(uploadPath);
+                var (relativePath, uniqueFileName) = await SavePhysicalFileAsync(
+                    file,
+                    controllerName,
+                    extension
+                );
 
-                string uniqueFileName = $"{Guid.NewGuid()}{extension}";
-                string fullPath = Path.Combine(uploadPath, uniqueFileName);
+                records.Add(
+                    CreateFileRecord(
+                        file,
+                        uniqueFileName,
+                        relativePath,
+                        controllerName,
+                        extension,
+                        userId
+                    )
+                );
 
-                using (var stream = new FileStream(fullPath, FileMode.Create))
-                    await file.CopyToAsync(stream);
-
-                string relativePath = Path.Combine("uploads", controllerName, typeFolder, uniqueFileName)
-                    .Replace("\\", "/");
-
-                uploadedPaths.Add(relativePath);
-
-                records.Add(new FileRecord
-                {
-                    FileName = uniqueFileName,
-                    RelativePath = relativePath,
-                    ControllerName = controllerName,
-                    FileType = extension,
-                    FileSize = file.Length,
-                    UploadedAt = DateTime.Now
-                });
+                paths.Add(relativePath);
             }
 
-            if (records.Count > 0)
+            if (records.Any())
             {
                 await _recordRepo.AddRangeAsync(records);
                 await _unitOfWork.SaveChangesAsync();
             }
 
-            return ServiceResult<List<string>>.Ok(uploadedPaths,"Files are uploaded Successfully");
+            return ServiceResult<List<string>>.Ok(paths, "Files uploaded successfully");
         }
 
-        public async Task<ServiceResult<string>> ReplaceFileAsync(IFormFile newFile, string existingFilePath, string controllerName)
+        // ===================== DOWNLOAD =====================
+
+        public async Task<
+            ServiceResult<(byte[] FileBytes, string FileName, string ContentType)>
+        > DownloadFileAsync(string filePath, string userId)
         {
-            var existingRecord = await _recordRepo.GetByPathAsync(existingFilePath);
-            if (existingRecord == null)
-                return ServiceResult<string>.Fail("File record not found.");
+            var record = await _recordRepo.GetByPathAsync(filePath, userId);
+            if (record == null)
+                return ServiceResult<(byte[], string, string)>.Fail("File not found.");
 
-            // Delete old physical file
-            string oldFullPath = Path.Combine(_rootPath, existingFilePath.Replace("uploads/", "").Replace("/", "\\"));
-            if (File.Exists(oldFullPath))
-                File.Delete(oldFullPath);
+            var fullPath = GetPhysicalPath(filePath);
+            if (!File.Exists(fullPath))
+                return ServiceResult<(byte[], string, string)>.Fail("Physical file missing.");
 
-            // Upload new one
-            var extension = Path.GetExtension(newFile.FileName).ToLowerInvariant();
-            string typeFolder = GetFileTypeFolder(extension);
-            string uploadPath = Path.Combine(_rootPath, controllerName, typeFolder);
+            var bytes = await File.ReadAllBytesAsync(fullPath);
+            return ServiceResult<(byte[], string, string)>.Ok(
+                (bytes, record.FileName, GetContentType(record.FileType)),
+                "File downloaded"
+            );
+        }
+
+        // ===================== DELETE =====================
+
+        public async Task<ServiceResult<bool>> DeleteFileAsync(string filePath, string userId)
+        {
+            var record = await _recordRepo.GetByPathAsync(filePath, userId);
+            if (record == null)
+                return ServiceResult<bool>.Fail("File not found.");
+
+            DeletePhysicalFile(filePath);
+
+            await _recordRepo.DeleteAsync(record.Id.ToString(), userId);
+            await _unitOfWork.SaveChangesAsync();
+
+            return ServiceResult<bool>.Ok(true, "File deleted");
+        }
+
+        // ===================== QUERIES =====================
+
+        public async Task<ServiceResult<IEnumerable<FileRecord>>> GetFilesByUserAsync(string userId)
+        {
+            var files = await _recordRepo.GetFilesByUserIdAsync(userId);
+            return ServiceResult<IEnumerable<FileRecord>>.Ok(files);
+        }
+
+        public async Task<ServiceResult<IEnumerable<FileRecord>>> GetPDFFilesByUserAsync(
+            string userId
+        )
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return ServiceResult<IEnumerable<FileRecord>>.Fail("UserId is required");
+
+            // Use the repository user-scoped method
+            var files = await _recordRepo.GetByTypeAsync(".pdf", userId);
+
+            return ServiceResult<IEnumerable<FileRecord>>.Ok(
+                files,
+                "PDF files retrieved successfully"
+            );
+        }
+
+        public async Task<ServiceResult<long>> GetTotalStorageUsedAsync(string userId)
+        {
+            var files = await _recordRepo.GetFilesByUserIdAsync(userId);
+            var total = files.Sum(f => f.FileSize);
+            return ServiceResult<long>.Ok(total);
+        }
+
+        // ===================== HELPERS =====================
+
+        private static string? ValidateExtension(string fileName)
+        {
+            var ext = Path.GetExtension(fileName).ToLowerInvariant();
+            return _allowedExtensions.Contains(ext) ? ext : null;
+        }
+
+        private async Task<(string RelativePath, string FileName)> SavePhysicalFileAsync(
+            IFormFile file,
+            string controller,
+            string extension
+        )
+        {
+            var folder = GetFileTypeFolder(extension);
+            var uploadPath = Path.Combine(_rootPath, controller, folder);
             Directory.CreateDirectory(uploadPath);
 
-            string uniqueFileName = $"{Guid.NewGuid()}{extension}";
-            string newFullPath = Path.Combine(uploadPath, uniqueFileName);
+            var fileName = $"{Guid.NewGuid()}{extension}";
+            var fullPath = Path.Combine(uploadPath, fileName);
 
-            using (var stream = new FileStream(newFullPath, FileMode.Create))
-                await newFile.CopyToAsync(stream);
+            using var stream = new FileStream(fullPath, FileMode.Create);
+            await file.CopyToAsync(stream);
 
-            string newRelativePath = Path.Combine("uploads", controllerName, typeFolder, uniqueFileName)
+            var relativePath = Path.Combine("uploads", controller, folder, fileName)
                 .Replace("\\", "/");
 
-            // Update record
-            existingRecord.FileName = uniqueFileName;
-            existingRecord.RelativePath = newRelativePath;
-            existingRecord.FileType = extension;
-            existingRecord.FileSize = newFile.Length;
-            existingRecord.UploadedAt = DateTime.Now;
-
-            await _recordRepo.UpdateAsync(existingRecord);
-            await _unitOfWork.SaveChangesAsync(); // commit DB changes
-
-            return ServiceResult<string>.Ok(newRelativePath,"The file Replaced Successfully");
+            return (relativePath, fileName);
         }
 
-        public async Task<ServiceResult<bool>> DeleteFileAsync(string filePath)
+        private static FileRecord CreateFileRecord(
+            IFormFile file,
+            string fileName,
+            string relativePath,
+            string controller,
+            string extension,
+            string userId
+        )
         {
-            if (string.IsNullOrEmpty(filePath))
-                return ServiceResult<bool>.Fail("No File Path Provided");
-
-            string fullPath = Path.Combine(_rootPath, filePath.Replace("uploads/", "").Replace("/", "\\"));
-
-            // Remove record from database
-            var record = await _recordRepo.GetByPathAsync(filePath);
-            if (record != null)
+            return new FileRecord
             {
-                await _recordRepo.DeleteAsync(record);
-                await _unitOfWork.SaveChangesAsync();
-            }
+                FileName = fileName,
+                RelativePath = relativePath,
+                ControllerName = controller,
+                FileType = extension,
+                FileSize = file.Length,
+                UploadedAt = DateTime.Now,
+                UserId = userId,
+            };
+        }
 
+        private string GetPhysicalPath(string relativePath)
+        {
+            return Path.Combine(_rootPath, relativePath.Replace("uploads/", "").Replace("/", "\\"));
+        }
+
+        private void DeletePhysicalFile(string relativePath)
+        {
+            var fullPath = GetPhysicalPath(relativePath);
             if (File.Exists(fullPath))
-            {
                 File.Delete(fullPath);
-                return ServiceResult<bool>.Ok(true,"File Deleted Successfully");
-            }
-
-            return ServiceResult<bool>.Ok(false, "File not Deleted");
         }
 
-        public async Task<ServiceResult<FileRecord?>> GetFileByIdAsync(string id)
-        {
-            var file = await _recordRepo.GetByIdAsync(id);
-            return ServiceResult<FileRecord?>.Ok(file, "File Retrieved Successfully");
-        }
-        public async Task<ServiceResult<FileRecord?>> GetFileByPathAsync(string relativePath)
-        {
-            var file = await _recordRepo.GetByPathAsync(relativePath);
-            return ServiceResult<FileRecord?>.Ok(file, "File Retrieved Successfully");
-        }
-        public async Task<ServiceResult<IEnumerable<FileRecord>>> GetAllFilesAsync()
-        {
-            var files = await _recordRepo.GetAllAsync();
-            return ServiceResult<IEnumerable<FileRecord>>.Ok(files, "Files Retrieved Successfully");
-        }
-
-        public async Task<ServiceResult<IEnumerable<FileRecord>>> GetFilesByControllerAsync(string controllerName)
-        {
-            var files = await _recordRepo.FindAsync(f => f.ControllerName == controllerName);
-            return ServiceResult<IEnumerable<FileRecord>>.Ok(files, "Files Retrieved Successfully");
-        }
-
-        public async Task<ServiceResult<IEnumerable<FileRecord>>> GetFilesByTypeAsync(string fileType)
-        {
-            fileType = fileType.ToLowerInvariant();
-            var files = await _recordRepo.FindAsync(f => f.FileType == fileType);
-            return ServiceResult<IEnumerable<FileRecord>>.Ok(files, "Files Retrieved Successfully");
-        }
-
-        public async Task<ServiceResult<IEnumerable<FileRecord>>> GetRecentFilesAsync(int days = 7)
-        {
-            var since = DateTime.Now.AddDays(-days);
-            var recentFiles = await _recordRepo.FindAsync(f => f.UploadedAt >= since);
-            return ServiceResult<IEnumerable<FileRecord>>.Ok(recentFiles, "Files Retrieved Successfully");
-        }
-
-        public async Task<ServiceResult<long>> GetTotalStorageUsedAsync()
-        {
-            var all = await _recordRepo.GetAllAsync();
-            var totalStorageUsed = all.Sum(f => f.FileSize);
-            return ServiceResult<long>.Ok(totalStorageUsed,$"Total Storage used is ${totalStorageUsed}");
-        }
-
-        public async Task<ServiceResult<int>> DeleteFilesByControllerAsync(string controllerName)
-        {
-            var files = await _recordRepo.FindAsync(f => f.ControllerName == controllerName);
-            int deletedCount = 0;
-
-            foreach (var record in files)
+        private static string GetFileTypeFolder(string ext) =>
+            ext switch
             {
-                string fullPath = Path.Combine(_rootPath, record.RelativePath.Replace("uploads/", "").Replace("/", "\\"));
-                if (File.Exists(fullPath))
-                    File.Delete(fullPath);
+                ".jpg" or ".jpeg" or ".png" or ".gif" => "images",
+                ".pdf" => "pdf",
+                ".doc" or ".docx" => "word",
+                _ => "others",
+            };
 
-                await _recordRepo.DeleteAsync(record);
-                deletedCount++;
-            }
-
-            await _unitOfWork.SaveChangesAsync();
-            return ServiceResult<int>.Ok(deletedCount,$"{deletedCount} files deleted successfully");
-        }
-
-        public async Task<ServiceResult<(byte[] FileBytes, string FileName, string ContentType)>> DownloadFileAsync(string filePath)
-        {
-            if (string.IsNullOrWhiteSpace(filePath))
-                return ServiceResult<(byte[], string, string)>.Fail("File path not provided.");
-
-            // Retrieve file record for validation
-            var record = await _recordRepo.GetByPathAsync(filePath);
-            if (record == null)
-                return ServiceResult<(byte[], string, string)>.Fail("File record not found in database.");
-
-            // Get physical path
-            string fullPath = Path.Combine(_rootPath, filePath.Replace("uploads/", "").Replace("/", "\\"));
-            if (!File.Exists(fullPath))
-                return ServiceResult<(byte[], string, string)>.Fail("Physical file not found.");
-
-            // Read file into memory
-            byte[] fileBytes = await File.ReadAllBytesAsync(fullPath);
-
-            // Determine MIME type
-            string contentType = GetContentType(record.FileType);
-
-            return ServiceResult<(byte[], string, string)>.Ok((fileBytes, record.FileName, contentType), "File downloaded successfully.");
-        }
-
-        private string GetContentType(string extension)
-        {
-            return extension.ToLower() switch
+        private static string GetContentType(string ext) =>
+            ext switch
             {
                 ".jpg" or ".jpeg" => "image/jpeg",
                 ".png" => "image/png",
                 ".gif" => "image/gif",
                 ".pdf" => "application/pdf",
                 ".doc" => "application/msword",
-                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                _ => "application/octet-stream"
+                ".docx" =>
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                _ => "application/octet-stream",
             };
-        }
-
-        private string GetFileTypeFolder(string extension)
-        {
-            if (new[] { ".jpg", ".jpeg", ".png", ".gif" }.Contains(extension))
-                return "images";
-            if (new[] { ".pdf" }.Contains(extension))
-                return "pdf";
-            if (new[] { ".doc", ".docx" }.Contains(extension))
-                return "word";
-            return "others";
-        }
-
-
     }
 }

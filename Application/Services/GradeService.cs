@@ -349,5 +349,19 @@ namespace Application.Services
             var data = _mapper.Map<IEnumerable<GradeViewDto>>(grades);
             return ServiceResult<IEnumerable<GradeViewDto>>.Ok(data);
         }
+
+        public async Task<ServiceResult<int>> GetGradeCountAsync()
+        {
+            try
+            {
+                var allGrades = await _gradeRepo.GetAllAsync();
+                var count = allGrades.Count();
+                return ServiceResult<int>.Ok(count, $"Total grades: {count}");
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<int>.Fail($"Error counting grades: {ex.Message}");
+            }
+        }
     }
 }

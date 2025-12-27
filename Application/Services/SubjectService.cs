@@ -107,5 +107,19 @@ namespace Application.Services
 
             return ServiceResult<bool>.Ok(true, "Subject deleted successfully.");
         }
+
+        public async Task<ServiceResult<int>> GetSubjectCountAsync()
+        {
+            try
+            {
+                var allSubjects = await _subjectRepository.GetAllAsync();
+                var count = allSubjects.Count();
+                return ServiceResult<int>.Ok(count, $"Total subjects: {count}");
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<int>.Fail($"Error counting subjects: {ex.Message}");
+            }
+        }
     }
 }

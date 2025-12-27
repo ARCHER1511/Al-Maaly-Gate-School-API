@@ -19,5 +19,6 @@ namespace Application.Interfaces
         Task<ServiceResult<ClassStatisticsDto>> GetClassStatisticsAsync(string classId);
         Task<ServiceResult<byte[]>> ExportClassDataAsync(string classId);
         Task<ServiceResult<byte[]>> ExportAllClassesAsync();
+        Task<ServiceResult<int>> GetClassCountAsync();
     }
 }

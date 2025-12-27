@@ -666,7 +666,13 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("FileRecords", "Files");
                 });
@@ -1518,6 +1524,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("Exam");
 
                     b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("Domain.Entities.FileRecord", b =>
+                {
+                    b.HasOne("Domain.Entities.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.Grade", b =>
