@@ -113,8 +113,49 @@ namespace Al_Maaly_Gate_School.Controllers
                 : BadRequest(ApiResponse<string>.Fail(result.Message!));
         }
 
+        //[HttpGet("confirm-email")]
+        //public async Task<IActionResult> ConfirmEmailByLink([FromQuery] string token,[FromQuery] string userId)
+        //{
+        //    var request = new ConfirmEmailRequest
+        //    {
+        //        Token = token,
+        //        UserId = userId
+        //    };
+
+        //    var result = await _authService.ConfirmEmailAsync(request);
+
+        //    return result.Success
+        //        ? Ok(ApiResponse<string>.Ok(result.Data!, result.Message))
+        //        : BadRequest(ApiResponse<string>.Fail(result.Message!));
+        //}
+
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmailByLink([FromQuery] string token,[FromQuery] string userId)
+        {
+            var request = new ConfirmEmailRequest
+            {
+                Token = token,
+                UserId = userId
+            };
+
+            var result = await _authService.ConfirmEmailAsync(request);
+
+            if (!result.Success)
+            {
+                // Optional: redirect to error page
+                return Redirect($"http://localhost:4200/login");
+            }else
+            {
+
+            }
+
+                // ✅ Redirect to login page
+                return Redirect($"http://localhost:4200/login");
+        }
+
         [HttpPost("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request)
+        [Consumes("application/json")]
+        public async Task<IActionResult> ConfirmEmailByCode([FromBody] ConfirmEmailRequest request)
         {
             var result = await _authService.ConfirmEmailAsync(request);
 
