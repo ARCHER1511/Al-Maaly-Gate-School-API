@@ -1,18 +1,21 @@
 ﻿using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using Application.Authentication;
 using Application.DTOs.AuthDTOs;
 using Application.DTOs.FileRequestDTOs;
 using Application.DTOs.ParentDTOs;
 using Application.Interfaces;
 using AutoMapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Win32;
 
 namespace Application.Services
 {
@@ -352,16 +355,24 @@ namespace Application.Services
         }
         private async Task SendConfirmationEmail(AppUser user)
         {
+            var token = UrlEncoder.Default.Encode(user.EmailConfirmationToken!);
             var link =
-                $"{_config["App:BaseUrl"]}/api/auth/confirm-email?token={user.EmailConfirmationToken}&userId={user.Id}";
+                $"{_config["App:BaseUrl"]}/api/authentication/confirm-email?token={token}&userId={user.Id}";
 
-                    var body = $@"
-            <h3>Email Confirmation</h3>
-            <p>Your confirmation code: <b>{user.ConfirmationNumber}</b></p>
-            <a href='{link}'>Confirm Email</a>
-            <p>Expires in 24 hours</p>";
+            var body = $@"
+                    <div style='font-family:Arial'>
+                        <h2>Email Confirmation</h2>
+                        <p>Your confirmation code:</p>
+                        <h3>{user.ConfirmationNumber}</h3>
+                        <p>
+                        <a href='{link}' style='padding:10px 15px;background:#0d6efd;color:#fff;text-decoration:none;border-radius:5px'>
+                            Confirm Email
+                        </a>
+                        </p>
+                        <p style='color:gray'>Expires in 24 hours</p>
+                    </div>";
 
-            await _emailService.SendAsync(user.Email, "Confirm Email", body, true);
+            await _emailService.SendAsync(user.Email!, "Confirm Email", body, true);
         }
 
         private string GenerateConfirmationNumber()
