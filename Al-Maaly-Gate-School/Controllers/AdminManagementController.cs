@@ -319,6 +319,7 @@ namespace Al_Maaly_Gate_School.Controllers
                 ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<bool>.Fail(result.Message!));
         }
+
         [HttpGet("user-files/{userId}")]
         public async Task<IActionResult> GetFilesByUserId(string userId)
         {
@@ -328,6 +329,7 @@ namespace Al_Maaly_Gate_School.Controllers
             var result = await _fileService.GetFilesByUserAsync(userId);
             return Ok(ApiResponse<IEnumerable<FileRecord>>.Ok(result.Data!,result.Message));
         }
+
         [HttpGet("user-pdf-files/{userId}")]
         public async Task<IActionResult> GetPDFFilesByUserId(string userId)
         {
