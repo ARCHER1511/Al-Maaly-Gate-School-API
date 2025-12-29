@@ -11,17 +11,33 @@ namespace Domain.Entities
         public string StudentId { get; set; } = string.Empty;
         public Student Student { get; set; } = null!;
 
-        // Link to Subject to get CreditHours
         public string SubjectId { get; set; } = string.Empty;
         public Subject Subject { get; set; } = null!;
 
-        public DegreeType DegreeType { get; set; } // MidTerm1 / Final1 / MidTerm2 / Final2
+        public DegreeType DegreeType { get; set; }
 
         public double Score { get; set; }
-        public double MaxScore { get; set; } // example: 20 or 80
+        public double MaxScore { get; set; }
 
-        // optional convenience property (duplicate of Subject.SubjectName)
         public string SubjectName { get; set; } = string.Empty;
+
+        // New: Detailed components for degree calculation
+        public double? OralScore { get; set; }
+        public double? OralMaxScore { get; set; }
+        public double? ExamScore { get; set; }
+        public double? ExamMaxScore { get; set; }
+        public double? PracticalScore { get; set; }
+        public double? PracticalMaxScore { get; set; }
+
+        // Method to calculate total score from components
+        public void CalculateTotalScore()
+        {
+            if (OralScore.HasValue || ExamScore.HasValue || PracticalScore.HasValue)
+            {
+                Score = (OralScore ?? 0) + (ExamScore ?? 0) + (PracticalScore ?? 0);
+                MaxScore = (OralMaxScore ?? 0) + (ExamMaxScore ?? 0) + (PracticalMaxScore ?? 0);
+            }
+        }
     }
 
     public enum DegreeType
