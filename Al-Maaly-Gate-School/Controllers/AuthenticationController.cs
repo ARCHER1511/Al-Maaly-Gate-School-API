@@ -16,11 +16,13 @@ namespace Al_Maaly_Gate_School.Controllers
     {
         private readonly IAuthenticationService _authService;
         private readonly IAppUserRepository _userRepo;
+        private readonly IConfiguration _config;
 
-        public AuthenticationController(IAuthenticationService authService, IAppUserRepository userRepo)
+        public AuthenticationController(IAuthenticationService authService, IAppUserRepository userRepo, IConfiguration config)
         {
             _authService = authService;
             _userRepo = userRepo;
+            _config = config;
         }
 
         [HttpPost("register/parent")]
@@ -113,22 +115,6 @@ namespace Al_Maaly_Gate_School.Controllers
                 : BadRequest(ApiResponse<string>.Fail(result.Message!));
         }
 
-        //[HttpGet("confirm-email")]
-        //public async Task<IActionResult> ConfirmEmailByLink([FromQuery] string token,[FromQuery] string userId)
-        //{
-        //    var request = new ConfirmEmailRequest
-        //    {
-        //        Token = token,
-        //        UserId = userId
-        //    };
-
-        //    var result = await _authService.ConfirmEmailAsync(request);
-
-        //    return result.Success
-        //        ? Ok(ApiResponse<string>.Ok(result.Data!, result.Message))
-        //        : BadRequest(ApiResponse<string>.Fail(result.Message!));
-        //}
-
         [HttpGet("confirm-email")]
         public async Task<IActionResult> ConfirmEmailByLink([FromQuery] string token,[FromQuery] string userId)
         {
@@ -142,16 +128,12 @@ namespace Al_Maaly_Gate_School.Controllers
 
             if (!result.Success)
             {
-                // Optional: redirect to error page
-                return Redirect($"http://localhost:4200/login");
-            }else
-            {
-
+                return Redirect($"{_config["App:ConsumerUrl"]}/confirmation-status?status=error");
             }
 
-                // ✅ Redirect to login page
-                return Redirect($"http://localhost:4200/login");
+            return Redirect($"{_config["App:ConsumerUrl"]}/confirmation-status?status=success");
         }
+
 
         [HttpPost("confirm-email")]
         [Consumes("application/json")]
