@@ -540,7 +540,25 @@ namespace Infrastructure.Migrations
                     b.Property<int>("DegreeType")
                         .HasColumnType("int");
 
+                    b.Property<double?>("ExamMaxScore")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("ExamScore")
+                        .HasColumnType("float");
+
                     b.Property<double>("MaxScore")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("OralMaxScore")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("OralScore")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("PracticalMaxScore")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("PracticalScore")
                         .HasColumnType("float");
 
                     b.Property<double>("Score")

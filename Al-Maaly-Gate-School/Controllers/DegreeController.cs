@@ -19,21 +19,12 @@ namespace Al_Maaly_Gate_School.Controllers
             _degreeService = degreeService;
         }
 
-        // Add Degrees
         [HttpPost("add")]
         [AllowAnonymous]
         public async Task<IActionResult> AddDegrees([FromBody] AddDegreesDto dto)
         {
-            var degrees = dto.Degrees.Select(d => new Degree
-            {
-                SubjectId = d.SubjectId,
-                Score = d.Score,
-                MaxScore = d.MaxScore,
-                DegreeType = d.DegreeType
-            }).ToList();
-
-            var result = await _degreeService.AddDegreesAsync(dto.StudentId, degrees);
-            if(!result.Success)
+            var result = await _degreeService.AddDegreesAsync(dto.StudentId, dto.Degrees);
+            if (!result.Success)
                 return BadRequest(result.Message);
             return Ok(ApiResponse<string>.Ok(result.Data!, result.Message));
         }

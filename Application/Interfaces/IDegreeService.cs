@@ -6,7 +6,7 @@ namespace Application.Interfaces
 {
     public interface IDegreeService
     {
-        Task<ServiceResult<string>> AddDegreesAsync(string studentId, List<Degree> degrees);
+        Task<ServiceResult<string>> AddDegreesAsync(string studentId, List<DegreeInput> degreeInputs);
         Task<ServiceResult<StudentDegreesDto>> GetStudentDegreesAsync(string studentId);
         Task<ServiceResult<List<StudentDegreesDto>>> GetAllStudentsDegreesAsync();
     }

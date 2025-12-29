@@ -16,19 +16,53 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        // ================================================
-        // ADD DEGREES
-        // ================================================
-        public async Task<ServiceResult<string>> AddDegreesAsync(string studentId, List<Degree> degrees)
+        public async Task<ServiceResult<string>> AddDegreesAsync(string studentId, List<DegreeInput> degreeInputs)
         {
             var student = await _unitOfWork.Students.GetByIdAsync(studentId);
 
             if (student == null)
                 return ServiceResult<string>.Fail("Student not found");
 
-            foreach (var degree in degrees)
+            foreach (var input in degreeInputs)
             {
-                degree.StudentId = studentId;
+                var degree = new Degree
+                {
+                    StudentId = studentId,
+                    SubjectId = input.SubjectId,
+                    DegreeType = input.DegreeType,
+
+                    // Set component scores
+                    OralScore = input.OralScore,
+                    OralMaxScore = input.OralMaxScore,
+                    ExamScore = input.ExamScore,
+                    ExamMaxScore = input.ExamMaxScore,
+                    PracticalScore = input.PracticalScore,
+                    PracticalMaxScore = input.PracticalMaxScore
+                };
+
+                // Calculate total if components are provided
+                if (input.OralScore.HasValue || input.ExamScore.HasValue || input.PracticalScore.HasValue)
+                {
+                    degree.CalculateTotalScore();
+                }
+                else if (input.Score.HasValue && input.MaxScore.HasValue)
+                {
+                    // Use direct total scores
+                    degree.Score = input.Score.Value;
+                    degree.MaxScore = input.MaxScore.Value;
+                }
+                else
+                {
+                    return ServiceResult<string>.Fail($"Either total scores or component scores must be provided for subject {input.SubjectId}");
+                }
+
+                // Get subject name
+                var subject = await _unitOfWork.Subjects.GetByIdAsync(input.SubjectId);
+                if (subject != null)
+                {
+                    degree.SubjectName = subject.SubjectName;
+                }
+
                 await _unitOfWork.Degrees.AddAsync(degree);
             }
 
@@ -36,9 +70,6 @@ namespace Application.Services
             return ServiceResult<string>.Ok("Degrees added successfully");
         }
 
-        // =====================================================
-        // GET STUDENT + DEGREES
-        // =====================================================
         public async Task<ServiceResult<StudentDegreesDto>> GetStudentDegreesAsync(string studentId)
         {
             var student = await _unitOfWork.Students.FirstOrDefaultAsync(
@@ -63,18 +94,25 @@ namespace Application.Services
                     DegreeId = d.Id,
                     SubjectId = d.SubjectId,
                     SubjectName = d.Subject.SubjectName,
+                    DegreeType = d.DegreeType.ToString(),
+
+                    // Total scores
                     Score = d.Score,
                     MaxScore = d.MaxScore,
-                    DegreeType = d.DegreeType.ToString()
+
+                    // Component details
+                    OralScore = d.OralScore,
+                    OralMaxScore = d.OralMaxScore,
+                    ExamScore = d.ExamScore,
+                    ExamMaxScore = d.ExamMaxScore,
+                    PracticalScore = d.PracticalScore,
+                    PracticalMaxScore = d.PracticalMaxScore
                 }).ToList()
             };
 
             return ServiceResult<StudentDegreesDto>.Ok(dto);
         }
 
-        // =====================================================
-        // GET ALL STUDENTS + DEGREES
-        // =====================================================
         public async Task<ServiceResult<List<StudentDegreesDto>>> GetAllStudentsDegreesAsync()
         {
             var students = await _unitOfWork.Students.FindAllAsync(
@@ -96,11 +134,20 @@ namespace Application.Services
                     DegreeId = d.Id,
                     SubjectId = d.SubjectId,
                     SubjectName = d.Subject.SubjectName,
+                    DegreeType = d.DegreeType.ToString(),
+
+                    // Total scores
                     Score = d.Score,
                     MaxScore = d.MaxScore,
-                    DegreeType = d.DegreeType.ToString()
-                }).ToList()
 
+                    // Component details
+                    OralScore = d.OralScore,
+                    OralMaxScore = d.OralMaxScore,
+                    ExamScore = d.ExamScore,
+                    ExamMaxScore = d.ExamMaxScore,
+                    PracticalScore = d.PracticalScore,
+                    PracticalMaxScore = d.PracticalMaxScore
+                }).ToList()
             }).ToList();
 
             return ServiceResult<List<StudentDegreesDto>>.Ok(result);
