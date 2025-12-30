@@ -51,6 +51,36 @@ namespace Al_Maaly_Gate_School.Controllers
                 : NotFound(ApiResponse<SubjectViewDto>.Fail(result.Message!));
         }
 
+        [HttpGet("{id}/with-components")]
+        public async Task<IActionResult> GetWithComponents(string id)
+        {
+            var result = await _subjectService.GetWithComponents(id);
+
+            return result.Success
+                ? Ok(ApiResponse<SubjectViewDto>.Ok(result.Data!, result.Message))
+                : NotFound(ApiResponse<SubjectViewDto>.Fail(result.Message!));
+        }
+
+        [HttpGet("with-components")]
+        public async Task<IActionResult> GetSubjectsWithComponentTypes()
+        {
+            var result = await _subjectService.GetSubjectsWithComponentTypes();
+
+            return result.Success
+                ? Ok(ApiResponse<IEnumerable<SubjectViewDto>>.Ok(result.Data!, result.Message))
+                : NotFound(ApiResponse<IEnumerable<SubjectViewDto>>.Fail(result.Message!));
+        }
+
+        [HttpGet("{id}/has-components")]
+        public async Task<IActionResult> HasComponentTypes(string id)
+        {
+            var result = await _subjectService.HasComponentTypes(id);
+
+            return result.Success
+                ? Ok(ApiResponse<bool>.Ok(result.Data!, result.Message))
+                : BadRequest(ApiResponse<bool>.Fail(result.Message!));
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] SubjectUpdateDto dto)
         {
@@ -96,8 +126,5 @@ namespace Al_Maaly_Gate_School.Controllers
 
             return Ok(ApiResponse<int>.Ok(result.Data!, result.Message));
         }
-
-
-
     }
 }

@@ -43,6 +43,7 @@ namespace Application.DependencyInjection
             services.AddScoped<ICurriculumService, CurriculumService>();
             services.AddScoped<IParentService, ParentService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IDegreeComponentTypeService, DegreeComponentTypeService>();
 
             //SignalR
             services.AddSignalR();

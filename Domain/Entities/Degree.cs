@@ -21,21 +21,17 @@ namespace Domain.Entities
 
         public string SubjectName { get; set; } = string.Empty;
 
-        // New: Detailed components for degree calculation
-        public double? OralScore { get; set; }
-        public double? OralMaxScore { get; set; }
-        public double? ExamScore { get; set; }
-        public double? ExamMaxScore { get; set; }
-        public double? PracticalScore { get; set; }
-        public double? PracticalMaxScore { get; set; }
+
+        // New: Dynamic components
+        public ICollection<DegreeComponent> Components { get; set; } = new List<DegreeComponent>();
 
         // Method to calculate total score from components
         public void CalculateTotalScore()
         {
-            if (OralScore.HasValue || ExamScore.HasValue || PracticalScore.HasValue)
+            if (Components != null && Components.Any())
             {
-                Score = (OralScore ?? 0) + (ExamScore ?? 0) + (PracticalScore ?? 0);
-                MaxScore = (OralMaxScore ?? 0) + (ExamMaxScore ?? 0) + (PracticalMaxScore ?? 0);
+                Score = Components.Sum(c => c.Score);
+                MaxScore = Components.Sum(c => c.MaxScore);
             }
         }
     }

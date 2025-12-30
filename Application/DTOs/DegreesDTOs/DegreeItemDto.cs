@@ -17,16 +17,11 @@ namespace Application.DTOs.DegreesDTOs
         public double Score { get; set; }
         public double MaxScore { get; set; }
 
-        // Component details (if available)
-        public double? OralScore { get; set; }
-        public double? OralMaxScore { get; set; }
-        public double? ExamScore { get; set; }
-        public double? ExamMaxScore { get; set; }
-        public double? PracticalScore { get; set; }
-        public double? PracticalMaxScore { get; set; }
+        // Component details
+        public List<DegreeComponentDto> Components { get; set; } = new();
 
         // Flag to indicate if components are present
-        public bool HasComponents => OralScore.HasValue || ExamScore.HasValue || PracticalScore.HasValue;
+        public bool HasComponents => Components != null && Components.Any();
     }
 
 }

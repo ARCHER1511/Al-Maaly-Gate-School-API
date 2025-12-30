@@ -12,16 +12,11 @@ namespace Application.DTOs.DegreesDTOs
         public string SubjectId { get; set; } = string.Empty;
         public DegreeType DegreeType { get; set; }
 
-        // Either provide total score directly
+        // Optional: Direct total scores
         public double? Score { get; set; }
         public double? MaxScore { get; set; }
 
-        // Or provide components (optional)
-        public double? OralScore { get; set; }
-        public double? OralMaxScore { get; set; }
-        public double? ExamScore { get; set; }
-        public double? ExamMaxScore { get; set; }
-        public double? PracticalScore { get; set; }
-        public double? PracticalMaxScore { get; set; }
+        // Optional: Component breakdown
+        public List<DegreeComponentInput>? Components { get; set; }
     }
 }

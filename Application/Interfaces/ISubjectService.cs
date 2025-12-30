@@ -12,5 +12,8 @@ namespace Application.Interfaces
         Task<ServiceResult<SubjectViewDto>> Update(SubjectUpdateDto dto);
         Task<ServiceResult<bool>> Delete(string id);
         Task<ServiceResult<int>> GetSubjectCountAsync();
+        Task<ServiceResult<SubjectViewDto>> GetWithComponents(string id);
+        Task<ServiceResult<IEnumerable<SubjectViewDto>>> GetSubjectsWithComponentTypes();
+        Task<ServiceResult<bool>> HasComponentTypes(string subjectId);
     }
 }

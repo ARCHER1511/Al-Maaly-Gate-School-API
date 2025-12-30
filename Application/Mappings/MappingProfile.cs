@@ -342,7 +342,10 @@ namespace Application.Mappings
             CreateMap<Subject, SubjectViewDto>()
                 .ForMember(dest => dest.GradeName, opt => opt.MapFrom(src => src.Grade.GradeName))
                 .ForMember(dest => dest.TeacherCount, opt => opt.MapFrom(src => src.TeacherSubjects != null ? src.TeacherSubjects.Count : 0))
-                .ForMember(dest => dest.ExamCount, opt => opt.MapFrom(src => src.Exams != null ? src.Exams.Count : 0));
+                .ForMember(dest => dest.ExamCount, opt => opt.MapFrom(src => src.Exams != null ? src.Exams.Count : 0))
+                .ForMember(dest => dest.GradeName, opt => opt.MapFrom(src => src.Grade.GradeName))
+                .ForMember(dest => dest.ComponentTypes, opt => opt.MapFrom(src => src.ComponentTypes))
+                .ForMember(dest => dest.ComponentTypeCount, opt => opt.MapFrom(src => src.ComponentTypes != null ? src.ComponentTypes.Count : 0)); ;
 
             CreateMap<SubjectCreateDto, Subject>();
             CreateMap<SubjectUpdateDto, Subject>();

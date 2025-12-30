@@ -27,5 +27,11 @@ namespace Infrastructure.Interfaces
 
         Task<int> GetCountAsync(Expression<Func<T, bool>> predicate);
         Task<bool> AnyAsync(Expression<Func<T, bool>> predicate);
+
+        Task UpdateAsync(T entity);
+        Task DeleteAsync(T entity);
+        Task DeleteAsync(string id);
+
+        Task<int> CountAsync(Expression<Func<T, bool>> predicate = null);
     }
 }
