@@ -11,8 +11,7 @@ namespace Application.DTOs.AuthDTOs
         public string Password { get; set; } = string.Empty;
         public string ConfirmPassword { get; set; } = string.Empty;
         public string Gender { get; set; } = string.Empty;
-        public int Age { get; set; } = 0;
+        public DateOnly BirthDay { get; set; }
         public string Role { get; set; } = string.Empty;
-
     }
 }
