@@ -79,6 +79,20 @@ namespace Application.Services
                 }
             }
         }
+        private int CalculateAge(DateOnly birthDate)
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            int age = today.Year - birthDate.Year;
+
+            // If birthday hasn't occurred yet this year, subtract 1
+            if (birthDate > today.AddYears(-age))
+            {
+                age--;
+            }
+
+            return age;
+        }
 
         private async Task LinkFilesToParent(
             string parentId,
@@ -220,6 +234,8 @@ namespace Application.Services
             if (!validRoles.Contains(role))
                 return ServiceResult<AuthResponse>.Fail("Invalid role.");
 
+            int age = CalculateAge(request.BirthDay);
+
             var user = _mapper.Map<AppUser>(request);
             user.Id = Guid.NewGuid().ToString();
             user.EmailConfirmed = false;
@@ -227,6 +243,7 @@ namespace Application.Services
             user.ConfirmationNumber = GenerateConfirmationNumber();
             user.EmailConfirmationToken = GenerateEmailToken();
             user.ConfirmationTokenExpiry = DateTime.UtcNow.AddHours(24);
+            user.Age = age;
 
             var result = await _userRepo.CreateAsync(user, request.Password);
             if (!result.Succeeded)
