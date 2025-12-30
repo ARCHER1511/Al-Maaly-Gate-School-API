@@ -10,6 +10,7 @@ namespace Domain.Entities
         public string ContactInfo { get; set; } = string.Empty;
         public string ProfileImagePath { get; set; } = string.Empty;
         public int Age { get; set; }
+        public DateOnly BirthDay { get; set; }
         public string Gender { get; set; } = string.Empty;
         public AccountStatus AccountStatus { get; set; } = AccountStatus.Pending;
         public List<AppUserRole> UserRoles { get; set; } = new();

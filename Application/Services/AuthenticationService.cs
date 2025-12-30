@@ -79,6 +79,20 @@ namespace Application.Services
                 }
             }
         }
+        private int CalculateAge(DateOnly birthDate)
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            int age = today.Year - birthDate.Year;
+
+            // If birthday hasn't occurred yet this year, subtract 1
+            if (birthDate > today.AddYears(-age))
+            {
+                age--;
+            }
+
+            return age;
+        }
 
         private async Task LinkFilesToParent(
             string parentId,
@@ -147,13 +161,10 @@ namespace Application.Services
                     );
                 }
             }
-
             return documentInfos;
         }
 
-        public async Task<ServiceResult<ParentRegistrationResponse>> RegisterParentAsync(
-    ParentRegisterRequest request
-)
+        public async Task<ServiceResult<ParentRegistrationResponse>> RegisterParentAsync(ParentRegisterRequest request)
         {
             try
             {
@@ -167,29 +178,30 @@ namespace Application.Services
                     return ServiceResult<ParentRegistrationResponse>.Fail(authResult.Message);
 
                 // Create Parent entity
-                var parent = _mapper.Map<Parent>(request);
-                parent.AppUserId = authResult.Data!.UserId;
+                //var parent = _mapper.Map<Parent>(request);
+                //parent.AppUserId = authResult.Data!.UserId;
 
-                await _parentRepo.AddAsync(parent);
-                await _unitOfWork.SaveChangesAsync();
+                //await _parentRepo.AddAsync(parent);
+                //await _unitOfWork.SaveChangesAsync();
 
                 // Build response
                 var response = new ParentRegistrationResponse
                 {
-                    UserId = authResult.Data.UserId,
+                    UserId = authResult.Data!.UserId,
                     Email = authResult.Data.Email,
-                    FullName = authResult.Data.FullName,
-                    Token = authResult.Data.Token,
-                    Roles = authResult.Data.Roles,
-                    ProfileImageUrl = authResult.Data.ProfileImageUrl,
-                    RoleEntityIds = authResult.Data.RoleEntityIds,
+                    RequiresConfirmation = true,
+                    //FullName = authResult.Data.FullName,
+                    //Token = authResult.Data.Token,
+                    //Roles = authResult.Data.Roles,
+                    //ProfileImageUrl = authResult.Data.ProfileImageUrl,
+                    //RoleEntityIds = authResult.Data.RoleEntityIds,
 
-                    ParentProfile = new ParentProfileDto
-                    {
-                        Id = parent.Id,
-                        RelationshipToStudent = parent.Relation ?? string.Empty,
-                        DocumentCount = 0, // no documents yet
-                    },
+                    //ParentProfile = new ParentProfileDto
+                    //{
+                    //    Id = parent.Id,
+                    //    RelationshipToStudent = parent.Relation ?? string.Empty,
+                    //    DocumentCount = 0, // no documents yet
+                    //},
                 };
 
                 return ServiceResult<ParentRegistrationResponse>.Ok(
@@ -222,6 +234,8 @@ namespace Application.Services
             if (!validRoles.Contains(role))
                 return ServiceResult<AuthResponse>.Fail("Invalid role.");
 
+            int age = CalculateAge(request.BirthDay);
+
             var user = _mapper.Map<AppUser>(request);
             user.Id = Guid.NewGuid().ToString();
             user.EmailConfirmed = false;
@@ -229,6 +243,7 @@ namespace Application.Services
             user.ConfirmationNumber = GenerateConfirmationNumber();
             user.EmailConfirmationToken = GenerateEmailToken();
             user.ConfirmationTokenExpiry = DateTime.UtcNow.AddHours(24);
+            user.Age = age;
 
             var result = await _userRepo.CreateAsync(user, request.Password);
             if (!result.Succeeded)
