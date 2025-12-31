@@ -177,13 +177,6 @@ namespace Application.Services
                 if (!authResult.Success)
                     return ServiceResult<ParentRegistrationResponse>.Fail(authResult.Message);
 
-                // Create Parent entity
-                //var parent = _mapper.Map<Parent>(request);
-                //parent.AppUserId = authResult.Data!.UserId;
-
-                //await _parentRepo.AddAsync(parent);
-                //await _unitOfWork.SaveChangesAsync();
-
                 // Build response
                 var response = new ParentRegistrationResponse
                 {
