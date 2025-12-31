@@ -16,6 +16,8 @@ namespace Infrastructure.Interfaces
         IGenericRepository<StudentExamAnswer> StudentExamAnswers { get; }
         IGenericRepository<Certificate> Certificates { get; }
         IGenericRepository<Degree> Degrees { get; }
+        IGenericRepository<DegreeComponent> DegreesComponent { get; }
+        IGenericRepository<DegreeComponentType> DegreeComponentTypes { get; }
         Task<int> SaveChangesAsync();
 
         IQueryable<T> AsQueryable<T>() where T : BaseEntity;

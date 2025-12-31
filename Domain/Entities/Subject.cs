@@ -15,5 +15,6 @@
         public List<ClassAppointment>? ClassAppointments { get; set; }
 
         public List<Degree>? Degrees { get; set; } = new();
+        public ICollection<DegreeComponentType> ComponentTypes { get; set; } = new List<DegreeComponentType>();
     }
 }

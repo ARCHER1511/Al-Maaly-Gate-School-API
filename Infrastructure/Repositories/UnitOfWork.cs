@@ -89,6 +89,9 @@ namespace Infrastructure.Repositories
         public IGenericRepository<Grade> Grades => Repository<Grade>();
         public IGenericRepository<Certificate> Certificates => Repository<Certificate>();
         public IGenericRepository<Degree> Degrees => Repository<Degree>();
+        public IGenericRepository<DegreeComponent> DegreesComponent => Repository<DegreeComponent>();
+        public IGenericRepository<DegreeComponentType> DegreeComponentTypes => Repository<DegreeComponentType>();
+
 
         // Add other repositories as needed
         public IGenericRepository<Curriculum> Curriculums => Repository<Curriculum>();

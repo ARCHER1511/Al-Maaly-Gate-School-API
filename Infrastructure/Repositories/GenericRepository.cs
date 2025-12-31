@@ -66,5 +66,31 @@ namespace Infrastructure.Repositories
         {
             return await _dbSet.AnyAsync(predicate);
         }
+
+
+        public virtual async Task UpdateAsync(T entity)
+        {
+            _dbSet.Update(entity);
+            await Task.CompletedTask;
+        }
+
+        public virtual async Task DeleteAsync(T entity)
+        {
+            _dbSet.Remove(entity);
+            await Task.CompletedTask;
+        }
+
+        public virtual async Task DeleteAsync(string id)
+        {
+            var entity = await GetByIdAsync(id);
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+            }
+        }
+
+        public virtual async Task<int> CountAsync(Expression<Func<T, bool>> predicate = null)
+            => predicate == null ? await _dbSet.CountAsync() : await _dbSet.CountAsync(predicate);
+
     }
 }

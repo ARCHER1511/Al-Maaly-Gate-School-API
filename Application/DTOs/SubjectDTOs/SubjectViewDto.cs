@@ -1,4 +1,6 @@
-﻿namespace Application.DTOs.SubjectDTOs
+﻿using Application.DTOs.DegreesDTOs;
+
+namespace Application.DTOs.SubjectDTOs
 {
     public class SubjectViewDto
     {
@@ -11,6 +13,10 @@
         public int ExamCount { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        // REMOVED: TeacherId, TeacherName (these come from TeacherSubject relationship)
+
+        // NEW: Component types information
+        public List<DegreeComponentTypeDto> ComponentTypes { get; set; } = new();
+        public bool HasComponentTypes => ComponentTypes != null && ComponentTypes.Any();
+        public int ComponentTypeCount => ComponentTypes?.Count ?? 0;
     }
 }

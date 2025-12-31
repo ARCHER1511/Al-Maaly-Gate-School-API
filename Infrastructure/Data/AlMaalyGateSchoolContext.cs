@@ -38,6 +38,9 @@ namespace Infrastructure.Data
         public DbSet<TeacherClass> TeacherClasses { get; set; }
         public DbSet<TeacherSubject> TeacherSubjects { get; set; }
         public DbSet<Degree> Degrees { get; set; }
+        public DbSet<DegreeComponent> DegreesComponent { get; set; }
+        public DbSet<DegreeComponentType> DegreesComponentType { get; set; }
+
         public DbSet<Certificate> Certificates { get; set; }
         public DbSet<Grade> Grades { get; set; }
         public DbSet<Curriculum> Curriculums { get; set; }

@@ -58,6 +58,7 @@ namespace Application.Services
 
         public async Task<ServiceResult<SubjectViewDto>> GetById(string id)
         {
+            // Updated to include component types
             var subject = await _subjectRepository.GetByIdAsync(id);
             if (subject == null)
             {
@@ -66,6 +67,29 @@ namespace Application.Services
 
             var subjectViewDto = _mapper.Map<SubjectViewDto>(subject);
             return ServiceResult<SubjectViewDto>.Ok(subjectViewDto, "Subject retrieved successfully.");
+        }
+
+        public async Task<ServiceResult<SubjectViewDto>> GetWithComponents(string id)
+        {
+            try
+            {
+                var subject = await _unitOfWork.Subjects.FirstOrDefaultAsync(
+                    s => s.Id == id,
+                    include: q => q
+                        .Include(s => s.ComponentTypes.Where(ct => ct.IsActive))
+                        .Include(s => s.Grade)
+                );
+
+                if (subject == null)
+                    return ServiceResult<SubjectViewDto>.Fail("Subject not found");
+
+                var dto = _mapper.Map<SubjectViewDto>(subject);
+                return ServiceResult<SubjectViewDto>.Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<SubjectViewDto>.Fail($"Error loading subject: {ex.Message}");
+            }
         }
 
         public async Task<ServiceResult<SubjectViewDto>> Update(SubjectUpdateDto dto)
@@ -119,6 +143,43 @@ namespace Application.Services
             catch (Exception ex)
             {
                 return ServiceResult<int>.Fail($"Error counting subjects: {ex.Message}");
+            }
+        }
+
+        // NEW: Get subjects with component types
+        public async Task<ServiceResult<IEnumerable<SubjectViewDto>>> GetSubjectsWithComponentTypes()
+        {
+            try
+            {
+                var subjects = await _subjectRepository.GetAllAsync();
+                var subjectsWithComponents = subjects
+                    .Where(s => s.ComponentTypes != null && s.ComponentTypes.Any())
+                    .ToList();
+
+                var result = _mapper.Map<IEnumerable<SubjectViewDto>>(subjectsWithComponents);
+                return ServiceResult<IEnumerable<SubjectViewDto>>.Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<IEnumerable<SubjectViewDto>>.Fail($"Error loading subjects: {ex.Message}");
+            }
+        }
+
+        // NEW: Check if subject has component types
+        public async Task<ServiceResult<bool>> HasComponentTypes(string subjectId)
+        {
+            try
+            {
+                var subject = await _subjectRepository.GetByIdAsync(subjectId);
+                if (subject == null)
+                    return ServiceResult<bool>.Fail("Subject not found");
+
+                var hasComponents = subject.ComponentTypes != null && subject.ComponentTypes.Any(ct => ct.IsActive);
+                return ServiceResult<bool>.Ok(hasComponents);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<bool>.Fail($"Error checking component types: {ex.Message}");
             }
         }
     }

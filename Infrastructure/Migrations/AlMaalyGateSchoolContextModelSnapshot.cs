@@ -543,25 +543,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("DegreeType")
                         .HasColumnType("int");
 
-                    b.Property<double?>("ExamMaxScore")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("ExamScore")
-                        .HasColumnType("float");
-
                     b.Property<double>("MaxScore")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("OralMaxScore")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("OralScore")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("PracticalMaxScore")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("PracticalScore")
                         .HasColumnType("float");
 
                     b.Property<double>("Score")
@@ -587,6 +569,81 @@ namespace Infrastructure.Migrations
                     b.HasIndex("SubjectId");
 
                     b.ToTable("Degrees", "Academics");
+                });
+
+            modelBuilder.Entity("Domain.Entities.DegreeComponent", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ComponentName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ComponentTypeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DegreeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("MaxScore")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0.0);
+
+                    b.Property<double>("Score")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0.0);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ComponentTypeId");
+
+                    b.HasIndex("DegreeId", "ComponentTypeId")
+                        .IsUnique();
+
+                    b.ToTable("DegreeComponents", "Academics");
+                });
+
+            modelBuilder.Entity("Domain.Entities.DegreeComponentType", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ComponentName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<double>("MaxScore")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0.0);
+
+                    b.Property<int>("Order")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<string>("SubjectId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId", "ComponentName")
+                        .IsUnique();
+
+                    b.ToTable("DegreeComponentTypes", "Academics");
                 });
 
             modelBuilder.Entity("Domain.Entities.Exam", b =>
@@ -1510,6 +1567,36 @@ namespace Infrastructure.Migrations
                     b.Navigation("Subject");
                 });
 
+            modelBuilder.Entity("Domain.Entities.DegreeComponent", b =>
+                {
+                    b.HasOne("Domain.Entities.DegreeComponentType", "ComponentType")
+                        .WithMany("Components")
+                        .HasForeignKey("ComponentTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Degree", "Degree")
+                        .WithMany("Components")
+                        .HasForeignKey("DegreeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ComponentType");
+
+                    b.Navigation("Degree");
+                });
+
+            modelBuilder.Entity("Domain.Entities.DegreeComponentType", b =>
+                {
+                    b.HasOne("Domain.Entities.Subject", "Subject")
+                        .WithMany("ComponentTypes")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subject");
+                });
+
             modelBuilder.Entity("Domain.Entities.Exam", b =>
                 {
                     b.HasOne("Domain.Entities.Class", "Class")
@@ -1841,6 +1928,16 @@ namespace Infrastructure.Migrations
                     b.Navigation("Students");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Degree", b =>
+                {
+                    b.Navigation("Components");
+                });
+
+            modelBuilder.Entity("Domain.Entities.DegreeComponentType", b =>
+                {
+                    b.Navigation("Components");
+                });
+
             modelBuilder.Entity("Domain.Entities.Exam", b =>
                 {
                     b.Navigation("ExamQuestions");
@@ -1884,6 +1981,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Subject", b =>
                 {
                     b.Navigation("ClassAppointments");
+
+                    b.Navigation("ComponentTypes");
 
                     b.Navigation("Degrees");
 

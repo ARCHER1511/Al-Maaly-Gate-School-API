@@ -22,7 +22,6 @@ namespace Infrastructure.Configurations
 
             builder.Property(d => d.Score).IsRequired();
             builder.Property(d => d.MaxScore).IsRequired();
-
             builder.Property(d => d.DegreeType).IsRequired();
 
             builder.HasOne(d => d.Student)
@@ -34,6 +33,11 @@ namespace Infrastructure.Configurations
                    .WithMany(s => s.Degrees)
                    .HasForeignKey(d => d.SubjectId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            // Add relationship to components
+            builder.HasMany(d => d.Components)
+                   .WithOne(c => c.Degree)
+                   .HasForeignKey(c => c.DegreeId);
         }
     }
 }
