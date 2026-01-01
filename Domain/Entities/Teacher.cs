@@ -4,7 +4,6 @@
     {
         // Add Curriculum specialization
         public List<Curriculum> SpecializedCurricula { get; set; } = new();
-
         public List<TeacherClass> TeacherClasses { get; set; } = new();
         public List<TeacherSubject>? TeacherSubjects { get; set; } = new();
         public List<Exam>? Exams { get; set; } = new List<Exam>();

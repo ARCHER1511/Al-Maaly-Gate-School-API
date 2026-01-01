@@ -31,10 +31,18 @@ namespace Al_Maaly_Gate_School.Controllers
         public async Task<IActionResult> GetExams(string classId)
         {
             var result = await _studentExamAnswerService.GetExamsForStudentByClassId(classId);
-            if (!result.Success)
-                return NotFound(ApiResponse<GetStudentExamsDto>.Fail(result.Message!));
 
-            return Ok(ApiResponse<IEnumerable<GetStudentExamsDto>>.Ok(result.Data!, result.Message));
+            if (!result.Success)
+            {
+                return BadRequest(ApiResponse<IEnumerable<GetStudentExamsDto>>.Fail(result.Message!));
+            }
+
+            var data = result.Data ?? Enumerable.Empty<GetStudentExamsDto>();
+            var message = result.Data?.Any() == true
+                ? result.Message
+                : "No exams found";
+
+            return Ok(ApiResponse<IEnumerable<GetStudentExamsDto>>.Ok(data, message));
         }
 
         [HttpPost("SubmitExam")]

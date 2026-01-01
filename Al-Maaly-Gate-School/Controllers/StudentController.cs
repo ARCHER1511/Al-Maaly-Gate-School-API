@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     [AllowAnonymous]
     public class StudentController : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace Al_Maaly_Gate_School.Controllers
             _studentService = studentService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<IActionResult> GetAll()
         {
             var result = await _studentService.GetAllAsync();

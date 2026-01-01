@@ -300,47 +300,50 @@ namespace Application.Services
             {
                 case "admin":
                     await _adminRepo.AddAsync(
-                        new Admin 
-                        { 
+                        new Admin
+                        {
                             AppUserId = user.Id,
                             AccountStatus = AccountStatus.Pending,
                             ContactInfo = user.ContactInfo,
                             Email = user.Email!,
                             FullName = user.FullName,
-                            
+
                         });
-                    break;
+                break;
 
                 case "teacher":
-                    await _teacherRepo.AddAsync(new Teacher {
-                            AppUserId = user.Id,
-                            AccountStatus = AccountStatus.Pending,
-                            ContactInfo = user.ContactInfo,
-                            Email = user.Email!,
-                            FullName = user.FullName,
-                            
-                        });
-                    break;
+                    await _teacherRepo.AddAsync(new Teacher
+                    {
+                        AppUserId = user.Id,
+                        AccountStatus = AccountStatus.Pending,
+                        ContactInfo = user.ContactInfo,
+                        Email = user.Email!,
+                        FullName = user.FullName,
+
+                    });
+                break;
 
                 case "student":
-                    await _studentRepo.AddAsync(new Student {
-                            AppUserId = user.Id,
-                            AccountStatus = AccountStatus.Pending,
-                            ContactInfo = user.ContactInfo,
-                            Email = user.Email!,
-                            FullName = user.FullName,
-                        });
-                    break;
+                    await _studentRepo.AddAsync(new Student
+                    {
+                        AppUserId = user.Id,
+                        AccountStatus = AccountStatus.Pending,
+                        ContactInfo = user.ContactInfo,
+                        Email = user.Email!,
+                        FullName = user.FullName,
+                    });
+                break;
 
                 case "parent":
-                    await _parentRepo.AddAsync(new Parent {
-                            AppUserId = user.Id,
-                            AccountStatus = AccountStatus.Pending,
-                            ContactInfo = user.ContactInfo,
-                            Email = user.Email!,
-                            FullName = user.FullName,
-                        });
-                    break;
+                    await _parentRepo.AddAsync(new Parent
+                    {
+                        AppUserId = user.Id,
+                        AccountStatus = AccountStatus.Pending,
+                        ContactInfo = user.ContactInfo,
+                        Email = user.Email!,
+                        FullName = user.FullName,
+                    });
+                break;
             }
         }
         public async Task<ServiceResult<string>> ResendConfirmationAsync(ResendConfirmationRequest request)
