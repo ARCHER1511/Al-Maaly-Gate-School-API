@@ -1230,8 +1230,7 @@ namespace Application.Services
                         StudentId = relationRequest.StudentId,
                         // Use the request relation, only fallback if it's empty
                         Relation = !string.IsNullOrEmpty(relationRequest.Relation)
-                            ? relationRequest.Relation
-                            : parent.Relation
+                            ? relationRequest.Relation : "No Relation"
                     };
 
                     await _parentStudentRepository.AddAsync(parentStudent);
@@ -1286,7 +1285,7 @@ namespace Application.Services
                         {
                             ParentId = bulkDto.ParentId,
                             StudentId = approval.StudentId,
-                            Relation = approval.Relation ?? parent.Relation
+                            Relation = approval.Relation 
                         };
 
                         await _parentStudentRepository.AddAsync(parentStudent);
@@ -1343,7 +1342,7 @@ namespace Application.Services
                 {
                     ParentId = parentId,
                     StudentId = studentDto.StudentId,
-                    Relation = studentDto.Relation ?? parent.Relation
+                    Relation = studentDto.Relation
                 };
 
                 await _parentStudentRepository.AddAsync(parentStudent);
@@ -1406,7 +1405,7 @@ namespace Application.Services
                     ParentId = relationParentRequest.ParentId,
                     StudentId = relationParentRequest.StudentId,
                     // Use the provided relation, fallback to parent.Relation if needed
-                    Relation = !string.IsNullOrEmpty(relationParentRequest.Relation) ? relationParentRequest.Relation : parent.Relation
+                    Relation = !string.IsNullOrEmpty(relationParentRequest.Relation) ? relationParentRequest.Relation : "No Relation"
                 };
 
                 await _parentStudentRepository.AddAsync(parentStudent);

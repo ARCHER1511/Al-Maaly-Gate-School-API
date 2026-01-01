@@ -10,9 +10,6 @@ namespace Infrastructure.Configurations
         {
             new UserBaseConfiguration<Parent>().Configure(builder);
 
-            builder.Property(p => p.Relation)
-                   .HasMaxLength(100);
-
             builder.ToTable("Parents", "Academics");
         }
     }

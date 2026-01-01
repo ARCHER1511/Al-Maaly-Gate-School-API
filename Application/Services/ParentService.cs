@@ -25,15 +25,21 @@ namespace Application.Services
 
         public async Task<ServiceResult<IEnumerable<ParentViewDto>>> GetAllAsync()
         {
-            var parent = await _ParentRepository.GetAllAsync();
-            if (parent == null) return ServiceResult<IEnumerable<ParentViewDto>>.Fail("parent not found");
+            var parents = await _ParentRepository.AsQueryable()
+                .Include(p => p.AppUser)
+                .ToListAsync();
+            if (parents == null) return ServiceResult<IEnumerable<ParentViewDto>>.Fail("parent not found");
 
-            var parentDto = _mapper.Map<IEnumerable<ParentViewDto>>(parent);
+            var parentDto = _mapper.Map<IEnumerable<ParentViewDto>>(parents);
             return ServiceResult<IEnumerable<ParentViewDto>>.Ok(parentDto, "parent retrieved successfully");
         }
         public async Task<ServiceResult<ParentViewDto>> GetByIdAsync(object id)
         {
-            var parent = await _ParentRepository.GetByIdAsync(id);
+            var parent = await _ParentRepository.AsQueryable()
+                .Where(p => p.Id == (string)id)
+                .Include(p => p.AppUser)
+                .FirstOrDefaultAsync();
+
             if (parent == null) return ServiceResult<ParentViewDto>.Fail("parent not found");
 
             var parentDto = _mapper.Map<ParentViewDto>(parent);

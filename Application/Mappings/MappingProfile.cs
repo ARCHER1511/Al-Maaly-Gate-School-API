@@ -15,6 +15,7 @@ using Application.DTOs.TeacherDTOs;
 using AutoMapper;
 using Common.Extensions;
 using Domain.Entities;
+using Domain.Enums;
 
 namespace Application.Mappings
 {
@@ -40,6 +41,7 @@ namespace Application.Mappings
             #endregion
 
             #region Auth Mappings
+
             CreateMap<RegisterRequest, AppUser>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
@@ -94,22 +96,6 @@ namespace Application.Mappings
                     opt =>
                         opt.MapFrom(src => new AppUser { UserName = src.Email, Email = src.Email })
                 )
-                .IgnoreUnmapped();
-
-            CreateMap<AppUser, Admin>()
-                .IncludeBase<AppUser, UserBase>()
-                .IgnoreUnmapped();
-
-            CreateMap<AppUser, Teacher>()
-                .IncludeBase<AppUser, UserBase>()
-                .IgnoreUnmapped();
-
-            CreateMap<AppUser, Student>()
-                .IncludeBase<AppUser, UserBase>()
-                .IgnoreUnmapped();
-
-            CreateMap<AppUser, Parent>()
-                .IncludeBase<AppUser, UserBase>()
                 .IgnoreUnmapped();
             #endregion
 
@@ -515,7 +501,17 @@ namespace Application.Mappings
             CreateMap<ParentViewWithChildrenDto, Parent>();
 
             CreateMap<ParentViewDto, Parent>();
-            CreateMap<Parent, ParentViewDto>();
+            CreateMap<Parent, ParentViewDto>()
+             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src =>
+                 src.AppUser != null ? src.AppUser.FullName : string.Empty))
+             .ForMember(dest => dest.Email, opt => opt.MapFrom(src =>
+                 src.AppUser != null ? src.AppUser.Email : string.Empty))
+             .ForMember(dest => dest.ContactInfo, opt => opt.MapFrom(src =>
+                 src.AppUser != null ? src.AppUser.ContactInfo : string.Empty))
+             .ForMember(dest => dest.Gender, opt => opt.MapFrom(src =>
+                 src.AppUser != null ? src.AppUser.Gender : null))
+             .ForMember(dest => dest.AccountStatus, opt => opt.MapFrom(src =>
+                 src.AppUser != null ? src.AppUser.AccountStatus : AccountStatus.Active));
 
             CreateMap<ParentRegisterRequest, RegisterRequest>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => "parent"))

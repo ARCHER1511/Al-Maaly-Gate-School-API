@@ -34,11 +34,9 @@ namespace Al_Maaly_Gate_School.Controllers
 
             if (!result.Success)
             {
-                // Only return error for actual errors, not for empty results
                 return BadRequest(ApiResponse<IEnumerable<GetStudentExamsDto>>.Fail(result.Message!));
             }
 
-            // Check if we have data or empty array
             var data = result.Data ?? Enumerable.Empty<GetStudentExamsDto>();
             var message = result.Data?.Any() == true
                 ? result.Message
