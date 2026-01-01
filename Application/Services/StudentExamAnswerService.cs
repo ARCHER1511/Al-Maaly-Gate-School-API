@@ -292,33 +292,47 @@ namespace Application.Services
 
         public async Task<ServiceResult<IEnumerable<GetStudentExamsDto>>> GetExamsForStudentByClassId(string classId)
         {
-            var exams = await _ExamRepository.AsQueryable()
-                            .Where(e => e.ClassId == classId)
-                            .Include(e => e.Subject)
-                            .Include(e => e.Teacher)
-                            .ToListAsync();
-
-            if (!exams.Any())
-                return ServiceResult<IEnumerable<GetStudentExamsDto>>.Fail("Couldn't find any exams");
-
-            bool isChanged = false;
-            foreach (var exam in exams)
+            try
             {
-                var newStatus = GetStatus(exam.Start, exam.End);
-                if (exam.Status != newStatus)
+                var exams = await _ExamRepository.AsQueryable()
+                                .Where(e => e.ClassId == classId)
+                                .Include(e => e.Subject)
+                                .Include(e => e.Teacher)
+                                .ToListAsync();
+
+                // Return empty array instead of error
+                if (!exams.Any())
                 {
-                    exam.Status = newStatus;
-                    _ExamRepository.Update(exam);
-                    isChanged = true;
+                    return ServiceResult<IEnumerable<GetStudentExamsDto>>
+                        .Ok(Enumerable.Empty<GetStudentExamsDto>(), "No exams found for this class");
                 }
+
+                // Update status logic
+                bool isChanged = false;
+                foreach (var exam in exams)
+                {
+                    var newStatus = GetStatus(exam.Start, exam.End);
+                    if (exam.Status != newStatus)
+                    {
+                        exam.Status = newStatus;
+                        _ExamRepository.Update(exam);
+                        isChanged = true;
+                    }
+                }
+
+                if (isChanged)
+                    await _unitOfWork.SaveChangesAsync();
+
+                var examsDto = _mapper.Map<IEnumerable<GetStudentExamsDto>>(exams);
+
+                return ServiceResult<IEnumerable<GetStudentExamsDto>>
+                    .Ok(examsDto, "Exams retrieved successfully");
             }
-            if (isChanged)
-                await _unitOfWork.SaveChangesAsync();
-
-            var examsDto = _mapper.Map<IEnumerable<GetStudentExamsDto>>(exams);
-
-            return ServiceResult<IEnumerable<GetStudentExamsDto>>.Ok(examsDto, "All exams retrieved successfully");
-
+            catch (Exception ex)
+            {
+                return ServiceResult<IEnumerable<GetStudentExamsDto>>
+                    .Fail("An error occurred while retrieving exams");
+            }
         }
 
         public async Task<ServiceResult<ExamQuestionsDto>> GetExamQuestions(string examId)

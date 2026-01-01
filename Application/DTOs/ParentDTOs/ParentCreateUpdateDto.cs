@@ -16,6 +16,6 @@ namespace Application.DTOs.ParentDTOs
         public string AppUserId { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public AccountStatus AccountStatus { get; set; }
-        public string? Relation { get; set; }
+        public string? Gender { get; set; }
     }
 }

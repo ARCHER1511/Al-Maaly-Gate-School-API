@@ -296,51 +296,30 @@ namespace Application.Services
         }
         private async Task CreateRoleEntities(AppUser user, string role)
         {
-            switch (role)
+            switch (role.ToLower())
             {
                 case "admin":
-                    await _adminRepo.AddAsync(
-                        new Admin 
-                        { 
-                            AppUserId = user.Id,
-                            AccountStatus = AccountStatus.Pending,
-                            ContactInfo = user.ContactInfo,
-                            Email = user.Email!,
-                            FullName = user.FullName,
-                            
-                        });
+                    var admin = _mapper.Map<Admin>(user);
+                    await _adminRepo.AddAsync(admin);
                     break;
 
                 case "teacher":
-                    await _teacherRepo.AddAsync(new Teacher {
-                            AppUserId = user.Id,
-                            AccountStatus = AccountStatus.Pending,
-                            ContactInfo = user.ContactInfo,
-                            Email = user.Email!,
-                            FullName = user.FullName,
-                            
-                        });
+                    var teacher = _mapper.Map<Teacher>(user);
+                    await _teacherRepo.AddAsync(teacher);
                     break;
 
                 case "student":
-                    await _studentRepo.AddAsync(new Student {
-                            AppUserId = user.Id,
-                            AccountStatus = AccountStatus.Pending,
-                            ContactInfo = user.ContactInfo,
-                            Email = user.Email!,
-                            FullName = user.FullName,
-                        });
+                    var student = _mapper.Map<Student>(user);
+                    await _studentRepo.AddAsync(student);
                     break;
 
                 case "parent":
-                    await _parentRepo.AddAsync(new Parent {
-                            AppUserId = user.Id,
-                            AccountStatus = AccountStatus.Pending,
-                            ContactInfo = user.ContactInfo,
-                            Email = user.Email!,
-                            FullName = user.FullName,
-                        });
+                    var parent = _mapper.Map<Parent>(user);
+                    await _parentRepo.AddAsync(parent);
                     break;
+
+                default:
+                    throw new ArgumentException($"Invalid role: {role}");
             }
         }
         public async Task<ServiceResult<string>> ResendConfirmationAsync(ResendConfirmationRequest request)

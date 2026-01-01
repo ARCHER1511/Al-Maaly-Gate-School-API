@@ -95,6 +95,22 @@ namespace Application.Mappings
                         opt.MapFrom(src => new AppUser { UserName = src.Email, Email = src.Email })
                 )
                 .IgnoreUnmapped();
+
+            CreateMap<AppUser, Admin>()
+                .IncludeBase<AppUser, UserBase>()
+                .IgnoreUnmapped();
+
+            CreateMap<AppUser, Teacher>()
+                .IncludeBase<AppUser, UserBase>()
+                .IgnoreUnmapped();
+
+            CreateMap<AppUser, Student>()
+                .IncludeBase<AppUser, UserBase>()
+                .IgnoreUnmapped();
+
+            CreateMap<AppUser, Parent>()
+                .IncludeBase<AppUser, UserBase>()
+                .IgnoreUnmapped();
             #endregion
 
             #region Teacher Mappings
@@ -506,7 +522,6 @@ namespace Application.Mappings
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<ParentRegisterRequest, Parent>()
-                .ForMember(dest => dest.Relation, opt => opt.MapFrom(src => src.Relation))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.ContactInfo, opt => opt.MapFrom(src => src.ContactInfo))

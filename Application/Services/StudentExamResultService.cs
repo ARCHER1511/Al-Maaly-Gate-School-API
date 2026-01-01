@@ -27,7 +27,7 @@ namespace Application.Services
 
             var resultDto = _mapper.Map<IEnumerable<StudentExamResultDto>>(result ?? new List<StudentExamResult>());
 
-            var message = result?.Any() == true ? $"تم العثور على {result.Count} نتيجة" : "لا توجد نتائج امتحانات لهذا الطالب";
+            var message = result?.Any() == true ? $"found {result.Count} results" : "there is no results for that student";
 
             return ServiceResult<IEnumerable<StudentExamResultDto>>.Ok(resultDto, message);
         }
