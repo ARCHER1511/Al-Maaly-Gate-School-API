@@ -52,7 +52,7 @@ namespace Application.Services
 
                 var curriculum = _mapper.Map<Curriculum>(dto);
                 curriculum.Id = Guid.NewGuid().ToString(); // Generate new ID
-                curriculum.CreatedAt = DateTime.UtcNow;
+                curriculum.CreatedAt = DateTime.Now;
 
                 await _curriculumRepository.AddAsync(curriculum);
                 await _unitOfWork.SaveChangesAsync();
@@ -83,7 +83,7 @@ namespace Application.Services
                 }
 
                 _mapper.Map(dto, curriculum);
-                curriculum.UpdatedAt = DateTime.UtcNow;
+                curriculum.UpdatedAt = DateTime.Now;
 
                 _curriculumRepository.Update(curriculum);
                 await _unitOfWork.SaveChangesAsync();

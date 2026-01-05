@@ -101,7 +101,7 @@ namespace Al_Maaly_Gate_School
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseRouting();
 
             app.UseCustomCORS();

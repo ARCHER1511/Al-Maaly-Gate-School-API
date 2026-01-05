@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
@@ -13,7 +8,7 @@ namespace Domain.Entities
         public Student Student { get; set; } = null!;
 
         public double GPA { get; set; }
-        public DateTime IssuedDate { get; set; } = DateTime.UtcNow;
+        public DateTime IssuedDate { get; set; } = DateTime.Now;
 
         public string CurriculumId { get; set; } = string.Empty;
         public Curriculum? Curriculum { get; set; }

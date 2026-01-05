@@ -81,7 +81,7 @@ namespace Application.Services
         }
         private int CalculateAge(DateOnly birthDate)
         {
-            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var today = DateOnly.FromDateTime(DateTime.Now);
 
             int age = today.Year - birthDate.Year;
 
@@ -235,7 +235,7 @@ namespace Application.Services
             user.PendingRole = role; //
             user.ConfirmationNumber = GenerateConfirmationNumber();
             user.EmailConfirmationToken = GenerateEmailToken();
-            user.ConfirmationTokenExpiry = DateTime.UtcNow.AddHours(24);
+            user.ConfirmationTokenExpiry = DateTime.Now.AddHours(24);
             user.Age = age;
 
             var result = await _userRepo.CreateAsync(user, request.Password);
@@ -268,7 +268,7 @@ namespace Application.Services
             if (user.EmailConfirmed)
                 return ServiceResult<string>.Ok("Email already confirmed.");
 
-            if (user.ConfirmationTokenExpiry < DateTime.UtcNow)
+            if (user.ConfirmationTokenExpiry < DateTime.Now)
                 return ServiceResult<string>.Fail("Confirmation expired.");
 
             if (user.EmailConfirmationToken != request.Token &&
@@ -357,7 +357,7 @@ namespace Application.Services
 
             user.ConfirmationNumber = GenerateConfirmationNumber();
             user.EmailConfirmationToken = GenerateEmailToken();
-            user.ConfirmationTokenExpiry = DateTime.UtcNow.AddHours(24);
+            user.ConfirmationTokenExpiry = DateTime.Now.AddHours(24);
 
             await _userRepo.UpdateAsync(user);
             await SendConfirmationEmail(user);
