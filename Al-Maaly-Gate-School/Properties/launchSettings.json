@@ -31,7 +31,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://192.168.1.6:8000;http://192.168.1.6:9000"
+      "applicationUrl": "http://192.168.1.6:8000;https://192.168.1.6:9000"
     },
     "WSL": {
       "commandName": "WSL2",

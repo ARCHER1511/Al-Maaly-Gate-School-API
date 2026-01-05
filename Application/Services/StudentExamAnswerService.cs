@@ -251,7 +251,7 @@ namespace Application.Services
                     SubjectName = exam.Subject.SubjectName,
                     TeacherName = teacher?.FullName ?? "Teacher Name",
                     ExamName = exam.ExamName,
-                    Date = DateOnly.FromDateTime(DateTime.UtcNow)
+                    Date = DateOnly.FromDateTime(DateTime.Now)
                 };
 
                 await _studentExamResultRepository.AddAsync(result);

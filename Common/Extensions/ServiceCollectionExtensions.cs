@@ -24,8 +24,11 @@ namespace Common.Extensions
                     name: MyAllowSpecificOrigins,
                     policy =>
                     {
-                        policy
-                            .WithOrigins("http://localhost:4200")
+                        policy.WithOrigins(
+                                "http://localhost:4200",
+                                "https://192.168.1.6:4200",
+                                "http://192.168.1.6:4200"
+                            )
                             .AllowAnyHeader()
                             .AllowAnyMethod()
                             .AllowCredentials();
@@ -42,13 +45,13 @@ namespace Common.Extensions
         {
             var jwtSettings = config.GetSection("Jwt");
             services
-                .AddAuthentication(
-                options => 
+                .AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                } ).AddJwtBearer(options =>
+                })
+                .AddJwtBearer(options =>
                 {
                     JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // Prevent remapping
 
