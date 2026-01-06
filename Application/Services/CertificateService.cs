@@ -94,8 +94,8 @@ namespace Application.Services
                 var gpa = _gpaCalculator.CalculateGpa(student.Degrees.ToList());
 
                 // Generate certificate number
-                var year = DateTime.UtcNow.Year;
-                var month = DateTime.UtcNow.Month;
+                var year = DateTime.Now.Year;
+                var month = DateTime.Now.Month;
                 var curriculumCode = student.Class?.Grade?.Curriculum?.Code ?? "GEN";
                 var studentIdShort = student.Id.Substring(0, Math.Min(8, student.Id.Length));
 
@@ -114,11 +114,11 @@ namespace Application.Services
                     GradeId = student.Class?.GradeId ?? string.Empty,
                     ClassId = student.ClassId ?? string.Empty,
                     PdfData = pdfBytes,
-                    FileName = $"{student.FullName}_{degreeType}_{DateTime.UtcNow:yyyyMMdd}.pdf",
+                    FileName = $"{student.FullName}_{degreeType}_{DateTime.Now:yyyyMMdd}.pdf",
                     ContentType = "application/pdf",
                     FileSize = pdfBytes.Length,
                     TemplateName = Path.GetFileNameWithoutExtension(templatePath),
-                    IssuedDate = DateTime.UtcNow,
+                    IssuedDate = DateTime.Now,
                     CertificateNumber = certificateNumber,
                     AcademicYear = student.ClassYear ?? "Unknown",
                     IsVerified = false,
@@ -412,8 +412,8 @@ namespace Application.Services
                 Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] GPA calculated: {gpa:F2}");
 
                 // Generate certificate number
-                var year = DateTime.UtcNow.Year;
-                var month = DateTime.UtcNow.Month;
+                var year = DateTime.Now.Year;
+                var month = DateTime.Now.Month;
                 var curriculumCode = student.Class?.Grade?.Curriculum?.Code ?? "GEN";
                 var studentIdShort = student.Id.Substring(0, Math.Min(8, student.Id.Length));
 
@@ -432,11 +432,11 @@ namespace Application.Services
                     GradeId = student.Class?.GradeId ?? string.Empty,
                     ClassId = student.ClassId ?? string.Empty,
                     PdfData = pdfBytes,
-                    FileName = $"{student.FullName}_{degreeType}_{DateTime.UtcNow:yyyyMMdd}.pdf",
+                    FileName = $"{student.FullName}_{degreeType}_{DateTime.Now:yyyyMMdd}.pdf",
                     ContentType = "application/pdf",
                     FileSize = pdfBytes.Length,
                     TemplateName = Path.GetFileNameWithoutExtension(templatePath),
-                    IssuedDate = DateTime.UtcNow,
+                    IssuedDate = DateTime.Now,
                     CertificateNumber = certificateNumber,
                     AcademicYear = targetAcademicYear ?? "Unknown",
                     IsVerified = false,
@@ -671,7 +671,7 @@ namespace Application.Services
             gfx.DrawString(summaryText, headerFont, darkBlueBrush, new XRect(summaryX, currentY, summaryWidth, 35), summaryFormat);
 
             currentY += 50;
-            var footerText = $"Issued on: {DateTime.UtcNow:dd/MM/yyyy} | {curriculumName}";
+            var footerText = $"Issued on: {DateTime.Now:dd/MM/yyyy} | {curriculumName}";
             gfx.DrawString(footerText, regularFont, mediumGrayBrush, new XPoint(marginX, currentY));
 
             using var ms = new MemoryStream();
@@ -901,7 +901,7 @@ namespace Application.Services
                 return false;
 
             certificate.IsVerified = true;
-            certificate.VerifiedDate = DateTime.UtcNow;
+            certificate.VerifiedDate = DateTime.Now;
             certificate.VerifiedBy = verifiedBy;
 
             await context.SaveChangesAsync();

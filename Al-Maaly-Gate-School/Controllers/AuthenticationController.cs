@@ -1,7 +1,6 @@
 ﻿using Application.DTOs.AuthDTOs;
 using Application.DTOs.ParentDTOs;
 using Application.Interfaces;
-using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +17,11 @@ namespace Al_Maaly_Gate_School.Controllers
         private readonly IAppUserRepository _userRepo;
         private readonly IConfiguration _config;
 
-        public AuthenticationController(IAuthenticationService authService, IAppUserRepository userRepo, IConfiguration config)
+        public AuthenticationController(
+            IAuthenticationService authService,
+            IAppUserRepository userRepo,
+            IConfiguration config
+        )
         {
             _authService = authService;
             _userRepo = userRepo;
@@ -116,13 +119,12 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpGet("confirm-email")]
-        public async Task<IActionResult> ConfirmEmailByLink([FromQuery] string token,[FromQuery] string userId)
+        public async Task<IActionResult> ConfirmEmailByLink(
+            [FromQuery] string token,
+            [FromQuery] string userId
+        )
         {
-            var request = new ConfirmEmailRequest
-            {
-                Token = token,
-                UserId = userId
-            };
+            var request = new ConfirmEmailRequest { Token = token, UserId = userId };
 
             var result = await _authService.ConfirmEmailAsync(request);
 
@@ -133,7 +135,6 @@ namespace Al_Maaly_Gate_School.Controllers
 
             return Redirect($"{_config["App:ConsumerUrl"]}/confirmation-status?status=success");
         }
-
 
         [HttpPost("confirm-email")]
         [Consumes("application/json")]
@@ -147,7 +148,9 @@ namespace Al_Maaly_Gate_School.Controllers
         }
 
         [HttpPost("resend-confirmation")]
-        public async Task<IActionResult> ResendConfirmation([FromBody] ResendConfirmationRequest request)
+        public async Task<IActionResult> ResendConfirmation(
+            [FromBody] ResendConfirmationRequest request
+        )
         {
             var result = await _authService.ResendConfirmationAsync(request);
 

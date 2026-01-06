@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Application.Authentication;
@@ -79,9 +80,10 @@ namespace Application.Services
                 }
             }
         }
+
         private int CalculateAge(DateOnly birthDate)
         {
-            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var today = DateOnly.FromDateTime(DateTime.Now);
 
             int age = today.Year - birthDate.Year;
 
@@ -164,7 +166,9 @@ namespace Application.Services
             return documentInfos;
         }
 
-        public async Task<ServiceResult<ParentRegistrationResponse>> RegisterParentAsync(ParentRegisterRequest request)
+        public async Task<ServiceResult<ParentRegistrationResponse>> RegisterParentAsync(
+            ParentRegisterRequest request
+        )
         {
             try
             {
@@ -235,22 +239,26 @@ namespace Application.Services
             user.PendingRole = role; //
             user.ConfirmationNumber = GenerateConfirmationNumber();
             user.EmailConfirmationToken = GenerateEmailToken();
-            user.ConfirmationTokenExpiry = DateTime.UtcNow.AddHours(24);
+            user.ConfirmationTokenExpiry = DateTime.Now.AddHours(24);
             user.Age = age;
 
             var result = await _userRepo.CreateAsync(user, request.Password);
             if (!result.Succeeded)
                 return ServiceResult<AuthResponse>.Fail(
-                    string.Join(", ", result.Errors.Select(e => e.Description)));
+                    string.Join(", ", result.Errors.Select(e => e.Description))
+                );
 
             await SendConfirmationEmail(user);
 
-            return ServiceResult<AuthResponse>.Ok(new AuthResponse
-            {
-                UserId = user.Id,
-                Email = user.Email!,
-                RequiresConfirmation = true
-            }, "Registration successful. Please confirm your email.");
+            return ServiceResult<AuthResponse>.Ok(
+                new AuthResponse
+                {
+                    UserId = user.Id,
+                    Email = user.Email!,
+                    RequiresConfirmation = true,
+                },
+                "Registration successful. Please confirm your email."
+            );
         }
 
         public async Task<ServiceResult<string>> ConfirmEmailAsync(ConfirmEmailRequest request)
@@ -259,7 +267,10 @@ namespace Application.Services
 
             if (!string.IsNullOrEmpty(request.Token) && !string.IsNullOrEmpty(request.UserId))
                 user = await _userRepo.GetByIdAsync(request.UserId);
-            else if (!string.IsNullOrEmpty(request.ConfirmationNumber) && !string.IsNullOrEmpty(request.Email))
+            else if (
+                !string.IsNullOrEmpty(request.ConfirmationNumber)
+                && !string.IsNullOrEmpty(request.Email)
+            )
                 user = await _userRepo.GetByEmailAsync(request.Email);
 
             if (user == null)
@@ -268,11 +279,13 @@ namespace Application.Services
             if (user.EmailConfirmed)
                 return ServiceResult<string>.Ok("Email already confirmed.");
 
-            if (user.ConfirmationTokenExpiry < DateTime.UtcNow)
+            if (user.ConfirmationTokenExpiry < DateTime.Now)
                 return ServiceResult<string>.Fail("Confirmation expired.");
 
-            if (user.EmailConfirmationToken != request.Token &&
-                user.ConfirmationNumber != request.ConfirmationNumber)
+            if (
+                user.EmailConfirmationToken != request.Token
+                && user.ConfirmationNumber != request.ConfirmationNumber
+            )
                 return ServiceResult<string>.Fail("Invalid confirmation data.");
 
             // ✅ CONFIRM EMAIL
@@ -294,6 +307,7 @@ namespace Application.Services
 
             return ServiceResult<string>.Ok("Account activated successfully.");
         }
+
         private async Task CreateRoleEntities(AppUser user, string role)
         {
             switch (role)
@@ -307,46 +321,54 @@ namespace Application.Services
                             ContactInfo = user.ContactInfo,
                             Email = user.Email!,
                             FullName = user.FullName,
-
-                        });
-                break;
+                        }
+                    );
+                    break;
 
                 case "teacher":
-                    await _teacherRepo.AddAsync(new Teacher
-                    {
-                        AppUserId = user.Id,
-                        AccountStatus = AccountStatus.Pending,
-                        ContactInfo = user.ContactInfo,
-                        Email = user.Email!,
-                        FullName = user.FullName,
-
-                    });
-                break;
+                    await _teacherRepo.AddAsync(
+                        new Teacher
+                        {
+                            AppUserId = user.Id,
+                            AccountStatus = AccountStatus.Pending,
+                            ContactInfo = user.ContactInfo,
+                            Email = user.Email!,
+                            FullName = user.FullName,
+                        }
+                    );
+                    break;
 
                 case "student":
-                    await _studentRepo.AddAsync(new Student
-                    {
-                        AppUserId = user.Id,
-                        AccountStatus = AccountStatus.Pending,
-                        ContactInfo = user.ContactInfo,
-                        Email = user.Email!,
-                        FullName = user.FullName,
-                    });
-                break;
+                    await _studentRepo.AddAsync(
+                        new Student
+                        {
+                            AppUserId = user.Id,
+                            AccountStatus = AccountStatus.Pending,
+                            ContactInfo = user.ContactInfo,
+                            Email = user.Email!,
+                            FullName = user.FullName,
+                        }
+                    );
+                    break;
 
                 case "parent":
-                    await _parentRepo.AddAsync(new Parent
-                    {
-                        AppUserId = user.Id,
-                        AccountStatus = AccountStatus.Pending,
-                        ContactInfo = user.ContactInfo,
-                        Email = user.Email!,
-                        FullName = user.FullName,
-                    });
-                break;
+                    await _parentRepo.AddAsync(
+                        new Parent
+                        {
+                            AppUserId = user.Id,
+                            AccountStatus = AccountStatus.Pending,
+                            ContactInfo = user.ContactInfo,
+                            Email = user.Email!,
+                            FullName = user.FullName,
+                        }
+                    );
+                    break;
             }
         }
-        public async Task<ServiceResult<string>> ResendConfirmationAsync(ResendConfirmationRequest request)
+
+        public async Task<ServiceResult<string>> ResendConfirmationAsync(
+            ResendConfirmationRequest request
+        )
         {
             var user = await _userRepo.GetByEmailAsync(request.Email);
             if (user == null)
@@ -357,20 +379,22 @@ namespace Application.Services
 
             user.ConfirmationNumber = GenerateConfirmationNumber();
             user.EmailConfirmationToken = GenerateEmailToken();
-            user.ConfirmationTokenExpiry = DateTime.UtcNow.AddHours(24);
+            user.ConfirmationTokenExpiry = DateTime.Now.AddHours(24);
 
             await _userRepo.UpdateAsync(user);
             await SendConfirmationEmail(user);
 
             return ServiceResult<string>.Ok("Confirmation email resent.");
         }
+
         private async Task SendConfirmationEmail(AppUser user)
         {
             var token = UrlEncoder.Default.Encode(user.EmailConfirmationToken!);
             var link =
                 $"{_config["App:BaseUrl"]}/api/authentication/confirm-email?token={token}&userId={user.Id}";
 
-            var body = $@"
+            var body =
+                $@"
                     <div style='font-family:Arial'>
                         <h2>Email Confirmation</h2>
                         <p>Your confirmation code:</p>
@@ -386,13 +410,15 @@ namespace Application.Services
             await _emailService.SendAsync(user.Email!, "Confirm Email", body, true);
         }
 
-        private string GenerateConfirmationNumber()
-            => Random.Shared.Next(100000, 999999).ToString();
-        private string GenerateEmailToken()
-            => Convert.ToBase64String(Guid.NewGuid().ToByteArray())
+        private string GenerateConfirmationNumber() =>
+            Random.Shared.Next(100000, 999999).ToString();
+
+        private string GenerateEmailToken() =>
+            Convert
+                .ToBase64String(Guid.NewGuid().ToByteArray())
                 .Replace("/", "_")
                 .Replace("+", "-")
-                    .Replace("=", "");
+                .Replace("=", "");
 
         public async Task<ServiceResult<AuthResponse>> LoginAsync(LoginRequest request)
         {
@@ -709,27 +735,105 @@ namespace Application.Services
         {
             var user = await _userRepo.GetByEmailAsync(email);
             if (user == null)
-                return ServiceResult<string>.Fail("User not found");
+                return ServiceResult<string>.Ok("If the email exists, a reset link has been sent");
 
             var token = await _userRepo.GeneratePasswordResetTokenAsync(user);
-            // TODO: send token via email using IEmailService
-            return ServiceResult<string>.Ok(token, "Password reset email sent");
+            //send token via email using IEmailService
+            var encodedToken = WebUtility.UrlEncode(token);
+            var encodedEmail = WebUtility.UrlEncode(email);
+            //it can be set in appsetting
+            var resetUrl =
+                $"{_config["Frontend:ResetPasswordUrl"]}"
+                + $"?email={encodedEmail}&token={encodedToken}";
+
+            var body =
+                $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Password Reset</title>
+</head>
+<body style='margin:0;padding:0;background-color:#f4f6f8;font-family:Arial,Helvetica,sans-serif;'>
+
+    <table width='100%' cellpadding='0' cellspacing='0'>
+        <tr>
+            <td align='center' style='padding:30px 15px;'>
+                <table width='600' cellpadding='0' cellspacing='0'
+                       style='background:#ffffff;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,0.08);'>
+
+                    <tr>
+                        <td style='padding:30px;'>
+
+                            <h2 style='color:#333;margin-top:0;'>Reset your password</h2>
+
+                            <p style='color:#555;font-size:14px;line-height:1.6;'>
+                                Hello <strong>{user.FullName}</strong>,
+                            </p>
+
+                            <p style='color:#555;font-size:14px;line-height:1.6;'>
+                                You recently requested to reset your password.
+                                Click the button below to proceed.
+                            </p>
+
+                            <div style='text-align:center;margin:30px 0;'>
+                                <a href='{resetUrl}'
+                                   style='background-color:#2563eb;
+                                          color:#ffffff;
+                                          padding:12px 24px;
+                                          text-decoration:none;
+                                          border-radius:6px;
+                                          font-size:15px;
+                                          display:inline-block;'>
+                                    Reset Password
+                                </a>
+                            </div>
+
+                            <p style='color:#555;font-size:13px;line-height:1.6;'>
+                                This password reset link will expire shortly.
+                            </p>
+
+                            <p style='color:#888;font-size:12px;line-height:1.6;'>
+                                If you did not request this password reset, you can safely ignore this email.
+                                Your account will remain secure.
+                            </p>
+
+                            <hr style='border:none;border-top:1px solid #eee;margin:25px 0;' />
+
+                            <p style='color:#aaa;font-size:11px;text-align:center;'>
+                                © {DateTime.UtcNow.Year} Your Company Name
+                            </p>
+
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>";
+
+            await _emailService.SendAsync(user.Email!, "Reset your password", body, isHtml: true);
+
+            return ServiceResult<string>.Ok("If the email exists, a reset link has been sent");
         }
 
         public async Task<ServiceResult<string>> ResetPasswordAsync(ResetPasswordRequest request)
         {
             var user = await _userRepo.GetByEmailAsync(request.Email);
             if (user == null)
-                return ServiceResult<string>.Fail("User not found");
+                return ServiceResult<string>.Fail("Invalid reset request");
 
-            var result = await _userRepo.ResetPasswordAsync(
+            var success = await _userRepo.ResetPasswordAsync(
                 user,
                 request.Token,
                 request.NewPassword
             );
-            return result
+            return success
                 ? ServiceResult<string>.Ok("Password reset successful")
-                : ServiceResult<string>.Fail("Invalid token or password");
+                : ServiceResult<string>.Fail("Invalid or expired token");
         }
 
         public async Task<ServiceResult<string>> DeleteAccountAsync(string userId)

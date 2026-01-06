@@ -487,7 +487,7 @@ namespace Application.Services
             {
                 TeacherId = teacherId,
                 ClassId = classId,
-                AssignedAt = DateTime.UtcNow
+                AssignedAt = DateTime.Now
             };
 
             // Add to teacher's classes

@@ -1,12 +1,12 @@
-﻿using Application.DTOs.AuthDTOs;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Application.DTOs.AuthDTOs;
 using Application.DTOs.FileRequestDTOs;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
@@ -18,7 +18,10 @@ namespace Al_Maaly_Gate_School.Controllers
         private readonly IAuthenticationService _authService;
         private readonly IFileService _fileService;
 
-        public AfterAuthenticationController(IAuthenticationService authService, IFileService fileService)
+        public AfterAuthenticationController(
+            IAuthenticationService authService,
+            IFileService fileService
+        )
         {
             _authService = authService;
             _fileService = fileService;
@@ -27,8 +30,9 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                         ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId =
+                User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(ApiResponse<string>.Fail("User not authenticated."));
@@ -40,8 +44,9 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpGet("profile")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                         ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId =
+                User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(ApiResponse<AuthResponse>.Fail("User not authenticated."));
@@ -56,8 +61,9 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                         ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId =
+                User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(ApiResponse<string>.Fail("User not authenticated."));
@@ -72,8 +78,9 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpDelete("delete-account")]
         public async Task<IActionResult> DeleteAccount()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                         ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId =
+                User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(ApiResponse<string>.Fail("User not authenticated."));
@@ -88,8 +95,9 @@ namespace Al_Maaly_Gate_School.Controllers
         [HttpPut("update-profile")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                         ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId =
+                User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(ApiResponse<string>.Fail("User not authenticated."));
@@ -100,21 +108,26 @@ namespace Al_Maaly_Gate_School.Controllers
                 ? Ok(ApiResponse<AuthResponse>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<AuthResponse>.Fail(result.Message!));
         }
+
         [HttpPost("profile/photo")]
         public async Task<IActionResult> UploadProfilePhoto([FromForm] FileUploadRequest request)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _authService.UploadProfilePhotoAsync(userId!, request.File);
-            if (!result.Success) return BadRequest(result.Message);
+            if (!result.Success)
+                return BadRequest(result.Message);
             return Ok(result.Data); // could return path or full updated profile DTO
         }
+
         [HttpGet("my-files")]
         public async Task<IActionResult> GetMyFiles()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var result = await _fileService.GetFilesByUserAsync(userId!);
-            return Ok(ApiResponse<IEnumerable<FileRecord>>.Ok(result.Data!,"Files Retived Successfully"));
+            return Ok(
+                ApiResponse<IEnumerable<FileRecord>>.Ok(result.Data!, "Files Retived Successfully")
+            );
         }
     }
 }
