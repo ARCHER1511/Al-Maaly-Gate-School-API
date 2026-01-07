@@ -41,8 +41,10 @@ namespace Application.Services
         public async Task<ServiceResult<IEnumerable<StudentViewDto>>> GetAllAsync()
         {
             var students = await _studentRepository.GetAllWithDetailsAsync(); // Updated method
+
+            // Return empty array instead of error
             if (students == null || !students.Any())
-                return ServiceResult<IEnumerable<StudentViewDto>>.Fail("No students found");
+                return ServiceResult<IEnumerable<StudentViewDto>>.Ok(Enumerable.Empty<StudentViewDto>(), "No students found");
 
             var studentsDto = _mapper.Map<IEnumerable<StudentViewDto>>(students);
             return ServiceResult<IEnumerable<StudentViewDto>>.Ok(studentsDto, "Students retrieved successfully");

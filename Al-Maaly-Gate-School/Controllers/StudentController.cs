@@ -24,9 +24,6 @@ namespace Al_Maaly_Gate_School.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _studentService.GetAllAsync();
-            if (!result.Success)
-                return NotFound(ApiResponse<IEnumerable<StudentViewDto>>.Fail(result.Message!));
-
             return Ok(ApiResponse<IEnumerable<StudentViewDto>>.Ok(result.Data!, result.Message));
         }
 
