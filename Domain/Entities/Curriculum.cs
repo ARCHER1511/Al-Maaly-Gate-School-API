@@ -8,9 +8,9 @@ namespace Domain.Entities
 {
     public class Curriculum : BaseEntity
     {
-        public string Name { get; set; } // e.g., "Egyptian Curriculum", "British Curriculum"
-        public string Code { get; set; } // e.g., "EGY", "UK"
-        public string Description { get; set; }
+        public string Name { get; set; } = string.Empty; // e.g., "Egyptian Curriculum", "British Curriculum"
+        public string Code { get; set; } = string.Empty; // e.g., "EGY", "UK"
+        public string? Description { get; set; } = string.Empty;
 
         // Add more curriculum details
         public string? Country { get; set; } // Country of origin
