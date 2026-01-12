@@ -26,7 +26,8 @@ namespace Infrastructure.Configurations
                    .HasMaxLength(20);
 
             builder.Property(c => c.Description)
-                   .HasMaxLength(500);
+                   .HasMaxLength(500)
+                   .IsRequired(false);
 
             // One Curriculum has many Grades
             builder.HasMany(c => c.Grades)
