@@ -1,15 +1,6 @@
-﻿using Application.DTOs.FileRequestDTOs;
-using Application.DTOs.ParentDTOs;
-using Application.DTOs.StudentDTOs;
-using Domain.Entities;
+﻿using Application.DTOs.ParentDTOs;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {

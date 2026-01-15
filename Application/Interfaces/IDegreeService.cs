@@ -1,5 +1,4 @@
 ﻿using Application.DTOs.DegreesDTOs;
-using Domain.Entities;
 using Domain.Wrappers;
 
 namespace Application.Interfaces

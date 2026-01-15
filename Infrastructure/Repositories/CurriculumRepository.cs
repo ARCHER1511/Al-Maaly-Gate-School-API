@@ -36,13 +36,13 @@ namespace Infrastructure.Repositories
         public async Task<Curriculum?> GetByNameAsync(string name)
         {
             return await _context.Curriculums
-                .FirstOrDefaultAsync(c => c.Name.ToLower() == name.ToLower());
+                .FirstOrDefaultAsync(c => c.Name.ToLower() == name.ToLower()!);
         }
 
         public async Task<bool> ExistsByNameAsync(string name)
         {
             return await _context.Curriculums
-                .AnyAsync(c => c.Name.ToLower() == name.ToLower());
+                .AnyAsync(c => c.Name.ToLower() == name.ToLower()!);
         }
 
         // Override to include grades by default
@@ -67,13 +67,13 @@ namespace Infrastructure.Repositories
             Func<IQueryable<Curriculum>, IIncludableQueryable<Curriculum, object>>? include = null)
         {
             IQueryable<Curriculum> query = _context.Curriculums;
-            
+
             // Always include Grades by default, then additional includes if provided
             query = query.Include(c => c.Grades);
-            
-            if (include != null) 
+
+            if (include != null)
                 query = include(query);
-                
+
             return await query.FirstOrDefaultAsync(predicate);
         }
     }

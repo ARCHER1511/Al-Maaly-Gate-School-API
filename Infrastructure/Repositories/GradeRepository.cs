@@ -2,11 +2,6 @@
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -132,7 +127,7 @@ namespace Infrastructure.Repositories
         public async Task<Grade?> GetByNameAndCurriculumAsync(string gradeName, string curriculumId)
         {
             return await _context.Grades
-                .FirstOrDefaultAsync(g => g.GradeName.ToLower() == gradeName.ToLower()
+                .FirstOrDefaultAsync(g => g.GradeName.ToLower() == gradeName.ToLower()!
                                        && g.CurriculumId == curriculumId);
         }
 
@@ -147,7 +142,7 @@ namespace Infrastructure.Repositories
         {
             return await _context.Grades
                 .Include(g => g.Curriculum)
-                .FirstOrDefaultAsync(g => g.GradeName.ToLower() == name.ToLower());
+                .FirstOrDefaultAsync(g => g.GradeName.ToLower() == name.ToLower()!);
         }
 
         public async Task<IEnumerable<Grade>> GetGradesByCurriculumAsync(string curriculumId)

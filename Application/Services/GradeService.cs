@@ -1,17 +1,11 @@
 ﻿using Application.DTOs.ClassDTOs;
 using Application.DTOs.GradeDTOs;
 using Application.DTOs.SubjectDTOs;
-using Application.DTOs.CurriculumDTOs;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -290,8 +284,13 @@ namespace Application.Services
             if (grade == null)
                 return ServiceResult<GradeWithDetailsDto>.Fail("Grade not found");
 
-            if (grade.Curriculum == null)
+            if (grade.Curriculum == null && grade.CurriculumId != null)
             {
+                if (string.IsNullOrEmpty(grade.CurriculumId))
+                {
+                    // This shouldn't happen based on your model, but handle just in case
+                    return ServiceResult<GradeWithDetailsDto>.Fail("Grade has no curriculum assigned");
+                }
                 grade.Curriculum = await _curriculumRepository.GetByIdAsync(grade.CurriculumId);
             }
 

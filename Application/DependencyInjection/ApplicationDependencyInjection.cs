@@ -31,11 +31,6 @@ namespace Application.DependencyInjection
             services.AddScoped<IClassAppointmentService, ClassAppointmentService>();
             services.AddScoped<IStudentExamAnswerService, StudentExamAnswerService>();
             services.AddScoped<IStudentExamResultService, StudentExamResultService>();
-            services.AddScoped<IManagementStudentService, ManagementStudentService>();
-            services.AddScoped<IManagementTeacherService, ManagementTeacherService>();
-            services.AddScoped<IManagementClassService, ManagementClassService>();
-            services.AddScoped<IManagementSubjectService, ManagementSubjectService>();
-            services.AddScoped<IManagementParentService, ManagementParentService>();
             services.AddScoped<IDegreeService, DegreeService>();
             services.AddScoped<IGpaCalculator, GpaCalculator>();
             services.AddScoped<ICertificateService, CertificateService>();
