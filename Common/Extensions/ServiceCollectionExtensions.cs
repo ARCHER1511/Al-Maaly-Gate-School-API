@@ -24,11 +24,7 @@ namespace Common.Extensions
                     name: MyAllowSpecificOrigins,
                     policy =>
                     {
-                        policy.WithOrigins(
-                                "http://localhost:4200",
-                                "https://192.168.1.6:4200",
-                                "http://192.168.1.6:4200"
-                            )
+                        policy.WithOrigins("http://localhost:4200")
                             .AllowAnyHeader()
                             .AllowAnyMethod()
                             .AllowCredentials();

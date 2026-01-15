@@ -9,7 +9,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:5000;https://localhost:7002"
+      "applicationUrl": "http://localhost:5000"
     },
     "https": {
       "commandName": "Project",
@@ -20,7 +20,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7002;http://localhost:5000"
+      "applicationUrl": "https://localhost:5000"
     },
     "LAN": {
       "commandName": "Project",
@@ -31,7 +31,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://192.168.1.6:8000;https://192.168.1.6:9000"
+      "applicationUrl": "http://192.168.1.6:5000"
     },
     "WSL": {
       "commandName": "WSL2",
@@ -39,17 +39,17 @@
       "launchUrl": "https://localhost:7002/swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "https://localhost:7002;http://localhost:5000"
+        "ASPNETCORE_URLS": "http://localhost:5000"
       },
       "distributionName": "ubuntu"
     },
     "WSLLAN": {
       "commandName": "WSL2",
       "launchBrowser": true,
-      "launchUrl": "https://172.21.193.66:7002/swagger",
+      "launchUrl": "https://172.21.193.66:5000/swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://172.21.193.66:5000;https://172.21.193.66:7002"
+        "ASPNETCORE_URLS": "http://172.21.193.66:5000"
       },
       "distributionName": "ubuntu"
     },
@@ -57,7 +57,7 @@
       "commandName": "IISExpress",
       "commandLineArgs": "powershell",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:5010/swagger",
+      "launchUrl": "http://localhost:5000/swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -68,8 +68,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5010",
-      "sslPort": 7010
+      "applicationUrl": "http://localhost:5000",
+      "sslPort": 8002
     }
   }
 }
