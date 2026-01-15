@@ -89,7 +89,7 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public virtual async Task<int> CountAsync(Expression<Func<T, bool>> predicate = null)
+        public virtual async Task<int> CountAsync(Expression<Func<T, bool>> predicate = null!)
             => predicate == null ? await _dbSet.CountAsync() : await _dbSet.CountAsync(predicate);
 
     }

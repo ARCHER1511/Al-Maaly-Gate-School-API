@@ -98,7 +98,7 @@ namespace Infrastructure.Repositories
                 f.UserId == userId);
         }
 
-        public Task UpdateAsync(FileRecord record)
+        public new Task UpdateAsync(FileRecord record)
         {
             _dbSet.Update(record);
             return Task.CompletedTask;

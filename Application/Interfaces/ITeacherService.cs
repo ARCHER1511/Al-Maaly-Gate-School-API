@@ -1,7 +1,6 @@
 ﻿using Application.DTOs.ClassDTOs;
 using Application.DTOs.SubjectDTOs;
 using Application.DTOs.TeacherDTOs;
-using Domain.Entities;
 using Domain.Wrappers;
 
 namespace Application.Interfaces

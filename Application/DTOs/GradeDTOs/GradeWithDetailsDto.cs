@@ -1,11 +1,6 @@
 ﻿using Application.DTOs.ClassDTOs;
 using Application.DTOs.CurriculumDTOs;
 using Application.DTOs.SubjectDTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.DTOs.GradeDTOs
 {

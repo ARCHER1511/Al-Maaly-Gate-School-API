@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Application.DTOs.AuthDTOs
+﻿namespace Application.DTOs.AuthDTOs
 {
     public class RegisterRequest
     {

@@ -1,22 +1,20 @@
-﻿using System.Data;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
-using Application.Authentication;
+﻿using Application.Authentication;
 using Application.DTOs.AuthDTOs;
 using Application.DTOs.FileRequestDTOs;
 using Application.DTOs.ParentDTOs;
 using Application.Interfaces;
 using AutoMapper;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Win32;
+using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
 
 namespace Application.Services
 {

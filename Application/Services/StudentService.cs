@@ -5,9 +5,6 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
-using Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace Application.Services
 {

@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
     public class Grade : BaseEntity
     {
-        public string GradeName { get; set; }
-        public string Description { get; set; }
+        public string GradeName { get; set; } = string.Empty;
+        public string? Description { get; set; } = string.Empty;
 
         // Link to Curriculum
-        public string CurriculumId { get; set; }
-        public Curriculum Curriculum { get; set; }
+        public string CurriculumId { get; set; } = string.Empty;
+        public Curriculum Curriculum { get; set; } = default!;
 
-        public List<Class> Classes { get; set; }
-        public List<Subject> Subjects { get; set; }
+        public List<Class> Classes { get; set; } = new List<Class>();
+        public List<Subject> Subjects { get; set; } = new List<Subject>();
     }
 }
