@@ -7,9 +7,9 @@
 
         // Link to Curriculum
         public string CurriculumId { get; set; } = string.Empty;
-        public Curriculum Curriculum { get; set; } = default!;
+        public Curriculum Curriculum { get; set; } = null!;
 
-        public List<Class> Classes { get; set; } = new List<Class>();
-        public List<Subject> Subjects { get; set; } = new List<Subject>();
+        public ICollection<Class> Classes { get; set; } = new HashSet<Class>();
+        public ICollection<Subject> Subjects { get; set; } = new HashSet<Subject>();
     }
 }

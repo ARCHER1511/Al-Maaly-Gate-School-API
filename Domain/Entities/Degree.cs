@@ -17,7 +17,7 @@
 
 
         // New: Dynamic components
-        public ICollection<DegreeComponent> Components { get; set; } = new List<DegreeComponent>();
+        public ICollection<DegreeComponent> Components { get; set; } = new HashSet<DegreeComponent>();
 
         // Method to calculate total score from components
         public void CalculateTotalScore()

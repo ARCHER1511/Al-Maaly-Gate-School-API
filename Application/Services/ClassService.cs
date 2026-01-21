@@ -12,37 +12,39 @@ namespace Application.Services
 {
     public class ClassService : IClassService
     {
-        private readonly IClassRepository _classRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ClassService(IClassRepository classRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public ClassService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _classRepository = classRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         public async Task<ServiceResult<IEnumerable<ClassViewDto>>> GetAllAsync()
         {
-            var result = await _classRepository.FindAllAsync(
-                include: q => q.Include(t => t.TeacherClasses)
-                               .ThenInclude(tc => tc.Teacher)
-                              .Include(s => s.Students)
-                              .Include(ca => ca.ClassAssets)
-                              .Include(cp => cp.ClassAppointments)
-                              .Include(c => c.Grade)!); // ADDED: Include Grade
+            var result = await _unitOfWork.ClassRepository.FindAllAsync(include: q =>
+                q.Include(t => t.TeacherClasses)
+                    .ThenInclude(tc => tc.Teacher)
+                    .Include(s => s.Students)
+                    .Include(ca => ca.ClassAssets)
+                    .Include(cp => cp.ClassAppointments)
+                    .Include(c => c.Grade)!
+            ); // ADDED: Include Grade
 
             if (result == null)
                 return ServiceResult<IEnumerable<ClassViewDto>>.Fail("Classes not found");
 
             var resultDto = _mapper.Map<IEnumerable<ClassViewDto>>(result);
-            return ServiceResult<IEnumerable<ClassViewDto>>.Ok(resultDto, "Classes retrieved successfully");
+            return ServiceResult<IEnumerable<ClassViewDto>>.Ok(
+                resultDto,
+                "Classes retrieved successfully"
+            );
         }
 
         public async Task<ServiceResult<ClassViewDto>> GetByIdAsync(object id)
         {
-            var result = await _classRepository.GetByIdAsync(id);
+            var result = await _unitOfWork.ClassRepository.GetByIdAsync(id);
             if (result == null)
                 return ServiceResult<ClassViewDto>.Fail("Class not found");
 
@@ -55,7 +57,7 @@ namespace Application.Services
             var result = _mapper.Map<Class>(dto);
             result.Id = Guid.NewGuid().ToString(); // Always generate new ID
 
-            await _classRepository.AddAsync(result);
+            await _unitOfWork.ClassRepository.AddAsync(result);
             await _unitOfWork.SaveChangesAsync();
 
             var viewDto = _mapper.Map<ClassDto>(result);
@@ -64,13 +66,13 @@ namespace Application.Services
 
         public async Task<ServiceResult<ClassDto>> UpdateAsync(UpdateClassDto dto)
         {
-            var existingResult = await _classRepository.GetByIdAsync(dto.Id);
+            var existingResult = await _unitOfWork.ClassRepository.GetByIdAsync(dto.Id);
             if (existingResult == null)
                 return ServiceResult<ClassDto>.Fail("Class not found");
 
             _mapper.Map(dto, existingResult);
 
-            _classRepository.Update(existingResult);
+            _unitOfWork.ClassRepository.Update(existingResult);
             await _unitOfWork.SaveChangesAsync();
 
             var viewDto = _mapper.Map<ClassDto>(existingResult);
@@ -79,35 +81,38 @@ namespace Application.Services
 
         public async Task<ServiceResult<bool>> DeleteAsync(object id)
         {
-            var result = await _classRepository.GetByIdAsync(id);
+            var result = await _unitOfWork.ClassRepository.GetByIdAsync(id);
             if (result == null)
                 return ServiceResult<bool>.Fail("Class not found");
 
-            _classRepository.Delete(result);
+            _unitOfWork.ClassRepository.Delete(result);
             await _unitOfWork.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true, "Class deleted successfully");
         }
 
         public async Task<ServiceResult<IEnumerable<ClassViewDto>>> GetAllWithTeachersAsync()
         {
-            var result = await _classRepository.GetAllWithTeachersAsync();
+            var result = await _unitOfWork.ClassRepository.GetAllWithTeachersAsync();
 
             if (result == null || !result.Any())
                 return ServiceResult<IEnumerable<ClassViewDto>>.Fail("No classes found");
 
             var dto = _mapper.Map<IEnumerable<ClassViewDto>>(result);
-            return ServiceResult<IEnumerable<ClassViewDto>>.Ok(dto, "Classes with teachers retrieved successfully");
+            return ServiceResult<IEnumerable<ClassViewDto>>.Ok(
+                dto,
+                "Classes with teachers retrieved successfully"
+            );
         }
 
         public async Task<ServiceResult<List<Student>>> GetStudentsByClassIdAsync(string classId)
         {
-            var students = await _classRepository.GetStudentsByClassIdAsync(classId);
+            var students = await _unitOfWork.ClassRepository.GetStudentsByClassIdAsync(classId);
             return ServiceResult<List<Student>>.Ok(students);
         }
 
         public async Task<ServiceResult<List<Subject>>> GetSubjectsByClassIdAsync(string classId)
         {
-            var subjects = await _classRepository.GetSubjectsByClassIdAsync(classId);
+            var subjects = await _unitOfWork.ClassRepository.GetSubjectsByClassIdAsync(classId);
             return ServiceResult<List<Subject>>.Ok(subjects);
         }
 
@@ -121,8 +126,7 @@ namespace Application.Services
             // Get the class
             var classEntity = await classRepo.FirstOrDefaultAsync(
                 c => c.Id == classId,
-                q => q.Include(c => c.Students)
-                      .Include(c => c.Exams)
+                q => q.Include(c => c.Students).Include(c => c.Exams)!
             );
 
             if (classEntity == null)
@@ -144,10 +148,13 @@ namespace Application.Services
             double averageScore = 0;
             if (totalStudents > 0)
             {
-                var studentIds = classEntity.Students?.Select(s => s.Id).ToList() ?? new List<string>();
+                var studentIds =
+                    classEntity.Students?.Select(s => s.Id).ToList() ?? new List<string>();
                 if (studentIds.Any())
                 {
-                    var degrees = await degreeRepo.FindAllAsync(d => studentIds.Contains(d.StudentId));
+                    var degrees = await degreeRepo.FindAllAsync(d =>
+                        studentIds.Contains(d.StudentId)
+                    );
                     averageScore = degrees.Any() ? degrees.Average(d => d.Score) : 0;
                 }
             }
@@ -161,10 +168,13 @@ namespace Application.Services
                 CompletedExams = completedExams,
                 PendingAssignments = pendingExams, // Using upcoming exams as pending assignments
                 TotalStudents = totalStudents,
-                TotalTeachers = teacherCount.Count()
+                TotalTeachers = teacherCount.Count(),
             };
 
-            return ServiceResult<ClassStatisticsDto>.Ok(statistics, "Class statistics retrieved successfully.");
+            return ServiceResult<ClassStatisticsDto>.Ok(
+                statistics,
+                "Class statistics retrieved successfully."
+            );
         }
 
         public async Task<ServiceResult<byte[]>> ExportClassDataAsync(string classId)
@@ -177,19 +187,21 @@ namespace Application.Services
                 // Get class with related data
                 var classEntity = await classRepo.FirstOrDefaultAsync(
                     c => c.Id == classId,
-                    q => q.Include(c => c.Students)
-                          .ThenInclude(s => s.AppUser)
-                          .Include(c => c.TeacherClasses)
-                          .ThenInclude(tc => tc.Teacher)
-                          .ThenInclude(t => t.AppUser)
-                          .Include(c => c.Grade)
+                    q =>
+                        q.Include(c => c.Students)!
+                            .ThenInclude(s => s.AppUser)
+                            .Include(c => c.TeacherClasses)
+                            .ThenInclude(tc => tc.Teacher)
+                            .ThenInclude(t => t.AppUser)
+                            .Include(c => c.Grade)
                 );
 
                 if (classEntity == null)
                     return ServiceResult<byte[]>.Fail("Class not found.");
 
                 // Get student scores from degrees
-                var studentIds = classEntity.Students?.Select(s => s.Id).ToList() ?? new List<string>();
+                var studentIds =
+                    classEntity.Students?.Select(s => s.Id).ToList() ?? new List<string>();
                 var studentDegrees = studentIds.Any()
                     ? await degreeRepo.FindAllAsync(d => studentIds.Contains(d.StudentId))
                     : new List<Degree>();
@@ -218,7 +230,15 @@ namespace Application.Services
                 row++;
 
                 // Student headers
-                string[] studentHeaders = { "Student Name", "Email", "Class Year", "Age", "Average Score", "Subject Count" };
+                string[] studentHeaders =
+                {
+                    "Student Name",
+                    "Email",
+                    "Class Year",
+                    "Age",
+                    "Average Score",
+                    "Subject Count",
+                };
                 for (int col = 0; col < studentHeaders.Length; col++)
                 {
                     sl.SetCellValue(row, col + 1, studentHeaders[col]);
@@ -230,9 +250,16 @@ namespace Application.Services
                 {
                     foreach (var student in classEntity.Students)
                     {
-                        var studentDegreesList = studentDegrees.Where(d => d.StudentId == student.Id).ToList();
-                        var averageScore = studentDegreesList.Any() ? studentDegreesList.Average(d => d.Score) : 0;
-                        var subjectCount = studentDegreesList.Select(d => d.SubjectId).Distinct().Count();
+                        var studentDegreesList = studentDegrees
+                            .Where(d => d.StudentId == student.Id)
+                            .ToList();
+                        var averageScore = studentDegreesList.Any()
+                            ? studentDegreesList.Average(d => d.Score)
+                            : 0;
+                        var subjectCount = studentDegreesList
+                            .Select(d => d.SubjectId)
+                            .Distinct()
+                            .Count();
 
                         sl.SetCellValue(row, 1, student.AppUser?.FullName ?? "N/A");
                         sl.SetCellValue(row, 2, student.Email);
@@ -274,7 +301,10 @@ namespace Application.Services
                 // Convert to byte array
                 using var stream = new MemoryStream();
                 sl.SaveAs(stream);
-                return ServiceResult<byte[]>.Ok(stream.ToArray(), "Class data exported successfully.");
+                return ServiceResult<byte[]>.Ok(
+                    stream.ToArray(),
+                    "Class data exported successfully."
+                );
             }
             catch (Exception ex)
             {
@@ -289,13 +319,13 @@ namespace Application.Services
                 var classRepo = _unitOfWork.Repository<Class>();
 
                 // Get all classes with related data
-                var classes = await classRepo.FindAllAsync(
-                    include: q => q.Include(c => c.Students)
-                                  .Include(c => c.TeacherClasses)
-                                  .ThenInclude(tc => tc.Teacher)
-                                  .ThenInclude(t => t.AppUser)
-                                  .Include(c => c.Grade)
-                                  .Include(c => c.Exams)
+                var classes = await classRepo.FindAllAsync(include: q =>
+                    q.Include(c => c.Students)
+                        .Include(c => c.TeacherClasses)
+                        .ThenInclude(tc => tc.Teacher)
+                        .ThenInclude(t => t.AppUser)
+                        .Include(c => c.Grade)
+                        .Include(c => c.Exams)!
                 );
 
                 if (!classes.Any())
@@ -306,7 +336,14 @@ namespace Application.Services
                 sl.RenameWorksheet(SLDocument.DefaultFirstSheetName, "All Classes");
 
                 // Add header row
-                string[] headers = { "Class Name", "Grade", "Student Count", "Teacher Count", "Exam Count" };
+                string[] headers =
+                {
+                    "Class Name",
+                    "Grade",
+                    "Student Count",
+                    "Teacher Count",
+                    "Exam Count",
+                };
                 for (int col = 0; col < headers.Length; col++)
                 {
                     sl.SetCellValue(1, col + 1, headers[col]);
@@ -331,11 +368,16 @@ namespace Application.Services
                 // Convert to byte array
                 using var stream = new MemoryStream();
                 sl.SaveAs(stream);
-                return ServiceResult<byte[]>.Ok(stream.ToArray(), "All classes data exported successfully.");
+                return ServiceResult<byte[]>.Ok(
+                    stream.ToArray(),
+                    "All classes data exported successfully."
+                );
             }
             catch (Exception ex)
             {
-                return ServiceResult<byte[]>.Fail($"Error exporting all classes data: {ex.Message}");
+                return ServiceResult<byte[]>.Fail(
+                    $"Error exporting all classes data: {ex.Message}"
+                );
             }
         }
 
@@ -344,7 +386,11 @@ namespace Application.Services
         {
             var style = new SLStyle();
             style.Font.Bold = true;
-            style.Fill.SetPattern(PatternValues.Solid, System.Drawing.Color.LightGray, System.Drawing.Color.LightGray);
+            style.Fill.SetPattern(
+                PatternValues.Solid,
+                System.Drawing.Color.LightGray,
+                System.Drawing.Color.LightGray
+            );
             return style;
         }
 
@@ -352,7 +398,7 @@ namespace Application.Services
         {
             try
             {
-                var allClasses = await _classRepository.FindAllAsync();
+                var allClasses = await _unitOfWork.ClassRepository.FindAllAsync();
                 var count = allClasses.Count();
                 return ServiceResult<int>.Ok(count, $"Total classes: {count}");
             }

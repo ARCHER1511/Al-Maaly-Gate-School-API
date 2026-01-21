@@ -9,12 +9,12 @@
 
         public double CreditHours { get; set; } = 3.0;
 
-        public List<TeacherSubject>? TeacherSubjects { get; set; } = new();
+        public ICollection<TeacherSubject>? TeacherSubjects { get; set; } = new HashSet<TeacherSubject>();
 
-        public List<Exam>? Exams { get; set; }
-        public List<ClassAppointment>? ClassAppointments { get; set; }
+        public ICollection<Exam>? Exams { get; set; } = new HashSet<Exam>();
+        public ICollection<ClassAppointment>? ClassAppointments { get; set; } = new HashSet<ClassAppointment>();
 
-        public List<Degree>? Degrees { get; set; } = new();
-        public ICollection<DegreeComponentType> ComponentTypes { get; set; } = new List<DegreeComponentType>();
+        public ICollection<Degree>? Degrees { get; set; } = new HashSet<Degree>();
+        public ICollection<DegreeComponentType> ComponentTypes { get; set; } = new HashSet<DegreeComponentType>();
     }
 }
