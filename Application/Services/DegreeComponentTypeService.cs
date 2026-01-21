@@ -15,7 +15,9 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ServiceResult<DegreeComponentTypeDto>> CreateComponentTypeAsync(CreateDegreeComponentTypeDto dto)
+        public async Task<ServiceResult<DegreeComponentTypeDto>> CreateComponentTypeAsync(
+            CreateDegreeComponentTypeDto dto
+        )
         {
             try
             {
@@ -25,11 +27,15 @@ namespace Application.Services
                     return ServiceResult<DegreeComponentTypeDto>.Fail("Subject not found");
 
                 // Check if component name already exists for this subject
-                var existing = await _unitOfWork.DegreeComponentTypes.FirstOrDefaultAsync(
-                    c => c.SubjectId == dto.SubjectId && c.ComponentName.ToLower() == dto.ComponentName.ToLower());
+                var existing = await _unitOfWork.DegreeComponentTypes.FirstOrDefaultAsync(c =>
+                    c.SubjectId == dto.SubjectId
+                    && c.ComponentName.ToLower() == dto.ComponentName.ToLower()!
+                );
 
                 if (existing != null)
-                    return ServiceResult<DegreeComponentTypeDto>.Fail($"Component '{dto.ComponentName}' already exists for this subject");
+                    return ServiceResult<DegreeComponentTypeDto>.Fail(
+                        $"Component '{dto.ComponentName}' already exists for this subject"
+                    );
 
                 // Get the next order number
                 var maxOrder = await _unitOfWork.DegreeComponentTypes.FindAllAsync(
@@ -44,7 +50,7 @@ namespace Application.Services
                     ComponentName = dto.ComponentName,
                     Order = dto.Order > 0 ? dto.Order : nextOrder,
                     MaxScore = dto.MaxScore,
-                    IsActive = dto.IsActive
+                    IsActive = dto.IsActive,
                 };
 
                 await _unitOfWork.DegreeComponentTypes.AddAsync(componentType);
@@ -57,18 +63,26 @@ namespace Application.Services
                     ComponentName = componentType.ComponentName,
                     Order = componentType.Order,
                     MaxScore = componentType.MaxScore,
-                    IsActive = componentType.IsActive
+                    IsActive = componentType.IsActive,
                 };
 
-                return ServiceResult<DegreeComponentTypeDto>.Ok(resultDto, "Component type created successfully");
+                return ServiceResult<DegreeComponentTypeDto>.Ok(
+                    resultDto,
+                    "Component type created successfully"
+                );
             }
             catch (Exception ex)
             {
-                return ServiceResult<DegreeComponentTypeDto>.Fail($"Error creating component type: {ex.Message}");
+                return ServiceResult<DegreeComponentTypeDto>.Fail(
+                    $"Error creating component type: {ex.Message}"
+                );
             }
         }
 
-        public async Task<ServiceResult<DegreeComponentTypeDto>> UpdateComponentTypeAsync(string id, UpdateDegreeComponentTypeDto dto)
+        public async Task<ServiceResult<DegreeComponentTypeDto>> UpdateComponentTypeAsync(
+            string id,
+            UpdateDegreeComponentTypeDto dto
+        )
         {
             try
             {
@@ -77,13 +91,16 @@ namespace Application.Services
                     return ServiceResult<DegreeComponentTypeDto>.Fail("Component type not found");
 
                 // Check if component name already exists for this subject (excluding current one)
-                var existing = await _unitOfWork.DegreeComponentTypes.FirstOrDefaultAsync(
-                    c => c.SubjectId == componentType.SubjectId &&
-                         c.Id != id &&
-                         c.ComponentName.ToLower() == dto.ComponentName.ToLower());
+                var existing = await _unitOfWork.DegreeComponentTypes.FirstOrDefaultAsync(c =>
+                    c.SubjectId == componentType.SubjectId
+                    && c.Id != id
+                    && c.ComponentName.ToLower() == dto.ComponentName.ToLower()!
+                );
 
                 if (existing != null)
-                    return ServiceResult<DegreeComponentTypeDto>.Fail($"Component '{dto.ComponentName}' already exists for this subject");
+                    return ServiceResult<DegreeComponentTypeDto>.Fail(
+                        $"Component '{dto.ComponentName}' already exists for this subject"
+                    );
 
                 // Update properties
                 componentType.ComponentName = dto.ComponentName;
@@ -102,14 +119,19 @@ namespace Application.Services
                     ComponentName = componentType.ComponentName,
                     Order = componentType.Order,
                     MaxScore = componentType.MaxScore,
-                    IsActive = componentType.IsActive
+                    IsActive = componentType.IsActive,
                 };
 
-                return ServiceResult<DegreeComponentTypeDto>.Ok(resultDto, "Component type updated successfully");
+                return ServiceResult<DegreeComponentTypeDto>.Ok(
+                    resultDto,
+                    "Component type updated successfully"
+                );
             }
             catch (Exception ex)
             {
-                return ServiceResult<DegreeComponentTypeDto>.Fail($"Error updating component type: {ex.Message}");
+                return ServiceResult<DegreeComponentTypeDto>.Fail(
+                    $"Error updating component type: {ex.Message}"
+                );
             }
         }
 
@@ -122,8 +144,9 @@ namespace Application.Services
                     return ServiceResult<bool>.Fail("Component type not found");
 
                 // Check if this component type is used in any degrees
-                var usedInDegrees = await _unitOfWork.DegreesComponent.FirstOrDefaultAsync(
-                    c => c.ComponentTypeId == id);
+                var usedInDegrees = await _unitOfWork.DegreesComponent.FirstOrDefaultAsync(c =>
+                    c.ComponentTypeId == id
+                );
 
                 if (usedInDegrees != null)
                 {
@@ -131,7 +154,10 @@ namespace Application.Services
                     componentType.IsActive = false;
                     await _unitOfWork.DegreeComponentTypes.UpdateAsync(componentType);
                     await _unitOfWork.SaveChangesAsync();
-                    return ServiceResult<bool>.Ok(true, "Component type marked as inactive (it is being used in existing degrees)");
+                    return ServiceResult<bool>.Ok(
+                        true,
+                        "Component type marked as inactive (it is being used in existing degrees)"
+                    );
                 }
 
                 await _unitOfWork.DegreeComponentTypes.DeleteAsync(componentType);
@@ -145,7 +171,9 @@ namespace Application.Services
             }
         }
 
-        public async Task<ServiceResult<List<DegreeComponentTypeDto>>> GetComponentTypesBySubjectAsync(string subjectId)
+        public async Task<
+            ServiceResult<List<DegreeComponentTypeDto>>
+        > GetComponentTypesBySubjectAsync(string subjectId)
         {
             try
             {
@@ -154,25 +182,31 @@ namespace Application.Services
                     orderBy: q => q.OrderBy(c => c.Order)
                 );
 
-                var result = componentTypes.Select(c => new DegreeComponentTypeDto
-                {
-                    Id = c.Id,
-                    SubjectId = c.SubjectId,
-                    ComponentName = c.ComponentName,
-                    Order = c.Order,
-                    MaxScore = c.MaxScore,
-                    IsActive = c.IsActive
-                }).ToList();
+                var result = componentTypes
+                    .Select(c => new DegreeComponentTypeDto
+                    {
+                        Id = c.Id,
+                        SubjectId = c.SubjectId,
+                        ComponentName = c.ComponentName,
+                        Order = c.Order,
+                        MaxScore = c.MaxScore,
+                        IsActive = c.IsActive,
+                    })
+                    .ToList();
 
                 return ServiceResult<List<DegreeComponentTypeDto>>.Ok(result);
             }
             catch (Exception ex)
             {
-                return ServiceResult<List<DegreeComponentTypeDto>>.Fail($"Error loading component types: {ex.Message}");
+                return ServiceResult<List<DegreeComponentTypeDto>>.Fail(
+                    $"Error loading component types: {ex.Message}"
+                );
             }
         }
 
-        public async Task<ServiceResult<DegreeComponentTypeDto>> GetComponentTypeByIdAsync(string id)
+        public async Task<ServiceResult<DegreeComponentTypeDto>> GetComponentTypeByIdAsync(
+            string id
+        )
         {
             try
             {
@@ -187,23 +221,28 @@ namespace Application.Services
                     ComponentName = componentType.ComponentName,
                     Order = componentType.Order,
                     MaxScore = componentType.MaxScore,
-                    IsActive = componentType.IsActive
+                    IsActive = componentType.IsActive,
                 };
 
                 return ServiceResult<DegreeComponentTypeDto>.Ok(resultDto);
             }
             catch (Exception ex)
             {
-                return ServiceResult<DegreeComponentTypeDto>.Fail($"Error loading component type: {ex.Message}");
+                return ServiceResult<DegreeComponentTypeDto>.Fail(
+                    $"Error loading component type: {ex.Message}"
+                );
             }
         }
 
-        public async Task<ServiceResult<bool>> ReorderComponentTypesAsync(string subjectId, List<string> componentTypeIds)
+        public async Task<ServiceResult<bool>> ReorderComponentTypesAsync(
+            string subjectId,
+            List<string> componentTypeIds
+        )
         {
             try
             {
-                var componentTypes = await _unitOfWork.DegreeComponentTypes.FindAllAsync(
-                    c => c.SubjectId == subjectId && componentTypeIds.Contains(c.Id)
+                var componentTypes = await _unitOfWork.DegreeComponentTypes.FindAllAsync(c =>
+                    c.SubjectId == subjectId && componentTypeIds.Contains(c.Id)
                 );
 
                 if (componentTypes.Count() != componentTypeIds.Count)
@@ -211,7 +250,9 @@ namespace Application.Services
 
                 for (int i = 0; i < componentTypeIds.Count; i++)
                 {
-                    var componentType = componentTypes.FirstOrDefault(c => c.Id == componentTypeIds[i]);
+                    var componentType = componentTypes.FirstOrDefault(c =>
+                        c.Id == componentTypeIds[i]
+                    );
                     if (componentType != null)
                     {
                         componentType.Order = i + 1;

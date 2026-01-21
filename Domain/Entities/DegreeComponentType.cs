@@ -11,6 +11,6 @@
         public bool IsActive { get; set; } = true;
 
         // Navigation
-        public ICollection<DegreeComponent> Components { get; set; } = new List<DegreeComponent>();
+        public ICollection<DegreeComponent> Components { get; set; } = new HashSet<DegreeComponent>();
     }
 }

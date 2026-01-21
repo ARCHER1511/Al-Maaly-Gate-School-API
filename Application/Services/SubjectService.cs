@@ -10,13 +10,11 @@ namespace Application.Services
 {
     public class SubjectService : ISubjectService
     {
-        private readonly ISubjectRepository _subjectRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public SubjectService(ISubjectRepository subjectRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public SubjectService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _subjectRepository = subjectRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -24,7 +22,7 @@ namespace Application.Services
         public async Task<ServiceResult<SubjectViewDto>> Create(SubjectCreateDto dto)
         {
             var subjectEntity = _mapper.Map<Subject>(dto);
-            await _subjectRepository.AddAsync(subjectEntity);
+            await _unitOfWork.SubjectRepository.AddAsync(subjectEntity);
             var result = await _unitOfWork.SaveChangesAsync();
 
             if (result <= 0)
@@ -33,12 +31,15 @@ namespace Application.Services
             }
 
             var subjectViewDto = _mapper.Map<SubjectViewDto>(subjectEntity);
-            return ServiceResult<SubjectViewDto>.Ok(subjectViewDto, "Subject created successfully.");
+            return ServiceResult<SubjectViewDto>.Ok(
+                subjectViewDto,
+                "Subject created successfully."
+            );
         }
 
         public async Task<ServiceResult<IEnumerable<SubjectViewDto>>> GetAll()
         {
-            var subjects = await _subjectRepository.GetAllAsync();
+            var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
             var subjectViewDtos = _mapper.Map<IEnumerable<SubjectViewDto>>(subjects);
 
             if (subjectViewDtos == null || !subjectViewDtos.Any())
@@ -46,12 +47,17 @@ namespace Application.Services
                 return ServiceResult<IEnumerable<SubjectViewDto>>.Fail("No subjects found.");
             }
 
-            return ServiceResult<IEnumerable<SubjectViewDto>>.Ok(subjectViewDtos, "Subjects retrieved successfully.");
+            return ServiceResult<IEnumerable<SubjectViewDto>>.Ok(
+                subjectViewDtos,
+                "Subjects retrieved successfully."
+            );
         }
 
-        public async Task<ServiceResult<IEnumerable<SubjectViewDto>>> GetSubjectsByGradeIdAsync(string gradeId)
+        public async Task<ServiceResult<IEnumerable<SubjectViewDto>>> GetSubjectsByGradeIdAsync(
+            string gradeId
+        )
         {
-            var subjects = await _subjectRepository.GetSubjectsByGradeIdAsync(gradeId);
+            var subjects = await _unitOfWork.SubjectRepository.GetSubjectsByGradeIdAsync(gradeId);
             var data = _mapper.Map<IEnumerable<SubjectViewDto>>(subjects);
             return ServiceResult<IEnumerable<SubjectViewDto>>.Ok(data);
         }
@@ -59,14 +65,17 @@ namespace Application.Services
         public async Task<ServiceResult<SubjectViewDto>> GetById(string id)
         {
             // Updated to include component types
-            var subject = await _subjectRepository.GetByIdAsync(id);
+            var subject = await _unitOfWork.SubjectRepository.GetByIdAsync(id);
             if (subject == null)
             {
                 return ServiceResult<SubjectViewDto>.Fail("Subject not found.");
             }
 
             var subjectViewDto = _mapper.Map<SubjectViewDto>(subject);
-            return ServiceResult<SubjectViewDto>.Ok(subjectViewDto, "Subject retrieved successfully.");
+            return ServiceResult<SubjectViewDto>.Ok(
+                subjectViewDto,
+                "Subject retrieved successfully."
+            );
         }
 
         public async Task<ServiceResult<SubjectViewDto>> GetWithComponents(string id)
@@ -75,9 +84,9 @@ namespace Application.Services
             {
                 var subject = await _unitOfWork.Subjects.FirstOrDefaultAsync(
                     s => s.Id == id,
-                    include: q => q
-                        .Include(s => s.ComponentTypes.Where(ct => ct.IsActive))
-                        .Include(s => s.Grade)
+                    include: q =>
+                        q.Include(s => s.ComponentTypes.Where(ct => ct.IsActive))
+                            .Include(s => s.Grade)
                 );
 
                 if (subject == null)
@@ -94,14 +103,14 @@ namespace Application.Services
 
         public async Task<ServiceResult<SubjectViewDto>> Update(SubjectUpdateDto dto)
         {
-            var subjectEntity = await _subjectRepository.GetByIdAsync(dto.Id);
+            var subjectEntity = await _unitOfWork.SubjectRepository.GetByIdAsync(dto.Id);
             if (subjectEntity == null)
             {
                 return ServiceResult<SubjectViewDto>.Fail("Subject not found.");
             }
 
             _mapper.Map(dto, subjectEntity);
-            _subjectRepository.Update(subjectEntity);
+            _unitOfWork.SubjectRepository.Update(subjectEntity);
             var result = await _unitOfWork.SaveChangesAsync();
 
             if (result <= 0)
@@ -110,18 +119,21 @@ namespace Application.Services
             }
 
             var subjectViewDto = _mapper.Map<SubjectViewDto>(subjectEntity);
-            return ServiceResult<SubjectViewDto>.Ok(subjectViewDto, "Subject updated successfully.");
+            return ServiceResult<SubjectViewDto>.Ok(
+                subjectViewDto,
+                "Subject updated successfully."
+            );
         }
 
         public async Task<ServiceResult<bool>> Delete(string id)
         {
-            var subjectEntity = await _subjectRepository.GetByIdAsync(id);
+            var subjectEntity = await _unitOfWork.SubjectRepository.GetByIdAsync(id);
             if (subjectEntity == null)
             {
                 return ServiceResult<bool>.Fail("Subject not found.");
             }
 
-            _subjectRepository.Delete(subjectEntity);
+            _unitOfWork.SubjectRepository.Delete(subjectEntity);
             var result = await _unitOfWork.SaveChangesAsync();
 
             if (result <= 0)
@@ -136,7 +148,7 @@ namespace Application.Services
         {
             try
             {
-                var allSubjects = await _subjectRepository.GetAllAsync();
+                var allSubjects = await _unitOfWork.SubjectRepository.GetAllAsync();
                 var count = allSubjects.Count();
                 return ServiceResult<int>.Ok(count, $"Total subjects: {count}");
             }
@@ -147,11 +159,13 @@ namespace Application.Services
         }
 
         // NEW: Get subjects with component types
-        public async Task<ServiceResult<IEnumerable<SubjectViewDto>>> GetSubjectsWithComponentTypes()
+        public async Task<
+            ServiceResult<IEnumerable<SubjectViewDto>>
+        > GetSubjectsWithComponentTypes()
         {
             try
             {
-                var subjects = await _subjectRepository.GetAllAsync();
+                var subjects = await _unitOfWork.SubjectRepository.GetAllAsync();
                 var subjectsWithComponents = subjects
                     .Where(s => s.ComponentTypes != null && s.ComponentTypes.Any())
                     .ToList();
@@ -161,7 +175,9 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                return ServiceResult<IEnumerable<SubjectViewDto>>.Fail($"Error loading subjects: {ex.Message}");
+                return ServiceResult<IEnumerable<SubjectViewDto>>.Fail(
+                    $"Error loading subjects: {ex.Message}"
+                );
             }
         }
 
@@ -170,11 +186,12 @@ namespace Application.Services
         {
             try
             {
-                var subject = await _subjectRepository.GetByIdAsync(subjectId);
+                var subject = await _unitOfWork.SubjectRepository.GetByIdAsync(subjectId);
                 if (subject == null)
                     return ServiceResult<bool>.Fail("Subject not found");
 
-                var hasComponents = subject.ComponentTypes != null && subject.ComponentTypes.Any(ct => ct.IsActive);
+                var hasComponents =
+                    subject.ComponentTypes != null && subject.ComponentTypes.Any(ct => ct.IsActive);
                 return ServiceResult<bool>.Ok(hasComponents);
             }
             catch (Exception ex)

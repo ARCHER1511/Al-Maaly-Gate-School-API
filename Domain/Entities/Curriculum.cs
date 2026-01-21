@@ -29,15 +29,15 @@
         public DateTime? UpdatedAt { get; set; }
 
         // Each curriculum has its own grades
-        public List<Grade> Grades { get; set; } = new();
+        public ICollection<Grade> Grades { get; set; } = new HashSet<Grade>();
 
         // Students enrolled in this curriculum
-        public List<Student> Students { get; set; } = new();
+        public ICollection<Student> Students { get; set; } = new HashSet<Student>();
 
         // Teachers specialized in this curriculum
-        public List<Teacher> Teachers { get; set; } = new();
+        public ICollection<Teacher> Teachers { get; set; } = new HashSet<Teacher>();
 
         // Certificates issued for this curriculum
-        public List<Certificate> Certificates { get; set; } = new();
+        public ICollection<Certificate> Certificates { get; set; } = new HashSet<Certificate>();
     }
 }

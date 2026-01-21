@@ -10,7 +10,6 @@ namespace Application.Services
     public class FileService : IFileService
     {
         private readonly string _rootPath;
-        private readonly IFileRecordRepository _recordRepo;
         private readonly IUnitOfWork _unitOfWork;
 
         private static readonly string[] _allowedExtensions =
@@ -24,14 +23,9 @@ namespace Application.Services
             ".docx",
         };
 
-        public FileService(
-            IWebHostEnvironment env,
-            IFileRecordRepository recordRepo,
-            IUnitOfWork unitOfWork
-        )
+        public FileService(IWebHostEnvironment env, IUnitOfWork unitOfWork)
         {
             _rootPath = Path.Combine(env.WebRootPath, "uploads");
-            _recordRepo = recordRepo;
             _unitOfWork = unitOfWork;
         }
 
@@ -46,7 +40,7 @@ namespace Application.Services
             if (string.IsNullOrWhiteSpace(userId))
                 return ServiceResult<FileRecord?>.Fail("UserId is required");
 
-            var file = await _recordRepo.GetByPathAsync(relativePath, userId);
+            var file = await _unitOfWork.FileRecordRepository.GetByPathAsync(relativePath, userId);
 
             if (file == null)
                 return ServiceResult<FileRecord?>.Fail("File not found");
@@ -62,7 +56,7 @@ namespace Application.Services
             if (string.IsNullOrWhiteSpace(userId))
                 return ServiceResult<FileRecord?>.Fail("UserId is required");
 
-            var file = await _recordRepo.GetByIdAsync(fileId, userId);
+            var file = await _unitOfWork.FileRecordRepository.GetByIdAsync(fileId, userId);
 
             if (file == null)
                 return ServiceResult<FileRecord?>.Fail("File not found");
@@ -99,7 +93,7 @@ namespace Application.Services
                 userId
             );
 
-            await _recordRepo.AddAsync(record);
+            await _unitOfWork.FileRecordRepository.AddAsync(record);
             await _unitOfWork.SaveChangesAsync();
 
             return ServiceResult<string>.Ok(relativePath, "Uploaded successfully");
@@ -150,7 +144,7 @@ namespace Application.Services
 
             if (records.Any())
             {
-                await _recordRepo.AddRangeAsync(records);
+                await _unitOfWork.FileRecordRepository.AddRangeAsync(records);
                 await _unitOfWork.SaveChangesAsync();
             }
 
@@ -163,7 +157,7 @@ namespace Application.Services
             ServiceResult<(byte[] FileBytes, string FileName, string ContentType)>
         > DownloadFileAsync(string filePath, string userId)
         {
-            var record = await _recordRepo.GetByPathAsync(filePath, userId);
+            var record = await _unitOfWork.FileRecordRepository.GetByPathAsync(filePath, userId);
             if (record == null)
                 return ServiceResult<(byte[], string, string)>.Fail("File not found.");
 
@@ -182,13 +176,13 @@ namespace Application.Services
 
         public async Task<ServiceResult<bool>> DeleteFileAsync(string filePath, string userId)
         {
-            var record = await _recordRepo.GetByPathAsync(filePath, userId);
+            var record = await _unitOfWork.FileRecordRepository.GetByPathAsync(filePath, userId);
             if (record == null)
                 return ServiceResult<bool>.Fail("File not found.");
 
             DeletePhysicalFile(filePath);
 
-            await _recordRepo.DeleteAsync(record.Id.ToString(), userId);
+            await _unitOfWork.FileRecordRepository.DeleteAsync(record.Id.ToString(), userId);
             await _unitOfWork.SaveChangesAsync();
 
             return ServiceResult<bool>.Ok(true, "File deleted");
@@ -198,7 +192,7 @@ namespace Application.Services
 
         public async Task<ServiceResult<IEnumerable<FileRecord>>> GetFilesByUserAsync(string userId)
         {
-            var files = await _recordRepo.GetFilesByUserIdAsync(userId);
+            var files = await _unitOfWork.FileRecordRepository.GetFilesByUserIdAsync(userId);
             return ServiceResult<IEnumerable<FileRecord>>.Ok(files);
         }
 
@@ -210,7 +204,7 @@ namespace Application.Services
                 return ServiceResult<IEnumerable<FileRecord>>.Fail("UserId is required");
 
             // Use the repository user-scoped method
-            var files = await _recordRepo.GetByTypeAsync(".pdf", userId);
+            var files = await _unitOfWork.FileRecordRepository.GetByTypeAsync(".pdf", userId);
 
             return ServiceResult<IEnumerable<FileRecord>>.Ok(
                 files,
@@ -220,7 +214,7 @@ namespace Application.Services
 
         public async Task<ServiceResult<long>> GetTotalStorageUsedAsync(string userId)
         {
-            var files = await _recordRepo.GetFilesByUserIdAsync(userId);
+            var files = await _unitOfWork.FileRecordRepository.GetFilesByUserIdAsync(userId);
             var total = files.Sum(f => f.FileSize);
             return ServiceResult<long>.Ok(total);
         }

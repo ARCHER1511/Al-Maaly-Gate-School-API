@@ -13,30 +13,18 @@ namespace Application.Services
 {
     public class TeacherService : ITeacherService
     {
-        private readonly ITeacherRepository _teacherRepo;
-        private readonly ISubjectRepository _subjectRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ICurriculumRepository _curriculumRepository; // Add this
 
-        public TeacherService(
-            ITeacherRepository teacherRepo,
-            ISubjectRepository subjectRepo,
-            IUnitOfWork unitOfWork,
-            IMapper mapper,
-            ICurriculumRepository curriculumRepository
-        ) // Add this
+        public TeacherService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _teacherRepo = teacherRepo;
-            _subjectRepo = subjectRepo;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _curriculumRepository = curriculumRepository;
         }
 
         public async Task<ServiceResult<IEnumerable<TeacherViewDto>>> GetAllAsync()
         {
-            var teachers = await _teacherRepo.FindAllAsync(
+            var teachers = await _unitOfWork.TeacherRepository.FindAllAsync(
                 predicate: null,
                 include: q =>
                     q.Include(t => t.AppUser)
@@ -74,7 +62,7 @@ namespace Application.Services
 
         public async Task<ServiceResult<TeacherViewDto>> GetByIdAsync(string id)
         {
-            var teacher = await _teacherRepo.FirstOrDefaultAsync(
+            var teacher = await _unitOfWork.TeacherRepository.FirstOrDefaultAsync(
                 t => t.Id == id,
                 include: q =>
                     q.Include(t => t.AppUser)
@@ -122,7 +110,7 @@ namespace Application.Services
             // Handle specialized curricula
             if (dto.SpecializedCurriculumIds != null && dto.SpecializedCurriculumIds.Any())
             {
-                var curricula = await _curriculumRepository.FindAllAsync(c =>
+                var curricula = await _unitOfWork.CurriculumRepository.FindAllAsync(c =>
                     dto.SpecializedCurriculumIds.Contains(c.Id)
                 );
 
@@ -130,11 +118,11 @@ namespace Application.Services
                 teacher.SpecializedCurricula = curricula.ToList();
             }
 
-            await _teacherRepo.AddAsync(teacher);
+            await _unitOfWork.TeacherRepository.AddAsync(teacher);
             await _unitOfWork.SaveChangesAsync();
 
             // Reload with details
-            var createdTeacher = await _teacherRepo.FirstOrDefaultAsync(
+            var createdTeacher = await _unitOfWork.TeacherRepository.FirstOrDefaultAsync(
                 t => t.Id == teacher.Id,
                 include: q => q.Include(t => t.SpecializedCurricula)
             );
@@ -150,7 +138,7 @@ namespace Application.Services
             UpdateTeacherDto dto
         )
         {
-            var teacher = await _teacherRepo.FirstOrDefaultAsync(
+            var teacher = await _unitOfWork.TeacherRepository.FirstOrDefaultAsync(
                 t => t.Id == id,
                 include: q => q.Include(t => t.SpecializedCurricula)
             );
@@ -163,18 +151,18 @@ namespace Application.Services
             // Handle specialized curricula updates
             if (dto.SpecializedCurriculumIds != null)
             {
-                var curricula = await _curriculumRepository.FindAllAsync(c =>
+                var curricula = await _unitOfWork.CurriculumRepository.FindAllAsync(c =>
                     dto.SpecializedCurriculumIds.Contains(c.Id)
                 );
 
                 teacher.SpecializedCurricula = curricula.ToList();
             }
 
-            _teacherRepo.Update(teacher);
+            _unitOfWork.TeacherRepository.Update(teacher);
             await _unitOfWork.SaveChangesAsync();
 
             // Reload with details
-            var updatedTeacher = await _teacherRepo.FirstOrDefaultAsync(
+            var updatedTeacher = await _unitOfWork.TeacherRepository.FirstOrDefaultAsync(
                 t => t.Id == id,
                 include: q => q.Include(t => t.SpecializedCurricula)
             );
@@ -187,11 +175,11 @@ namespace Application.Services
 
         public async Task<ServiceResult<bool>> DeleteAsync(string id)
         {
-            var teacher = await _teacherRepo.GetByIdAsync(id);
+            var teacher = await _unitOfWork.TeacherRepository.GetByIdAsync(id);
             if (teacher == null)
                 return ServiceResult<bool>.Fail("Teacher not found");
 
-            _teacherRepo.Delete(teacher);
+            _unitOfWork.TeacherRepository.Delete(teacher);
             await _unitOfWork.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true, "Teacher deleted successfully");
         }
@@ -201,7 +189,7 @@ namespace Application.Services
             string curriculumId
         )
         {
-            var teachers = await _teacherRepo.FindAllAsync(
+            var teachers = await _unitOfWork.TeacherRepository.FindAllAsync(
                 predicate: t => t.SpecializedCurricula.Any(c => c.Id == curriculumId),
                 include: q =>
                     q.Include(t => t.AppUser)
@@ -244,7 +232,7 @@ namespace Application.Services
             string curriculumId
         )
         {
-            var teacher = await _teacherRepo.FirstOrDefaultAsync(
+            var teacher = await _unitOfWork.TeacherRepository.FirstOrDefaultAsync(
                 t => t.Id == teacherId,
                 include: q => q.Include(t => t.SpecializedCurricula)
             );
@@ -252,7 +240,7 @@ namespace Application.Services
             if (teacher == null)
                 return ServiceResult<TeacherViewDto>.Fail("Teacher not found");
 
-            var curriculum = await _curriculumRepository.GetByIdAsync(curriculumId);
+            var curriculum = await _unitOfWork.CurriculumRepository.GetByIdAsync(curriculumId);
             if (curriculum == null)
                 return ServiceResult<TeacherViewDto>.Fail("Curriculum not found");
 
@@ -263,10 +251,10 @@ namespace Application.Services
                 );
 
             teacher.SpecializedCurricula.Add(curriculum);
-            _teacherRepo.Update(teacher);
+            _unitOfWork.TeacherRepository.Update(teacher);
             await _unitOfWork.SaveChangesAsync();
 
-            var updatedTeacher = await _teacherRepo.FirstOrDefaultAsync(
+            var updatedTeacher = await _unitOfWork.TeacherRepository.FirstOrDefaultAsync(
                 t => t.Id == teacherId,
                 include: q => q.Include(t => t.SpecializedCurricula)
             );
@@ -283,7 +271,7 @@ namespace Application.Services
             string curriculumId
         )
         {
-            var teacher = await _teacherRepo.FirstOrDefaultAsync(
+            var teacher = await _unitOfWork.TeacherRepository.FirstOrDefaultAsync(
                 t => t.Id == teacherId,
                 include: q => q.Include(t => t.SpecializedCurricula)
             );
@@ -298,10 +286,10 @@ namespace Application.Services
                 );
 
             teacher.SpecializedCurricula.Remove(curriculum);
-            _teacherRepo.Update(teacher);
+            _unitOfWork.TeacherRepository.Update(teacher);
             await _unitOfWork.SaveChangesAsync();
 
-            var updatedTeacher = await _teacherRepo.FirstOrDefaultAsync(
+            var updatedTeacher = await _unitOfWork.TeacherRepository.FirstOrDefaultAsync(
                 t => t.Id == teacherId,
                 include: q => q.Include(t => t.SpecializedCurricula)
             );
@@ -315,7 +303,7 @@ namespace Application.Services
         // New method: Get teacher count by curriculum
         public async Task<ServiceResult<int>> GetTeacherCountByCurriculumAsync(string curriculumId)
         {
-            var count = await _teacherRepo.GetCountAsync(t =>
+            var count = await _unitOfWork.TeacherRepository.GetCountAsync(t =>
                 t.SpecializedCurricula.Any(c => c.Id == curriculumId)
             );
 
@@ -328,7 +316,7 @@ namespace Application.Services
         // New method: Get detailed teacher view
         public async Task<ServiceResult<TeacherDetailsDto>> GetTeacherDetailsAsync(string id)
         {
-            var teacher = await _teacherRepo.FirstOrDefaultAsync(
+            var teacher = await _unitOfWork.TeacherRepository.FirstOrDefaultAsync(
                 t => t.Id == id,
                 include: q =>
                     q.Include(t => t.AppUser)
@@ -365,7 +353,7 @@ namespace Application.Services
                             Id = c.Id,
                             Name = c.Name,
                             Code = c.Code,
-                            Description = c.Description,
+                            Description = c.Description!,
                         })
                         .ToList() ?? new List<CurriculumDto>(),
                 AssignedClasses =
@@ -397,12 +385,14 @@ namespace Application.Services
         {
             if (string.IsNullOrWhiteSpace(subjectId))
                 return ServiceResult<IEnumerable<TeacherViewDto>>.Fail("SubjectId is required");
-            var subjectExists = await _subjectRepo.AnyAsync(s => s.Id == subjectId);
+            var subjectExists = await _unitOfWork.SubjectRepository.AnyAsync(s =>
+                s.Id == subjectId
+            );
 
             if (!subjectExists)
                 return ServiceResult<IEnumerable<TeacherViewDto>>.Fail("Subject not found");
 
-            var teachers = await _teacherRepo.FindAllAsync(t =>
+            var teachers = await _unitOfWork.TeacherRepository.FindAllAsync(t =>
                 t.TeacherSubjects == null || !t.TeacherSubjects.Any(ts => ts.SubjectId == subjectId)
             );
 
@@ -415,7 +405,9 @@ namespace Application.Services
             );
         }
 
-        public async Task<ServiceResult<IEnumerable<TeacherViewDto>>> GetTeachersNotAssignedToClassAsync(string classId)
+        public async Task<
+            ServiceResult<IEnumerable<TeacherViewDto>>
+        > GetTeachersNotAssignedToClassAsync(string classId)
         {
             if (string.IsNullOrWhiteSpace(classId))
                 return ServiceResult<IEnumerable<TeacherViewDto>>.Fail("ClassId is required");
@@ -424,16 +416,16 @@ namespace Application.Services
             // For now, let's assume you can check through teacher's assigned classes
 
             // Get all teachers who are NOT assigned to this specific class
-            var teachers = await _teacherRepo.FindAllAsync(
-                predicate: t => t.TeacherClasses == null ||
-                               !t.TeacherClasses.Any(tc => tc.ClassId == classId),
+            var teachers = await _unitOfWork.TeacherRepository.FindAllAsync(
+                predicate: t =>
+                    t.TeacherClasses == null || !t.TeacherClasses.Any(tc => tc.ClassId == classId),
                 include: q =>
                     q.Include(t => t.AppUser)
-                     .Include(t => t.TeacherSubjects!)
+                        .Include(t => t.TeacherSubjects!)
                         .ThenInclude(ts => ts.Subject)
-                     .Include(t => t.TeacherClasses)
+                        .Include(t => t.TeacherClasses)
                         .ThenInclude(tc => tc.Class)
-                     .Include(t => t.SpecializedCurricula)
+                        .Include(t => t.SpecializedCurricula)
             );
 
             // Map to TeacherViewDto
@@ -445,14 +437,16 @@ namespace Application.Services
                 ContactInfo = t.ContactInfo ?? string.Empty,
                 AppUserId = t.AppUserId ?? string.Empty,
                 AccountStatus = t.AccountStatus,
-                Subjects = t.TeacherSubjects?.Select(ts => ts.Subject?.SubjectName ?? "[Unknown]").ToList()
-                           ?? new List<string>(),
-                ClassNames = t.TeacherClasses?.Select(tc => tc.Class?.ClassName ?? "[Unknown]").ToList()
-                             ?? new List<string>(),
-                SpecializedCurricula = t.SpecializedCurricula?.Select(c => c.Name).ToList()
-                                       ?? new List<string>(),
-                SpecializedCurriculumIds = t.SpecializedCurricula?.Select(c => c.Id).ToList()
-                                           ?? new List<string>(),
+                Subjects =
+                    t.TeacherSubjects?.Select(ts => ts.Subject?.SubjectName ?? "[Unknown]").ToList()
+                    ?? new List<string>(),
+                ClassNames =
+                    t.TeacherClasses?.Select(tc => tc.Class?.ClassName ?? "[Unknown]").ToList()
+                    ?? new List<string>(),
+                SpecializedCurricula =
+                    t.SpecializedCurricula?.Select(c => c.Name).ToList() ?? new List<string>(),
+                SpecializedCurriculumIds =
+                    t.SpecializedCurricula?.Select(c => c.Id).ToList() ?? new List<string>(),
             });
 
             return ServiceResult<IEnumerable<TeacherViewDto>>.Ok(
@@ -464,13 +458,16 @@ namespace Application.Services
         }
 
         // In TeacherService.cs - Add these methods
-        public async Task<ServiceResult<bool>> AssignTeacherToClassAsync(string teacherId, string classId)
+        public async Task<ServiceResult<bool>> AssignTeacherToClassAsync(
+            string teacherId,
+            string classId
+        )
         {
             if (string.IsNullOrWhiteSpace(teacherId) || string.IsNullOrWhiteSpace(classId))
                 return ServiceResult<bool>.Fail("Teacher ID and Class ID are required");
 
             // Get teacher with classes
-            var teacher = await _teacherRepo.FirstOrDefaultAsync(
+            var teacher = await _unitOfWork.TeacherRepository.FirstOrDefaultAsync(
                 t => t.Id == teacherId,
                 include: q => q.Include(t => t.TeacherClasses)
             );
@@ -487,25 +484,28 @@ namespace Application.Services
             {
                 TeacherId = teacherId,
                 ClassId = classId,
-                AssignedAt = DateTime.Now
+                AssignedAt = DateTime.Now,
             };
 
             // Add to teacher's classes
             teacher.TeacherClasses ??= new List<TeacherClass>();
             teacher.TeacherClasses.Add(teacherClass);
 
-            _teacherRepo.Update(teacher);
+            _unitOfWork.TeacherRepository.Update(teacher);
             await _unitOfWork.SaveChangesAsync();
 
             return ServiceResult<bool>.Ok(true, "Teacher assigned to class successfully");
         }
 
-        public async Task<ServiceResult<bool>> UnassignTeacherFromClassAsync(string teacherId, string classId)
+        public async Task<ServiceResult<bool>> UnassignTeacherFromClassAsync(
+            string teacherId,
+            string classId
+        )
         {
             if (string.IsNullOrWhiteSpace(teacherId) || string.IsNullOrWhiteSpace(classId))
                 return ServiceResult<bool>.Fail("Teacher ID and Class ID are required");
 
-            var teacher = await _teacherRepo.FirstOrDefaultAsync(
+            var teacher = await _unitOfWork.TeacherRepository.FirstOrDefaultAsync(
                 t => t.Id == teacherId,
                 include: q => q.Include(t => t.TeacherClasses)
             );
@@ -520,43 +520,46 @@ namespace Application.Services
 
             // Remove the relationship
             teacher.TeacherClasses?.Remove(teacherClass);
-            _teacherRepo.Update(teacher);
+            _unitOfWork.TeacherRepository.Update(teacher);
             await _unitOfWork.SaveChangesAsync();
 
             return ServiceResult<bool>.Ok(true, "Teacher unassigned from class successfully");
         }
 
-        public async Task<ServiceResult<IEnumerable<SubjectViewDto>>> GetTeacherSubjectsAsync(string teacherId)
+        public async Task<ServiceResult<IEnumerable<SubjectViewDto>>> GetTeacherSubjectsAsync(
+            string teacherId
+        )
         {
             if (string.IsNullOrWhiteSpace(teacherId))
                 return ServiceResult<IEnumerable<SubjectViewDto>>.Fail("Teacher ID is required");
 
-            var teacher = await _teacherRepo.FirstOrDefaultAsync(
+            var teacher = await _unitOfWork.TeacherRepository.FirstOrDefaultAsync(
                 t => t.Id == teacherId,
-                include: q => q
-                    .Include(t => t.TeacherSubjects!)
-                    .ThenInclude(ts => ts.Subject)
-                    .ThenInclude(s => s.Grade) // Include Grade
+                include: q =>
+                    q.Include(t => t.TeacherSubjects!)
+                        .ThenInclude(ts => ts.Subject)
+                        .ThenInclude(s => s.Grade) // Include Grade
             );
 
             if (teacher == null)
                 return ServiceResult<IEnumerable<SubjectViewDto>>.Fail("Teacher not found");
 
-            var subjects = teacher.TeacherSubjects?
-                .Where(ts => ts.Subject != null)
-                .Select(ts => new SubjectViewDto
-                {
-                    Id = ts.Subject!.Id,
-                    SubjectName = ts.Subject.SubjectName ?? "[Unknown]",
-                    GradeId = ts.Subject.GradeId ?? string.Empty,
-                    GradeName = ts.Subject.Grade?.GradeName ?? string.Empty,
-                    CreditHours = ts.Subject.CreditHours,
-                    // Calculate TeacherCount if needed
-                    TeacherCount = ts.Subject.TeacherSubjects?.Count ?? 0,
-                    // Calculate ExamCount if needed
-                    ExamCount = ts.Subject.Exams?.Count ?? 0
-                })
-                .ToList() ?? new List<SubjectViewDto>();
+            var subjects =
+                teacher
+                    .TeacherSubjects?.Where(ts => ts.Subject != null)
+                    .Select(ts => new SubjectViewDto
+                    {
+                        Id = ts.Subject!.Id,
+                        SubjectName = ts.Subject.SubjectName ?? "[Unknown]",
+                        GradeId = ts.Subject.GradeId ?? string.Empty,
+                        GradeName = ts.Subject.Grade?.GradeName ?? string.Empty,
+                        CreditHours = ts.Subject.CreditHours,
+                        // Calculate TeacherCount if needed
+                        TeacherCount = ts.Subject.TeacherSubjects?.Count ?? 0,
+                        // Calculate ExamCount if needed
+                        ExamCount = ts.Subject.Exams?.Count ?? 0,
+                    })
+                    .ToList() ?? new List<SubjectViewDto>();
 
             return ServiceResult<IEnumerable<SubjectViewDto>>.Ok(
                 subjects,
@@ -564,27 +567,30 @@ namespace Application.Services
             );
         }
 
-        public async Task<ServiceResult<IEnumerable<ClassViewDto>>> GetTeacherClassesAsync(string teacherId)
+        public async Task<ServiceResult<IEnumerable<ClassViewDto>>> GetTeacherClassesAsync(
+            string teacherId
+        )
         {
             if (string.IsNullOrWhiteSpace(teacherId))
                 return ServiceResult<IEnumerable<ClassViewDto>>.Fail("Teacher ID is required");
 
-            var teacher = await _teacherRepo.FirstOrDefaultAsync(
+            var teacher = await _unitOfWork.TeacherRepository.FirstOrDefaultAsync(
                 t => t.Id == teacherId,
-                include: q => q
-                    .Include(t => t.TeacherClasses!)
-                    .ThenInclude(tc => tc.Class)
-                    .ThenInclude(c => c.Grade) // Include Grade
+                include: q =>
+                    q.Include(t => t.TeacherClasses!)
+                        .ThenInclude(tc => tc.Class)
+                        .ThenInclude(c => c.Grade) // Include Grade
             );
 
             if (teacher == null)
                 return ServiceResult<IEnumerable<ClassViewDto>>.Fail("Teacher not found");
 
             // Extract the classes from teacher-class relationships
-            var classes = teacher.TeacherClasses?
-                .Where(tc => tc.Class != null)
-                .Select(tc => tc.Class!)
-                .ToList() ?? new List<Class>();
+            var classes =
+                teacher
+                    .TeacherClasses?.Where(tc => tc.Class != null)
+                    .Select(tc => tc.Class!)
+                    .ToList() ?? new List<Class>();
 
             // Use AutoMapper to map to ClassViewDto
             var classDtos = _mapper.Map<IEnumerable<ClassViewDto>>(classes);
@@ -595,16 +601,20 @@ namespace Application.Services
             );
         }
 
-        public async Task<ServiceResult<IEnumerable<TeacherViewDto>>> GetTeachersAssignedToThisSubject(string subjectId)
+        public async Task<
+            ServiceResult<IEnumerable<TeacherViewDto>>
+        > GetTeachersAssignedToThisSubject(string subjectId)
         {
             if (string.IsNullOrWhiteSpace(subjectId))
                 return ServiceResult<IEnumerable<TeacherViewDto>>.Fail("SubjectId is required");
-            var subjectExists = await _subjectRepo.AnyAsync(s => s.Id == subjectId);
+            var subjectExists = await _unitOfWork.SubjectRepository.AnyAsync(s =>
+                s.Id == subjectId
+            );
 
             if (!subjectExists)
                 return ServiceResult<IEnumerable<TeacherViewDto>>.Fail("Subject not found");
 
-            var teachers = await _teacherRepo.FindAllAsync(t =>
+            var teachers = await _unitOfWork.TeacherRepository.FindAllAsync(t =>
                 t.TeacherSubjects == null || t.TeacherSubjects.Any(ts => ts.SubjectId == subjectId)
             );
 

@@ -14,6 +14,6 @@
         public string Status { get; set; } = "Upcoming";
         public decimal MinMark { get; set; } = 0;
         public decimal FullMark { get; set; } = 0;
-        public List<ExamQuestion> ExamQuestions { get; set; } = new();
+        public ICollection<ExamQuestion> ExamQuestions { get; set; } = new HashSet<ExamQuestion>();
     }
 }
