@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PdfSharp.Drawing;
 using PdfSharp.Fonts;
+using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using System.Diagnostics;
 using System.IO.Compression;
@@ -29,8 +30,15 @@ namespace Application.Services
             _env = env;
             _serviceProvider = serviceProvider;
 
+            //if (GlobalFontSettings.FontResolver == null)
+            //{
+            //    GlobalFontSettings.FontResolver = new Application.Helpers.FontResolver();
+            //}
+
             if (GlobalFontSettings.FontResolver == null)
+            {
                 GlobalFontSettings.FontResolver = new FontResolver();
+            }
         }
 
         public async Task<byte[]> GenerateCertificateForStudentAsync(string studentId, DegreeType degreeType, string templatePath)
@@ -542,16 +550,89 @@ namespace Application.Services
                 }
                 page.Rotate = 0;
 
-                XFont GetAppropriateFont(string text, double size, XFontStyleEx style)
+                //XFont GetAppropriateFont(string text, double size, XFontStyleEx style)
+                //{
+                //    if (FontResolver.ContainsArabic(text))
+                //    {
+                //        text = ArabicHelper.ShapeArabic(text);
+                //        return new XFont("ArabicFont", size, style);
+                //    }
+                //    else
+                //    {
+                //        return new XFont("MyFont", size, style);
+                //    }
+                //}
+
+                XFont GetAppropriateFont(string familyName, double size, XFontStyleEx style)
                 {
-                    if (FontResolver.ContainsArabic(text))
+                    string[] fontCandidates = null;
+
+                    if (familyName.Equals("Arial", StringComparison.OrdinalIgnoreCase) ||
+                        familyName.Equals("Helvetica", StringComparison.OrdinalIgnoreCase))
                     {
-                        text = ArabicHelper.ShapeArabic(text);
-                        return new XFont("ArabicFont", size, style);
+                        fontCandidates = new[]
+                        {
+                    "Liberation Sans",
+                    "DejaVu Sans",
+                    "Nimbus Sans",
+                    "FreeSans",
+                    "Ubuntu",
+                    "Noto Sans",
+                    "Arial"
+                };
                     }
-                    else
+                    else if (familyName.Equals("Times New Roman", StringComparison.OrdinalIgnoreCase) ||
+                             familyName.Equals("Times", StringComparison.OrdinalIgnoreCase))
                     {
-                        return new XFont("MyFont", size, style);
+                        fontCandidates = new[]
+                        {
+                    "Liberation Serif",
+                    "DejaVu Serif",
+                    "Nimbus Roman",
+                    "FreeSerif",
+                    "Noto Serif",
+                    "Times New Roman"
+                };
+                    }
+                    else if (familyName.Equals("Courier New", StringComparison.OrdinalIgnoreCase) ||
+                             familyName.Equals("Courier", StringComparison.OrdinalIgnoreCase))
+                    {
+                        fontCandidates = new[]
+                        {
+                    "Liberation Mono",
+                    "DejaVu Sans Mono",
+                    "Nimbus Mono",
+                    "FreeMono",
+                    "Noto Mono",
+                    "Courier New"
+                };
+                    }
+
+                    // Try each candidate
+                    if (fontCandidates != null)
+                    {
+                        foreach (var fontCandidate in fontCandidates)
+                        {
+                            try
+                            {
+                                return new XFont(fontCandidate, size, style);
+                            }
+                            catch
+                            {
+                                continue; // Try next candidate
+                            }
+                        }
+                    }
+
+                    // Last resort: try the original font
+                    try
+                    {
+                        return new XFont(familyName, size, style);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Ultimate fallback
+                        return new XFont("DejaVu Sans", size, style);
                     }
                 }
 
@@ -559,8 +640,12 @@ namespace Application.Services
                 var mediumGrayBrush = new XSolidBrush(XColor.FromArgb(108, 117, 125));
                 var lightGrayBrush = new XSolidBrush(XColor.FromArgb(248, 249, 250));
 
-                var headerFont = new XFont("MyFont", 11, XFontStyleEx.Bold);
-                var regularFont = new XFont("MyFont", 10, XFontStyleEx.Regular);
+                //var headerFont = new XFont("MyFont", 11, XFontStyleEx.Bold);
+                //var regularFont = new XFont("MyFont", 10, XFontStyleEx.Regular);
+
+                var headerFont = GetAppropriateFont("HEADER", 11, XFontStyleEx.Bold);
+                var regularFont = GetAppropriateFont("TEXT", 10, XFontStyleEx.Regular);
+
 
                 double pageWidth = page.Width;
                 double pageHeight = page.Height;
@@ -1070,4 +1155,5 @@ namespace Application.Services
             return ServiceResult<string>.Ok(info);
         }
     }
+
 }

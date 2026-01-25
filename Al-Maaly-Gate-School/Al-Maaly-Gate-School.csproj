@@ -39,6 +39,9 @@
     <None Update="Fonts\LiberationSans-Regular.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+	<None Update="Templates\*.pdf">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>

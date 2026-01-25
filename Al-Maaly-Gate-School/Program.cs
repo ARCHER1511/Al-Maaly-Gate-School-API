@@ -6,6 +6,8 @@ using Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.OpenApi.Models;
+using OfficeOpenXml;
+using PdfSharp.Fonts;
 using QuestPDF.Infrastructure;
 using System.Text.Json.Serialization;
 
@@ -19,6 +21,10 @@ namespace Al_Maaly_Gate_School
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
+            if (GlobalFontSettings.FontResolver == null)
+            {
+                GlobalFontSettings.FontResolver = new FontResolver();
+            }
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
 

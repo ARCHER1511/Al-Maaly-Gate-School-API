@@ -25,7 +25,7 @@ namespace Application.Services
 
         private string GetStatus(DateTime start, DateTime end)
         {
-            var now = DateTime.Now;
+            var now = DateTimeOffset.Now;
 
             if (now < start)
                 return "Upcoming";
@@ -128,8 +128,11 @@ namespace Application.Services
         {
             var result = _mapper.Map<ClassAppointment>(dto);
 
-            await _unitOfWork.ClassAppointmentRepository.AddAsync(result);
-            await _unitOfWork.SaveChangesAsync();
+            result.StartTime = dto.StartTime.ToUniversalTime();
+            result.EndTime = dto.EndTime.ToUniversalTime();
+
+            await _classAppointmentRepository.AddAsync(result);
+        await _unitOfWork.SaveChangesAsync();
 
             var viewDto = _mapper.Map<ClassAppointmentDto>(result);
             return ServiceResult<ClassAppointmentDto>.Ok(

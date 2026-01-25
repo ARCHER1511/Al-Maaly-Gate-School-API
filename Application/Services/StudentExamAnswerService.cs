@@ -18,8 +18,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-
-        private string GetStatus(DateTime start, DateTime end)
+        private string GetStatus(DateTimeOffset start, DateTimeOffset end)
         {
             var now = DateTime.Now;
 
