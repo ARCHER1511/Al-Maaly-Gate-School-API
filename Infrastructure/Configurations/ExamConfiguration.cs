@@ -50,10 +50,10 @@ namespace Infrastructure.Configurations
                    .HasDefaultValue("Upcoming");
 
             builder.Property(e => e.Start)
-                   .HasColumnType("datetime2");
+                   .HasColumnType("datetimeoffset");
 
             builder.Property(e => e.End)
-                   .HasColumnType("datetime2");
+                   .HasColumnType("datetimeoffset");
         }
     }
 }

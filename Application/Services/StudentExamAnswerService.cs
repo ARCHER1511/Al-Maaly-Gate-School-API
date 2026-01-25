@@ -29,7 +29,7 @@ namespace Application.Services
             _subjectRepository = subjectRepository;
             _studentRepository = studentRepository;
         }
-        private string GetStatus(DateTime start, DateTime end)
+        private string GetStatus(DateTimeOffset start, DateTimeOffset end)
         {
             var now = DateTime.Now;
 

@@ -20,9 +20,9 @@ public class ClassAppointmentService : IClassAppointmentService
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
-        private string GetStatus(DateTime start, DateTime end)
+        private string GetStatus(DateTimeOffset start, DateTimeOffset end)
         {
-            var now = DateTime.Now;
+            var now = DateTimeOffset.Now;
 
             if (now < start)
                 return "Upcoming";
@@ -101,6 +101,9 @@ public class ClassAppointmentService : IClassAppointmentService
         public async Task<ServiceResult<ClassAppointmentDto>> CreateAsync(ClassAppointmentDto dto)
     {
             var result = _mapper.Map<ClassAppointment>(dto);
+
+            result.StartTime = dto.StartTime.ToUniversalTime();
+            result.EndTime = dto.EndTime.ToUniversalTime();
 
             await _classAppointmentRepository.AddAsync(result);
         await _unitOfWork.SaveChangesAsync();

@@ -20,8 +20,8 @@ namespace Application.DTOs.ExamDTOS
         public string TeacherId { get; set; } = string.Empty;
         public int QuestionCount { get; set; }
 
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
+        public DateTimeOffset Start { get; set; }
+        public DateTimeOffset End { get; set; }
         public decimal MinMark { get; set; }
         public decimal FullMark { get; set; }
     }
