@@ -23,7 +23,7 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        private string GetStatus(DateTime start, DateTime end)
+        private string GetStatus(DateTimeOffset start, DateTimeOffset end)
         {
             var now = DateTimeOffset.Now;
 
@@ -131,8 +131,8 @@ namespace Application.Services
             result.StartTime = dto.StartTime.ToUniversalTime();
             result.EndTime = dto.EndTime.ToUniversalTime();
 
-            await _classAppointmentRepository.AddAsync(result);
-        await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.ClassAppointmentRepository.AddAsync(result);
+            await _unitOfWork.SaveChangesAsync();
 
             var viewDto = _mapper.Map<ClassAppointmentDto>(result);
             return ServiceResult<ClassAppointmentDto>.Ok(
