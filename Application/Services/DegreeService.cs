@@ -4,10 +4,6 @@ using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -16,13 +12,19 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IDegreeComponentTypeService _componentTypeService;
 
-        public DegreeService(IUnitOfWork unitOfWork, IDegreeComponentTypeService componentTypeService)
+        public DegreeService(
+            IUnitOfWork unitOfWork,
+            IDegreeComponentTypeService componentTypeService
+        )
         {
             _unitOfWork = unitOfWork;
             _componentTypeService = componentTypeService;
         }
 
-        public async Task<ServiceResult<string>> AddDegreesAsync(string studentId, List<DegreeInput> degreeInputs)
+        public async Task<ServiceResult<string>> AddDegreesAsync(
+            string studentId,
+            List<DegreeInput> degreeInputs
+        )
         {
             try
             {
@@ -39,25 +41,30 @@ namespace Application.Services
                     var validationResult = ValidateDegreeInput(input);
                     if (!validationResult.IsValid)
                     {
-                        validationErrors.Add($"Subject {input.SubjectId}: {validationResult.ErrorMessage}");
+                        validationErrors.Add(
+                            $"Subject {input.SubjectId}: {validationResult.ErrorMessage}"
+                        );
                         continue;
                     }
 
                     // Check if degree already exists
                     var existingDegree = await _unitOfWork.Degrees.FirstOrDefaultAsync(
-                        d => d.StudentId == studentId &&
-                             d.SubjectId == input.SubjectId &&
-                             d.DegreeType == input.DegreeType,
+                        d =>
+                            d.StudentId == studentId
+                            && d.SubjectId == input.SubjectId
+                            && d.DegreeType == input.DegreeType,
                         include: q => q.Include(d => d.Components)
                     );
 
-                    var degree = existingDegree ?? new Degree
-                    {
-                        StudentId = studentId,
-                        SubjectId = input.SubjectId,
-                        DegreeType = input.DegreeType,
-                        Components = new List<DegreeComponent>()
-                    };
+                    var degree =
+                        existingDegree
+                        ?? new Degree
+                        {
+                            StudentId = studentId,
+                            SubjectId = input.SubjectId,
+                            DegreeType = input.DegreeType,
+                            Components = new List<DegreeComponent>(),
+                        };
 
                     // Clear existing components if updating
                     if (existingDegree != null)
@@ -90,7 +97,9 @@ namespace Application.Services
 
                 if (validationErrors.Any())
                 {
-                    return ServiceResult<string>.Fail($"Validation errors: {string.Join("; ", validationErrors)}");
+                    return ServiceResult<string>.Fail(
+                        $"Validation errors: {string.Join("; ", validationErrors)}"
+                    );
                 }
 
                 // Save all degrees
@@ -118,7 +127,10 @@ namespace Application.Services
                 return (false, "Either total scores or component scores must be provided");
 
             if (hasComponents && hasTotalScores)
-                return (false, "Cannot provide both total scores and component scores. Choose one method.");
+                return (
+                    false,
+                    "Cannot provide both total scores and component scores. Choose one method."
+                );
 
             // Validate components if provided
             if (hasComponents)
@@ -126,10 +138,16 @@ namespace Application.Services
                 foreach (var component in input.Components!)
                 {
                     if (component.Score < 0)
-                        return (false, $"Component {component.ComponentName} has invalid negative score");
+                        return (
+                            false,
+                            $"Component {component.ComponentName} has invalid negative score"
+                        );
 
                     if (component.MaxScore.HasValue && component.MaxScore <= 0)
-                        return (false, $"Component {component.ComponentName} has invalid max score");
+                        return (
+                            false,
+                            $"Component {component.ComponentName} has invalid max score"
+                        );
                 }
             }
 
@@ -153,7 +171,9 @@ namespace Application.Services
             foreach (var componentInput in input.Components!)
             {
                 // Verify component type exists and belongs to this subject
-                var componentType = await _unitOfWork.DegreeComponentTypes.GetByIdAsync(componentInput.ComponentTypeId);
+                var componentType = await _unitOfWork.DegreeComponentTypes.GetByIdAsync(
+                    componentInput.ComponentTypeId
+                );
                 if (componentType == null || componentType.SubjectId != input.SubjectId)
                 {
                     throw new Exception($"Invalid component type for subject {input.SubjectId}");
@@ -164,7 +184,7 @@ namespace Application.Services
                     ComponentTypeId = componentInput.ComponentTypeId,
                     ComponentName = componentInput.ComponentName,
                     Score = componentInput.Score,
-                    MaxScore = componentInput.MaxScore ?? componentType.MaxScore
+                    MaxScore = componentInput.MaxScore ?? componentType.MaxScore,
                 };
 
                 degree.Components.Add(degreeComponent);
@@ -189,11 +209,11 @@ namespace Application.Services
             {
                 var student = await _unitOfWork.Students.FirstOrDefaultAsync(
                     s => s.Id == studentId,
-                    include: q => q
-                        .Include(s => s.Class)
-                        .Include(s => s.Degrees)
+                    include: q =>
+                        q.Include(s => s.Class)
+                            .Include(s => s.Degrees)
                             .ThenInclude(d => d.Subject)
-                        .Include(s => s.Degrees)
+                            .Include(s => s.Degrees)
                             .ThenInclude(d => d.Components)
                 );
 
@@ -206,30 +226,36 @@ namespace Application.Services
                     StudentName = student.FullName,
                     ClassId = student.ClassId ?? "",
                     ClassName = student.Class?.ClassName ?? "",
-                    Degrees = student.Degrees.Select(d => new DegreeItemDto
-                    {
-                        DegreeId = d.Id,
-                        SubjectId = d.SubjectId,
-                        SubjectName = d.Subject.SubjectName,
-                        DegreeType = d.DegreeType.ToString(),
-                        Score = d.Score,
-                        MaxScore = d.MaxScore,
-                        Components = d.Components.Select(c => new DegreeComponentDto
+                    Degrees = student
+                        .Degrees.Select(d => new DegreeItemDto
                         {
-                            Id = c.Id,
-                            ComponentTypeId = c.ComponentTypeId,
-                            ComponentName = c.ComponentName,
-                            Score = c.Score,
-                            MaxScore = c.MaxScore
-                        }).ToList()
-                    }).ToList()
+                            DegreeId = d.Id,
+                            SubjectId = d.SubjectId,
+                            SubjectName = d.Subject.SubjectName,
+                            DegreeType = d.DegreeType.ToString(),
+                            Score = d.Score,
+                            MaxScore = d.MaxScore,
+                            Components = d
+                                .Components.Select(c => new DegreeComponentDto
+                                {
+                                    Id = c.Id,
+                                    ComponentTypeId = c.ComponentTypeId,
+                                    ComponentName = c.ComponentName,
+                                    Score = c.Score,
+                                    MaxScore = c.MaxScore,
+                                })
+                                .ToList(),
+                        })
+                        .ToList(),
                 };
 
                 return ServiceResult<StudentDegreesDto>.Ok(dto);
             }
             catch (Exception ex)
             {
-                return ServiceResult<StudentDegreesDto>.Fail($"Error loading student degrees: {ex.Message}");
+                return ServiceResult<StudentDegreesDto>.Fail(
+                    $"Error loading student degrees: {ex.Message}"
+                );
             }
         }
 
@@ -239,53 +265,66 @@ namespace Application.Services
             {
                 var students = await _unitOfWork.Students.FindAllAsync(
                     predicate: s => s.Degrees.Any(),
-                    include: q => q
-                        .Include(s => s.Class)
-                        .Include(s => s.Degrees)
+                    include: q =>
+                        q.Include(s => s.Class)
+                            .Include(s => s.Degrees)
                             .ThenInclude(d => d.Subject)
-                        .Include(s => s.Degrees)
+                            .Include(s => s.Degrees)
                             .ThenInclude(d => d.Components)
                 );
 
-                var result = students.Select(student => new StudentDegreesDto
-                {
-                    StudentId = student.Id,
-                    StudentName = student.FullName,
-                    ClassId = student.ClassId ?? "",
-                    ClassName = student.Class?.ClassName ?? "",
-                    Degrees = student.Degrees.Select(d => new DegreeItemDto
+                var result = students
+                    .Select(student => new StudentDegreesDto
                     {
-                        DegreeId = d.Id,
-                        SubjectId = d.SubjectId,
-                        SubjectName = d.Subject.SubjectName,
-                        DegreeType = d.DegreeType.ToString(),
-                        Score = d.Score,
-                        MaxScore = d.MaxScore,
-                        Components = d.Components.Select(c => new DegreeComponentDto
-                        {
-                            Id = c.Id,
-                            ComponentTypeId = c.ComponentTypeId,
-                            ComponentName = c.ComponentName,
-                            Score = c.Score,
-                            MaxScore = c.MaxScore
-                        }).ToList()
-                    }).ToList()
-                }).ToList();
+                        StudentId = student.Id,
+                        StudentName = student.FullName,
+                        ClassId = student.ClassId ?? "",
+                        ClassName = student.Class?.ClassName ?? "",
+                        Degrees = student
+                            .Degrees.Select(d => new DegreeItemDto
+                            {
+                                DegreeId = d.Id,
+                                SubjectId = d.SubjectId,
+                                SubjectName = d.Subject.SubjectName,
+                                DegreeType = d.DegreeType.ToString(),
+                                Score = d.Score,
+                                MaxScore = d.MaxScore,
+                                Components = d
+                                    .Components.Select(c => new DegreeComponentDto
+                                    {
+                                        Id = c.Id,
+                                        ComponentTypeId = c.ComponentTypeId,
+                                        ComponentName = c.ComponentName,
+                                        Score = c.Score,
+                                        MaxScore = c.MaxScore,
+                                    })
+                                    .ToList(),
+                            })
+                            .ToList(),
+                    })
+                    .ToList();
 
                 return ServiceResult<List<StudentDegreesDto>>.Ok(result);
             }
             catch (Exception ex)
             {
-                return ServiceResult<List<StudentDegreesDto>>.Fail($"Error loading all degrees: {ex.Message}");
+                return ServiceResult<List<StudentDegreesDto>>.Fail(
+                    $"Error loading all degrees: {ex.Message}"
+                );
             }
         }
 
-        public async Task<ServiceResult<List<DegreeComponentTypeDto>>> GetSubjectComponentTypesAsync(string subjectId)
+        public async Task<
+            ServiceResult<List<DegreeComponentTypeDto>>
+        > GetSubjectComponentTypesAsync(string subjectId)
         {
             return await _componentTypeService.GetComponentTypesBySubjectAsync(subjectId);
         }
 
-        public async Task<ServiceResult<string>> UpdateDegreeAsync(string degreeId, DegreeInput input)
+        public async Task<ServiceResult<string>> UpdateDegreeAsync(
+            string degreeId,
+            DegreeInput input
+        )
         {
             try
             {
@@ -318,10 +357,14 @@ namespace Application.Services
                     // Process with components
                     foreach (var componentInput in input.Components!)
                     {
-                        var componentType = await _unitOfWork.DegreeComponentTypes.GetByIdAsync(componentInput.ComponentTypeId);
+                        var componentType = await _unitOfWork.DegreeComponentTypes.GetByIdAsync(
+                            componentInput.ComponentTypeId
+                        );
                         if (componentType == null || componentType.SubjectId != input.SubjectId)
                         {
-                            return ServiceResult<string>.Fail($"Invalid component type for subject {input.SubjectId}");
+                            return ServiceResult<string>.Fail(
+                                $"Invalid component type for subject {input.SubjectId}"
+                            );
                         }
 
                         var degreeComponent = new DegreeComponent
@@ -329,7 +372,7 @@ namespace Application.Services
                             ComponentTypeId = componentInput.ComponentTypeId,
                             ComponentName = componentInput.ComponentName,
                             Score = componentInput.Score,
-                            MaxScore = componentInput.MaxScore ?? componentType.MaxScore
+                            MaxScore = componentInput.MaxScore ?? componentType.MaxScore,
                         };
 
                         degree.Components.Add(degreeComponent);
@@ -359,7 +402,10 @@ namespace Application.Services
             }
         }
 
-        public async Task<ServiceResult<string>> ConvertToComponentsAsync(string degreeId, List<DegreeComponentInput> components)
+        public async Task<ServiceResult<string>> ConvertToComponentsAsync(
+            string degreeId,
+            List<DegreeComponentInput> components
+        )
         {
             try
             {
@@ -384,11 +430,15 @@ namespace Application.Services
                 // Add new components
                 foreach (var componentInput in components)
                 {
-                    var componentType = await _unitOfWork.DegreeComponentTypes.GetByIdAsync(componentInput.ComponentTypeId);
+                    var componentType = await _unitOfWork.DegreeComponentTypes.GetByIdAsync(
+                        componentInput.ComponentTypeId
+                    );
 
                     if (componentType == null || componentType.SubjectId != degree.SubjectId)
                     {
-                        return ServiceResult<string>.Fail($"Invalid component type for subject {degree.SubjectId}");
+                        return ServiceResult<string>.Fail(
+                            $"Invalid component type for subject {degree.SubjectId}"
+                        );
                     }
 
                     var degreeComponent = new DegreeComponent
@@ -396,7 +446,7 @@ namespace Application.Services
                         ComponentTypeId = componentInput.ComponentTypeId,
                         ComponentName = componentInput.ComponentName,
                         Score = componentInput.Score,
-                        MaxScore = componentInput.MaxScore ?? componentType.MaxScore
+                        MaxScore = componentInput.MaxScore ?? componentType.MaxScore,
                     };
 
                     degree.Components.Add(degreeComponent);

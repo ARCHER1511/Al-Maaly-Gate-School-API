@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
     public class Curriculum : BaseEntity
     {
-        public string Name { get; set; } // e.g., "Egyptian Curriculum", "British Curriculum"
-        public string Code { get; set; } // e.g., "EGY", "UK"
-        public string Description { get; set; }
+        public string Name { get; set; } = string.Empty; // e.g., "Egyptian Curriculum", "British Curriculum"
+        public string Code { get; set; } = string.Empty; // e.g., "EGY", "UK"
+        public string? Description { get; set; } = string.Empty;
 
         // Add more curriculum details
         public string? Country { get; set; } // Country of origin
@@ -35,15 +29,15 @@ namespace Domain.Entities
         public DateTime? UpdatedAt { get; set; }
 
         // Each curriculum has its own grades
-        public List<Grade> Grades { get; set; } = new();
+        public ICollection<Grade> Grades { get; set; } = new HashSet<Grade>();
 
         // Students enrolled in this curriculum
-        public List<Student> Students { get; set; } = new();
+        public ICollection<Student> Students { get; set; } = new HashSet<Student>();
 
         // Teachers specialized in this curriculum
-        public List<Teacher> Teachers { get; set; } = new();
+        public ICollection<Teacher> Teachers { get; set; } = new HashSet<Teacher>();
 
         // Certificates issued for this curriculum
-        public List<Certificate> Certificates { get; set; } = new();
+        public ICollection<Certificate> Certificates { get; set; } = new HashSet<Certificate>();
     }
 }

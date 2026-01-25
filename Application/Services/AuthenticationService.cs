@@ -9,14 +9,12 @@ using Application.DTOs.FileRequestDTOs;
 using Application.DTOs.ParentDTOs;
 using Application.Interfaces;
 using AutoMapper;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Win32;
 
 namespace Application.Services
 {
@@ -24,43 +22,28 @@ namespace Application.Services
     {
         private readonly IAppUserRepository _userRepo;
         private readonly IAppRoleRepository _roleRepo;
-        private readonly IAdminRepository _adminRepo;
-        private readonly ITeacherRepository _teacherRepo;
-        private readonly IStudentRepository _studentRepo;
-        private readonly IParentRepository _parentRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
         private readonly IFileService _fileService;
-        private readonly IFileRecordRepository _fileRecordRepository;
         private readonly IEmailService _emailService;
 
         public AuthenticationService(
             IAppUserRepository userRepo,
             IAppRoleRepository roleRepo,
-            IAdminRepository adminRepo,
-            ITeacherRepository teacherRepo,
-            IStudentRepository studentRepo,
-            IParentRepository parentRepo,
             IUnitOfWork unitOfWork,
             IConfiguration config,
             IMapper mapper,
             IFileService fileService,
-            IFileRecordRepository fileRecordRepository,
             IEmailService emailService
         )
         {
             _userRepo = userRepo;
             _roleRepo = roleRepo;
-            _adminRepo = adminRepo;
-            _teacherRepo = teacherRepo;
-            _studentRepo = studentRepo;
-            _parentRepo = parentRepo;
             _unitOfWork = unitOfWork;
             _config = config;
             _mapper = mapper;
             _fileService = fileService;
-            _fileRecordRepository = fileRecordRepository;
             _emailService = emailService;
         }
 
@@ -131,7 +114,7 @@ namespace Application.Services
 
                 fileRecord.Id = parentId;
 
-                await _fileRecordRepository.UpdateAsync(fileRecord);
+                await _unitOfWork.FileRecordRepository.UpdateAsync(fileRecord);
             }
 
             // Save changes
@@ -313,7 +296,7 @@ namespace Application.Services
             switch (role)
             {
                 case "admin":
-                    await _adminRepo.AddAsync(
+                    await _unitOfWork.AdminRepository.AddAsync(
                         new Admin
                         {
                             AppUserId = user.Id,
@@ -326,7 +309,7 @@ namespace Application.Services
                     break;
 
                 case "teacher":
-                    await _teacherRepo.AddAsync(
+                    await _unitOfWork.TeacherRepository.AddAsync(
                         new Teacher
                         {
                             AppUserId = user.Id,
@@ -339,7 +322,7 @@ namespace Application.Services
                     break;
 
                 case "student":
-                    await _studentRepo.AddAsync(
+                    await _unitOfWork.StudentRepository.AddAsync(
                         new Student
                         {
                             AppUserId = user.Id,
@@ -352,7 +335,7 @@ namespace Application.Services
                     break;
 
                 case "parent":
-                    await _parentRepo.AddAsync(
+                    await _unitOfWork.ParentRepository.AddAsync(
                         new Parent
                         {
                             AppUserId = user.Id,
@@ -436,9 +419,10 @@ namespace Application.Services
             Teacher? teacherEntity = null;
             if (roles.Contains("Teacher"))
             {
-                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsAndClassesByUserIdAsync(
-                    user.Id
-                );
+                teacherEntity =
+                    await _unitOfWork.TeacherRepository.GetTeacherWithSubjectsAndClassesByUserIdAsync(
+                        user.Id
+                    );
             }
             response.UserId = user.Id;
             response.ProfileImageUrl = user.ProfileImagePath;
@@ -508,7 +492,7 @@ namespace Application.Services
             switch (request.RoleName.ToLower())
             {
                 case "admin":
-                    await _adminRepo.AddAsync(
+                    await _unitOfWork.AdminRepository.AddAsync(
                         new Admin
                         {
                             AppUserId = user.Id,
@@ -521,7 +505,7 @@ namespace Application.Services
                     break;
 
                 case "teacher":
-                    await _teacherRepo.AddAsync(
+                    await _unitOfWork.TeacherRepository.AddAsync(
                         new Teacher
                         {
                             AppUserId = user.Id,
@@ -534,7 +518,7 @@ namespace Application.Services
                     break;
 
                 case "student":
-                    await _studentRepo.AddAsync(
+                    await _unitOfWork.StudentRepository.AddAsync(
                         new Student
                         {
                             AppUserId = user.Id,
@@ -547,7 +531,7 @@ namespace Application.Services
                     break;
 
                 case "parent":
-                    await _parentRepo.AddAsync(
+                    await _unitOfWork.ParentRepository.AddAsync(
                         new Parent
                         {
                             AppUserId = user.Id,
@@ -598,27 +582,27 @@ namespace Application.Services
             switch (request.RoleName.ToLower())
             {
                 case "admin":
-                    var admin = await _adminRepo.GetByAppUserIdAsync(user.Id);
+                    var admin = await _unitOfWork.AdminRepository.GetByAppUserIdAsync(user.Id);
                     if (admin != null)
-                        _adminRepo.Delete(admin);
+                        _unitOfWork.AdminRepository.Delete(admin);
                     break;
 
                 case "teacher":
-                    var teacher = await _teacherRepo.GetByAppUserIdAsync(user.Id);
+                    var teacher = await _unitOfWork.TeacherRepository.GetByAppUserIdAsync(user.Id);
                     if (teacher != null)
-                        _teacherRepo.Delete(teacher);
+                        _unitOfWork.TeacherRepository.Delete(teacher);
                     break;
 
                 case "student":
-                    var student = await _studentRepo.GetByAppUserIdAsync(user.Id);
+                    var student = await _unitOfWork.StudentRepository.GetByAppUserIdAsync(user.Id);
                     if (student != null)
-                        _studentRepo.Delete(student);
+                        _unitOfWork.StudentRepository.Delete(student);
                     break;
 
                 case "parent":
-                    var parent = await _parentRepo.GetByAppUserIdAsync(user.Id);
+                    var parent = await _unitOfWork.ParentRepository.GetByAppUserIdAsync(user.Id);
                     if (parent != null)
-                        _parentRepo.Delete(parent);
+                        _unitOfWork.ParentRepository.Delete(parent);
                     break;
 
                 default:
@@ -660,9 +644,10 @@ namespace Application.Services
             Teacher? teacherEntity = null;
             if (roles.Contains("Teacher"))
             {
-                teacherEntity = await _teacherRepo.GetTeacherWithSubjectsAndClassesByUserIdAsync(
-                    userId
-                );
+                teacherEntity =
+                    await _unitOfWork.TeacherRepository.GetTeacherWithSubjectsAndClassesByUserIdAsync(
+                        userId
+                    );
             }
 
             var newJwt = JwtExtensions.GenerateJwtToken(user!, teacherEntity, roles, _config);
@@ -908,28 +893,28 @@ namespace Application.Services
                 {
                     case "admin":
                     {
-                        var admin = await _adminRepo.GetByAppUserIdAsync(user.Id);
+                        var admin = await _unitOfWork.AdminRepository.GetByAppUserIdAsync(user.Id);
                         if (admin != null)
                             map["adminId"] = admin.Id;
                         break;
                     }
                     case "teacher":
                     {
-                        var t = await _teacherRepo.GetByAppUserIdAsync(user.Id);
+                        var t = await _unitOfWork.TeacherRepository.GetByAppUserIdAsync(user.Id);
                         if (t != null)
                             map["teacherId"] = t.Id;
                         break;
                     }
                     case "student":
                     {
-                        var s = await _studentRepo.GetByAppUserIdAsync(user.Id);
+                        var s = await _unitOfWork.StudentRepository.GetByAppUserIdAsync(user.Id);
                         if (s != null)
                             map["studentId"] = s.Id;
                         break;
                     }
                     case "parent":
                     {
-                        var p = await _parentRepo.GetByAppUserIdAsync(user.Id);
+                        var p = await _unitOfWork.ParentRepository.GetByAppUserIdAsync(user.Id);
                         if (p != null)
                             map["parentId"] = p.Id;
                         break;

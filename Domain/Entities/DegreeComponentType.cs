@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
     public class DegreeComponentType : BaseEntity
     {
@@ -17,6 +11,6 @@ namespace Domain.Entities
         public bool IsActive { get; set; } = true;
 
         // Navigation
-        public ICollection<DegreeComponent> Components { get; set; } = new List<DegreeComponent>();
+        public ICollection<DegreeComponent> Components { get; set; } = new HashSet<DegreeComponent>();
     }
 }

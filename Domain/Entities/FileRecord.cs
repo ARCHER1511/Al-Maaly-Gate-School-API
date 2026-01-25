@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
     public class FileRecord : BaseEntity
     {
@@ -11,6 +9,6 @@ namespace Domain.Entities
         public long FileSize { get; set; }
         public DateTime UploadedAt { get; set; } = DateTime.Now;
         public string UserId { get; set; } = string.Empty;
-        public AppUser User { get; set; } = default!;
+        public AppUser User { get; set; } = null!;
     }
 }

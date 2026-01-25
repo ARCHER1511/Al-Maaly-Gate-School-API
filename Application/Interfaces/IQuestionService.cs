@@ -1,5 +1,4 @@
-﻿using Application.DTOs.ExamDTOS;
-using Application.DTOs.QuestionDTOs;
+﻿using Application.DTOs.QuestionDTOs;
 using Domain.Wrappers;
 
 namespace Application.Interfaces

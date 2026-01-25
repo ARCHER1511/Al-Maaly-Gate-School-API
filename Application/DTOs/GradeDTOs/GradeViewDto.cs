@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.DTOs.GradeDTOs
+﻿namespace Application.DTOs.GradeDTOs
 {
     public class GradeViewDto
     {
         public string Id { get; set; } = string.Empty;
         public string GradeName { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; } = string.Empty;
         public string CurriculumId { get; set; } = string.Empty; // Add this
         public string CurriculumName { get; set; } = string.Empty; // Add this
         public int ClassCount { get; set; }

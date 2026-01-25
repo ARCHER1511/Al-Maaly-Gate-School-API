@@ -22,7 +22,7 @@ namespace Infrastructure.Interfaces
         Task<bool> ExistsAsync(string relativePath, string userId);
 
         // UPDATE
-        Task UpdateAsync(FileRecord record);
+        new Task UpdateAsync(FileRecord record);
 
         // DELETE (user-scoped)
         Task DeleteAsync(string fileId, string userId);

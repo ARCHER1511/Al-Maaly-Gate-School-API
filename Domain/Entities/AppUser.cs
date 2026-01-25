@@ -13,8 +13,8 @@ namespace Domain.Entities
         public DateOnly BirthDay { get; set; }
         public string Gender { get; set; } = string.Empty;
         public AccountStatus AccountStatus { get; set; } = AccountStatus.Pending;
-        public List<AppUserRole> UserRoles { get; set; } = new();
-        public List<UserNotification> UserNotifications { get; set; } = new();
+        public ICollection<AppUserRole> UserRoles { get; set; } = new HashSet<AppUserRole>();
+        public ICollection<UserNotification> UserNotifications { get; set; } = new HashSet<UserNotification>();
         public override bool EmailConfirmed { get; set; }
         public string? ConfirmationNumber { get; set; }
         public string? EmailConfirmationToken { get; set; }

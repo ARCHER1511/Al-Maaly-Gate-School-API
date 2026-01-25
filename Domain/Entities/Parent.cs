@@ -2,6 +2,6 @@
 {
     public class Parent : UserBase
     {
-        public List<ParentStudent> ParentStudent { get; set; } = new List<ParentStudent>();
+        public ICollection<ParentStudent> ParentStudent { get; set; } = new HashSet<ParentStudent>();
     }
 }

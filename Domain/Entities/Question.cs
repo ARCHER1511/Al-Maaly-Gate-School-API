@@ -6,10 +6,10 @@
         public string? CorrectTextAnswer { get; set; }
         public decimal Degree { get; set; }
         public QuestionTypes Type { get; set; }
-        public List<Choices>? Choices { get; set; } = new ();
+        public ICollection<Choices>? Choices { get; set; } = new HashSet<Choices>();
         public ChoiceAnswer? ChoiceAnswer { get; set; }
         public bool? TrueAndFalses { get; set; }
-        public List<ExamQuestion> ExamQuestions { get; set; } = new();
+        public ICollection<ExamQuestion> ExamQuestions { get; set; } = new HashSet<ExamQuestion>();
         public string TeacherId { get; set; } = string.Empty;
         public Teacher Teacher { get; set; } = null!;
     }

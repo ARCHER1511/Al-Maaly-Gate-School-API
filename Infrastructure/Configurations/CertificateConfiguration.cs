@@ -8,7 +8,8 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Certificate> builder)
         {
-            builder.ToTable("Certificates", "Academics");
+            // Add check constraint for GPA
+            builder.ToTable("Certificates", "Academics",t => t.HasCheckConstraint("CK_Certificates_GPA", "[GPA] >= 0 AND [GPA] <= 4.0"));
 
             builder.HasKey(c => c.Id);
 
@@ -71,7 +72,7 @@ namespace Infrastructure.Configurations
                    .HasFilter("[CertificateNumber] IS NOT NULL");
 
             // Add check constraint for GPA
-            builder.HasCheckConstraint("CK_Certificates_GPA", "[GPA] >= 0 AND [GPA] <= 4.0");
+            //builder.HasCheckConstraint("CK_Certificates_GPA", "[GPA] >= 0 AND [GPA] <= 4.0");
         }
     }
 }

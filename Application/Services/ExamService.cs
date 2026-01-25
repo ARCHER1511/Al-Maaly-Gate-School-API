@@ -4,20 +4,17 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Interfaces;
-using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
 {
     public class ExamService : IExamService
     {
-        private readonly IExamRepository _examRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ExamService(IUnitOfWork unitOfWork, IMapper mapper,IExamRepository examRepository)
+        public ExamService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _examRepository = examRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }

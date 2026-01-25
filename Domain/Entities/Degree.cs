@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
     public class Degree : BaseEntity
     {
@@ -23,7 +17,7 @@ namespace Domain.Entities
 
 
         // New: Dynamic components
-        public ICollection<DegreeComponent> Components { get; set; } = new List<DegreeComponent>();
+        public ICollection<DegreeComponent> Components { get; set; } = new HashSet<DegreeComponent>();
 
         // Method to calculate total score from components
         public void CalculateTotalScore()

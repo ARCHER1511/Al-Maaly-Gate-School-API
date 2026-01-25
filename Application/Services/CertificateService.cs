@@ -1,5 +1,4 @@
-﻿using Application.DTOs;
-using Application.Helpers;
+﻿using Application.Helpers;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Wrappers;
@@ -50,7 +49,7 @@ namespace Application.Services
                 .Include(s => s.Degrees)
                     .ThenInclude(d => d.Subject)
                 .Include(s => s.Class)
-                    .ThenInclude(c => c.Grade)
+                    .ThenInclude(c => c!.Grade)
                     .ThenInclude(g => g.Curriculum)
                 .FirstOrDefaultAsync(s => s.Id == studentId);
 
@@ -69,7 +68,7 @@ namespace Application.Services
             {
                 var student = await context.Students
                     .Include(s => s.Class)
-                        .ThenInclude(c => c.Grade)
+                        .ThenInclude(c => c!.Grade)
                         .ThenInclude(g => g.Curriculum)
                     .Include(s => s.Degrees.Where(d =>
                         d.DegreeType == degreeType ||
@@ -343,7 +342,7 @@ namespace Application.Services
                 // If no curriculum found, try to get from any student in the class
                 var student = await context.Students
                     .Include(s => s.Class)
-                        .ThenInclude(c => c.Grade)
+                        .ThenInclude(c => c!.Grade)
                         .ThenInclude(g => g.Curriculum)
                     .FirstOrDefaultAsync(s => s.ClassId == classId);
 
@@ -379,7 +378,7 @@ namespace Application.Services
 
                 var student = await context.Students
                     .Include(s => s.Class)
-                        .ThenInclude(c => c.Grade)
+                        .ThenInclude(c => c!.Grade)
                         .ThenInclude(g => g.Curriculum)
                     .Include(s => s.Degrees.Where(d =>
                         d.DegreeType == degreeType ||

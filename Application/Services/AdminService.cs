@@ -11,25 +11,16 @@ namespace Application.Services
 {
     public class AdminService : IAdminService
     {
-        private readonly IAdminRepository _adminRepository;
-        private readonly ITeacherRepository _teacherRepository;
-        private readonly IStudentRepository _studentRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notificationService;
 
         public AdminService(
-            IAdminRepository adminRepository,
-            ITeacherRepository teacherRepository,
-            IStudentRepository studentRepository,
             IUnitOfWork unitOfWork,
             IMapper mapper,
             INotificationService notificationService
         )
         {
-            _adminRepository = adminRepository;
-            _teacherRepository = teacherRepository;
-            _studentRepository = studentRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notificationService = notificationService;
@@ -37,7 +28,7 @@ namespace Application.Services
 
         public async Task<ServiceResult<AdminViewDto>> GetByIdAsync(object id)
         {
-            var admin = await _adminRepository.GetByIdAsync(id);
+            var admin = await _unitOfWork.AdminRepository.GetByIdAsync(id);
             if (admin == null)
                 return ServiceResult<AdminViewDto>.Fail("Admin not found");
             var adminDto = _mapper.Map<AdminViewDto>(admin);
@@ -47,7 +38,7 @@ namespace Application.Services
 
         public async Task<ServiceResult<IEnumerable<AdminViewDto>>> GetAllAsync()
         {
-            var admins = await _adminRepository.GetAllAsync();
+            var admins = await _unitOfWork.AdminRepository.GetAllAsync();
             if (admins == null)
                 return ServiceResult<IEnumerable<AdminViewDto>>.Fail("No admins found");
 
@@ -64,7 +55,7 @@ namespace Application.Services
             Func<IQueryable<Admin>, IIncludableQueryable<Admin, object>>? include = null
         )
         {
-            var admin = await _adminRepository.FirstOrDefaultAsync(predicate, include);
+            var admin = await _unitOfWork.AdminRepository.FirstOrDefaultAsync(predicate, include);
             if (admin == null)
                 return ServiceResult<AdminViewDto?>.Fail("Admin not found");
 
@@ -81,7 +72,7 @@ namespace Application.Services
             int? take = null
         )
         {
-            var admins = await _adminRepository.FindAllAsync(
+            var admins = await _unitOfWork.AdminRepository.FindAllAsync(
                 predicate,
                 include,
                 orderBy,
@@ -102,7 +93,7 @@ namespace Application.Services
         {
             var admin = _mapper.Map<Admin>(dto);
 
-            await _adminRepository.AddAsync(admin);
+            await _unitOfWork.AdminRepository.AddAsync(admin);
             await _unitOfWork.SaveChangesAsync();
 
             var viewDto = _mapper.Map<AdminViewDto>(admin);
@@ -111,14 +102,14 @@ namespace Application.Services
 
         public async Task<ServiceResult<AdminViewDto>> UpdateAsync(AdminUpdateDto dto)
         {
-            var existingAdmin = await _adminRepository.GetByIdAsync(dto.Id);
+            var existingAdmin = await _unitOfWork.AdminRepository.GetByIdAsync(dto.Id);
             if (existingAdmin == null)
                 return ServiceResult<AdminViewDto>.Fail("Admin not found");
 
             // Apply updates from DTO to the tracked entity
             _mapper.Map(dto, existingAdmin);
 
-            _adminRepository.Update(existingAdmin); // Optional if tracked
+            _unitOfWork.AdminRepository.Update(existingAdmin); // Optional if tracked
             await _unitOfWork.SaveChangesAsync();
 
             var viewDto = _mapper.Map<AdminViewDto>(existingAdmin);
@@ -127,11 +118,11 @@ namespace Application.Services
 
         public async Task<ServiceResult<bool>> DeleteAsync(object id)
         {
-            var entity = await _adminRepository.GetByIdAsync(id);
+            var entity = await _unitOfWork.AdminRepository.GetByIdAsync(id);
             if (entity == null)
                 return ServiceResult<bool>.Fail("Admin not found");
 
-            _adminRepository.Delete(entity);
+            _unitOfWork.AdminRepository.Delete(entity);
             await _unitOfWork.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true, "Admin deleted successfully");
         }

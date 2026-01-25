@@ -15,8 +15,8 @@
         public string? CurriculumId { get; set; }
         public Curriculum? Curriculum { get; set; }
 
-        public List<ParentStudent> Parents { get; set; } = new();
-        public List<Degree> Degrees { get; set; } = new();
-        public List<Certificate> Certificates { get; set; } = new();
+        public ICollection<ParentStudent> Parents { get; set; } = new HashSet<ParentStudent>();
+        public ICollection<Degree> Degrees { get; set; } = new HashSet<Degree>();
+        public ICollection<Certificate> Certificates { get; set; } = new HashSet<Certificate>();
     }
 }

@@ -3,11 +3,11 @@
     public class Teacher : UserBase
     {
         // Add Curriculum specialization
-        public List<Curriculum> SpecializedCurricula { get; set; } = new();
-        public List<TeacherClass> TeacherClasses { get; set; } = new();
-        public List<TeacherSubject>? TeacherSubjects { get; set; } = new();
-        public List<Exam>? Exams { get; set; } = new List<Exam>();
-        public List<Question> Questions { get; set; } = new List<Question>();
-        public List<ClassAppointment> ClassAppointments { get; set; } = new();
+        public ICollection<Curriculum> SpecializedCurricula { get; set; } = new HashSet<Curriculum>();
+        public ICollection<TeacherClass> TeacherClasses { get; set; } = new HashSet<TeacherClass>();
+        public ICollection<TeacherSubject>? TeacherSubjects { get; set; } = new HashSet<TeacherSubject>();
+        public ICollection<Exam>? Exams { get; set; } = new HashSet<Exam>();
+        public ICollection<Question> Questions { get; set; } = new HashSet<Question>();
+        public ICollection<ClassAppointment> ClassAppointments { get; set; } = new HashSet<ClassAppointment>();
     }
 }

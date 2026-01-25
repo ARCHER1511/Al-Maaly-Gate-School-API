@@ -7,19 +7,11 @@ namespace Application.Services
 {
     public class NotificationService : INotificationService
     {
-        private readonly INotificationRepository _notificationRepo;
-        private readonly IUserNotificationRepository _userNotificationRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly INotificationBroadcaster _broadcaster;
 
-        public NotificationService(
-            INotificationRepository notificationRepo,
-            IUserNotificationRepository userNotificationRepo,
-            IUnitOfWork unitOfWork,
-            INotificationBroadcaster broadcaster)
+        public NotificationService(IUnitOfWork unitOfWork, INotificationBroadcaster broadcaster)
         {
-            _notificationRepo = notificationRepo;
-            _userNotificationRepo = userNotificationRepo;
             _unitOfWork = unitOfWork;
             _broadcaster = broadcaster;
         }
@@ -32,21 +24,27 @@ namespace Application.Services
             IEnumerable<string> targetUserIds,
             string? url = null,
             string? role = null,
-            bool isBroadcast = false)
+            bool isBroadcast = false
+        )
         {
-
             // Validate creator
             if (!string.IsNullOrWhiteSpace(creatorUserId))
             {
-                var creatorExists = await _userNotificationRepo.UserExistsAsync(creatorUserId);
+                var creatorExists = await _unitOfWork.UserNotificationRepository.UserExistsAsync(
+                    creatorUserId
+                );
                 if (!creatorExists)
-                    ServiceResult<Notification>.Fail($"Creator user ID '{creatorUserId}' does not exist.");
+                    ServiceResult<Notification>.Fail(
+                        $"Creator user ID '{creatorUserId}' does not exist."
+                    );
             }
 
             // Validate targets
             foreach (var userId in targetUserIds)
             {
-                var userExists = await _userNotificationRepo.UserExistsAsync(userId);
+                var userExists = await _unitOfWork.UserNotificationRepository.UserExistsAsync(
+                    userId
+                );
                 if (!userExists)
                     ServiceResult<Notification>.Fail($"Target user ID '{userId}' does not exist.");
             }
@@ -59,14 +57,17 @@ namespace Application.Services
                 Url = url ?? string.Empty,
                 CreatorUserId = creatorUserId ?? string.Empty,
                 Role = role,
-                IsBroadcast = isBroadcast
+                IsBroadcast = isBroadcast,
             };
 
-            await _notificationRepo.AddAsync(notification);
+            await _unitOfWork.NotificationRepository.AddAsync(notification);
 
             foreach (var userId in targetUserIds)
             {
-                await _notificationRepo.AddUserNotificationAsync(notification, userId);
+                await _unitOfWork.NotificationRepository.AddUserNotificationAsync(
+                    notification,
+                    userId
+                );
             }
 
             await _unitOfWork.SaveChangesAsync();
@@ -74,28 +75,46 @@ namespace Application.Services
             // Send via SignalR
             await _broadcaster.BroadcastToUsersAsync(notification, targetUserIds);
 
-            return ServiceResult<Notification>.Ok(notification,"notification created sucessfully");
+            return ServiceResult<Notification>.Ok(notification, "notification created sucessfully");
         }
 
-        public async Task<ServiceResult<IEnumerable<Notification>>> GetUserNotificationsAsync(string userId)
+        public async Task<ServiceResult<IEnumerable<Notification>>> GetUserNotificationsAsync(
+            string userId
+        )
         {
-            var notifications = await _notificationRepo.GetUserNotificationsAsync(userId);
+            var notifications = await _unitOfWork.NotificationRepository.GetUserNotificationsAsync(
+                userId
+            );
             if (notifications == null)
                 return ServiceResult<IEnumerable<Notification>>.Fail("No notificaions found");
-            return ServiceResult<IEnumerable<Notification>>.Ok(notifications,"Notifications retrived successfully");
+            return ServiceResult<IEnumerable<Notification>>.Ok(
+                notifications,
+                "Notifications retrived successfully"
+            );
         }
 
-        public async Task<ServiceResult<IEnumerable<Notification>>> GetUnreadNotificationsAsync(string userId)
+        public async Task<ServiceResult<IEnumerable<Notification>>> GetUnreadNotificationsAsync(
+            string userId
+        )
         {
-            var unreadNotifications =  await _notificationRepo.GetUnreadNotificationsAsync(userId);
+            var unreadNotifications =
+                await _unitOfWork.NotificationRepository.GetUnreadNotificationsAsync(userId);
             if (unreadNotifications == null)
-                return ServiceResult<IEnumerable<Notification>>.Fail("No Un Read notifaitions found");
-            return ServiceResult<IEnumerable<Notification>>.Ok(unreadNotifications,"Un Read notifications retrived Successfully");
+                return ServiceResult<IEnumerable<Notification>>.Fail(
+                    "No Un Read notifaitions found"
+                );
+            return ServiceResult<IEnumerable<Notification>>.Ok(
+                unreadNotifications,
+                "Un Read notifications retrived Successfully"
+            );
         }
 
         public async Task<ServiceResult<bool>> MarkAsReadAsync(string notificationId, string userId)
         {
-            var marked = await _notificationRepo.MarkAsReadAsync(notificationId, userId);
+            var marked = await _unitOfWork.NotificationRepository.MarkAsReadAsync(
+                notificationId,
+                userId
+            );
             if (!marked)
                 ServiceResult<bool>.Fail("Failed to mark as read");
             await _unitOfWork.SaveChangesAsync();

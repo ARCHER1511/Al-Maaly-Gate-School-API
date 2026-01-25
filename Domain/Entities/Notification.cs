@@ -12,6 +12,6 @@
         public string? Role { get; set; }               // e.g., "Admin", "Manager"
         public bool IsBroadcast { get; set; } = false;  // to all users
 
-        public List<UserNotification> UserNotifications { get; set; } = new List<UserNotification>();
+        public ICollection<UserNotification> UserNotifications { get; set; } = new HashSet<UserNotification>();
     }
 }

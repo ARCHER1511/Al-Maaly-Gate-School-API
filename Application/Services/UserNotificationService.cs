@@ -7,35 +7,44 @@ namespace Application.Services
 {
     public class UserNotificationService : IUserNotificationService
     {
-        private readonly IUserNotificationRepository _userNotificationRepo;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UserNotificationService(IUserNotificationRepository userNotificationRepo, IUnitOfWork unitOfWork)
+        public UserNotificationService(IUnitOfWork unitOfWork)
         {
-            _userNotificationRepo = userNotificationRepo;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ServiceResult<IEnumerable<UserNotification>>> GetByUserIdAsync(string userId)
+        public async Task<ServiceResult<IEnumerable<UserNotification>>> GetByUserIdAsync(
+            string userId
+        )
         {
             if (userId == null)
-            return ServiceResult<IEnumerable<UserNotification>>.Fail("No user id added");
-            var result = await _userNotificationRepo.GetByUserIdAsync(userId);
-            return ServiceResult<IEnumerable<UserNotification>>.Ok(result,"notifications retrived successfully");
+                return ServiceResult<IEnumerable<UserNotification>>.Fail("No user id added");
+            var result = await _unitOfWork.UserNotificationRepository.GetByUserIdAsync(userId);
+            return ServiceResult<IEnumerable<UserNotification>>.Ok(
+                result,
+                "notifications retrived successfully"
+            );
         }
 
-        public async Task<ServiceResult<bool>> MarkAsDeliveredAsync(string notificationId, string userId)
+        public async Task<ServiceResult<bool>> MarkAsDeliveredAsync(
+            string notificationId,
+            string userId
+        )
         {
-            var entity = await _userNotificationRepo.GetByNotificationAndUserAsync(notificationId, userId);
+            var entity = await _unitOfWork.UserNotificationRepository.GetByNotificationAndUserAsync(
+                notificationId,
+                userId
+            );
             if (entity == null)
                 return ServiceResult<bool>.Fail("Failed To Update");
 
             entity.IsDelivered = true;
             entity.DeliveredAt = DateTime.Now;
 
-            _userNotificationRepo.Update(entity);
+            _unitOfWork.UserNotificationRepository.Update(entity);
             await _unitOfWork.SaveChangesAsync();
-            return ServiceResult<bool>.Ok(true,"Updated Successfully");
+            return ServiceResult<bool>.Ok(true, "Updated Successfully");
         }
     }
 }
