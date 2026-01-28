@@ -1,4 +1,6 @@
-﻿using Application.DTOs.AuthDTOs;
+﻿using Al_Maaly_Gate_School.ControllerResponseHandler;
+using Application.DTOs.AdminDTOs;
+using Application.DTOs.AuthDTOs;
 using Application.DTOs.ParentDTOs;
 using Application.Interfaces;
 using Domain.Wrappers;
@@ -46,7 +48,6 @@ namespace Al_Maaly_Gate_School.Controllers
                 ? Ok(ApiResponse<AuthResponse>.Ok(result.Data!, result.Message))
                 : BadRequest(ApiResponse<AuthResponse>.Fail(result.Message!));
         }
-
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest request)
         {

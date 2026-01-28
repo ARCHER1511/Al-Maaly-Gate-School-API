@@ -4,6 +4,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Application.Authentication;
+using Application.DTOs.AdminDTOs;
 using Application.DTOs.AuthDTOs;
 using Application.DTOs.FileRequestDTOs;
 using Application.DTOs.ParentDTOs;
@@ -45,108 +46,6 @@ namespace Application.Services
             _mapper = mapper;
             _fileService = fileService;
             _emailService = emailService;
-        }
-
-        private async Task CleanupUploadedFiles(List<string> filePaths, string userId)
-        {
-            foreach (var path in filePaths)
-            {
-                try
-                {
-                    await _fileService.DeleteFileAsync(path, userId);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(
-                        $"Failed to cleanup file during rollback: {path} information: {ex}"
-                    );
-                }
-            }
-        }
-
-        private int CalculateAge(DateOnly birthDate)
-        {
-            var today = DateOnly.FromDateTime(DateTime.Now);
-
-            int age = today.Year - birthDate.Year;
-
-            // If birthday hasn't occurred yet this year, subtract 1
-            if (birthDate > today.AddYears(-age))
-            {
-                age--;
-            }
-
-            return age;
-        }
-
-        private async Task LinkFilesToParent(
-            string parentId,
-            List<string> filePaths,
-            string identityDocumentName,
-            string userId
-        )
-        {
-            bool identityDocumentProcessed = false;
-
-            foreach (var filePath in filePaths)
-            {
-                // Get the FileRecord
-                var fileRecordResult = await _fileService.GetFileByPathAsync(filePath, userId);
-                if (!fileRecordResult.Success || fileRecordResult.Data == null)
-                    continue;
-
-                var fileRecord = fileRecordResult.Data;
-
-                if (
-                    !identityDocumentProcessed
-                    || fileRecord.FileName.Contains(
-                        Path.GetFileNameWithoutExtension(identityDocumentName)
-                    )
-                )
-                {
-                    fileRecord.FileType = "identity";
-                    identityDocumentProcessed = true;
-                }
-                else
-                {
-                    fileRecord.FileType = "additional";
-                }
-
-                fileRecord.Id = parentId;
-
-                await _unitOfWork.FileRecordRepository.UpdateAsync(fileRecord);
-            }
-
-            // Save changes
-            await _unitOfWork.SaveChangesAsync();
-        }
-
-        private async Task<List<DocumentInfo>> GetUploadedDocumentInfos(
-            List<string> filePaths,
-            string userId
-        )
-        {
-            var documentInfos = new List<DocumentInfo>();
-
-            foreach (var path in filePaths)
-            {
-                var fileResult = await _fileService.GetFileByPathAsync(path, userId);
-                if (fileResult.Success && fileResult.Data != null)
-                {
-                    documentInfos.Add(
-                        new DocumentInfo
-                        {
-                            Id = fileResult.Data.Id,
-                            Path = fileResult.Data.RelativePath,
-                            Type = fileResult.Data.FileType ?? "unknown",
-                            OriginalFileName = fileResult.Data.FileName,
-                            FileSize = fileResult.Data.FileSize,
-                            UploadedAt = fileResult.Data.UploadedAt,
-                        }
-                    );
-                }
-            }
-            return documentInfos;
         }
 
         public async Task<ServiceResult<ParentRegistrationResponse>> RegisterParentAsync(
@@ -197,6 +96,21 @@ namespace Application.Services
             }
         }
 
+        public async Task<ServiceResult<string>> CreateTeacherAsync(CreateTeacherRequest request)
+        {
+            return await CreateUserByAdminAsync(request, "teacher");
+        }
+
+        public async Task<ServiceResult<string>> CreateStudentAsync(CreateStudentRequest request)
+        {
+            return await CreateUserByAdminAsync(request, "student");
+        }
+
+        public async Task<ServiceResult<string>> CreateParentAsync(CreateParentRequest request)
+        {
+            return await CreateUserByAdminAsync(request, "parent");
+        }
+
         public async Task<ServiceResult<AuthResponse>> RegisterAsync(RegisterRequest request)
         {
             if (request.Password != request.ConfirmPassword)
@@ -219,7 +133,7 @@ namespace Application.Services
             var user = _mapper.Map<AppUser>(request);
             user.Id = Guid.NewGuid().ToString();
             user.EmailConfirmed = false;
-            user.PendingRole = role; //
+            user.PendingRole = role;
             user.ConfirmationNumber = GenerateConfirmationNumber();
             user.EmailConfirmationToken = GenerateEmailToken();
             user.ConfirmationTokenExpiry = DateTime.Now.AddHours(24);
@@ -231,6 +145,7 @@ namespace Application.Services
                     string.Join(", ", result.Errors.Select(e => e.Description))
                 );
 
+            // Send email WITHOUT temp password for self-registration
             await SendConfirmationEmail(user);
 
             return ServiceResult<AuthResponse>.Ok(
@@ -242,6 +157,27 @@ namespace Application.Services
                 },
                 "Registration successful. Please confirm your email."
             );
+        }
+
+        public async Task<ServiceResult<List<AppUser>>> GetPendingRoleTeacherAsync()
+        {
+            var users = await _userRepo.GetAllUsersAsync();
+            var pendingTeachers = users.Where(u => u.PendingRole == "teacher").ToList();
+            return ServiceResult<List<AppUser>>.Ok(pendingTeachers);
+        }
+
+        public async Task<ServiceResult<List<AppUser>>> GetPendingRoleStudentAsync()
+        {
+            var users = await _userRepo.GetAllUsersAsync();
+            var pendingStudents = users.Where(u => u.PendingRole == "student").ToList();
+            return ServiceResult<List<AppUser>>.Ok(pendingStudents);
+        }
+
+        public async Task<ServiceResult<List<AppUser>>> GetPendingRoleParentAsync()
+        {
+            var users = await _userRepo.GetAllUsersAsync();
+            var pendingParents = users.Where(u => u.PendingRole == "parent").ToList();
+            return ServiceResult<List<AppUser>>.Ok(pendingParents);
         }
 
         public async Task<ServiceResult<string>> ConfirmEmailAsync(ConfirmEmailRequest request)
@@ -350,8 +286,8 @@ namespace Application.Services
         }
 
         public async Task<ServiceResult<string>> ResendConfirmationAsync(
-            ResendConfirmationRequest request
-        )
+    ResendConfirmationRequest request
+)
         {
             var user = await _userRepo.GetByEmailAsync(request.Email);
             if (user == null)
@@ -365,43 +301,13 @@ namespace Application.Services
             user.ConfirmationTokenExpiry = DateTime.Now.AddHours(24);
 
             await _userRepo.UpdateAsync(user);
-            await SendConfirmationEmail(user);
+
+            // SIMPLE: Always send WITHOUT temp password on resend
+            // If user lost password, they should use "Forgot Password"
+            await SendConfirmationEmail(user); // Send without password
 
             return ServiceResult<string>.Ok("Confirmation email resent.");
         }
-
-        private async Task SendConfirmationEmail(AppUser user)
-        {
-            var token = UrlEncoder.Default.Encode(user.EmailConfirmationToken!);
-            var link =
-                $"{_config["App:BaseUrl"]}/api/authentication/confirm-email?token={token}&userId={user.Id}";
-
-            var body =
-                $@"
-                    <div style='font-family:Arial'>
-                        <h2>Email Confirmation</h2>
-                        <p>Your confirmation code:</p>
-                        <h3>{user.ConfirmationNumber}</h3>
-                        <p>
-                        <a href='{link}' style='padding:10px 15px;background:#0d6efd;color:#fff;text-decoration:none;border-radius:5px'>
-                            Confirm Email
-                        </a>
-                        </p>
-                        <p style='color:gray'>Expires in 24 hours</p>
-                    </div>";
-
-            await _emailService.SendAsync(user.Email!, "Confirm Email", body, true);
-        }
-
-        private string GenerateConfirmationNumber() =>
-            Random.Shared.Next(100000, 999999).ToString();
-
-        private string GenerateEmailToken() =>
-            Convert
-                .ToBase64String(Guid.NewGuid().ToByteArray())
-                .Replace("/", "_")
-                .Replace("+", "-")
-                .Replace("=", "");
 
         public async Task<ServiceResult<AuthResponse>> LoginAsync(LoginRequest request)
         {
@@ -882,6 +788,71 @@ namespace Application.Services
             return ServiceResult<AuthResponse>.Ok(response, "Profile photo uploaded");
         }
 
+        private async Task SendConfirmationEmail(AppUser user, string? tempPassword = null)
+        {
+            var token = UrlEncoder.Default.Encode(user.EmailConfirmationToken!);
+            var link = $"{_config["App:BaseUrl"]}/api/authentication/confirm-email?token={token}&userId={user.Id}";
+
+            string body;
+
+            if (tempPassword != null)
+            {
+                // Email for admin-created users (includes temp password)
+                body = $@"
+            <div style='font-family:Arial; max-width:600px; margin:0 auto; padding:20px; border:1px solid #ddd; border-radius:5px;'>
+                <h2 style='color:#333;'>Account Created by Administrator</h2>
+                <p>Your account has been created by an administrator. Here are your login details:</p>
+                <div style='background-color:#f8f9fa; padding:15px; border-radius:5px; margin:15px 0;'>
+                    <p><strong>Email:</strong> {user.Email}</p>
+                    <p><strong>Temporary Password:</strong> <code style='background:#e9ecef; padding:2px 6px; border-radius:3px;'>{tempPassword}</code></p>
+                    <p><small style='color:#6c757d;'>You will be prompted to change this password on first login.</small></p>
+                </div>
+                <p>Your confirmation code:</p>
+                <h3 style='background:#0d6efd; color:white; padding:10px; border-radius:5px; text-align:center;'>{user.ConfirmationNumber}</h3>
+                <p>Click the button below to confirm your email:</p>
+                <p>
+                    <a href='{link}' style='padding:12px 24px; background:#0d6efd; color:#fff; text-decoration:none; border-radius:5px; display:inline-block;'>
+                        Confirm Email
+                    </a>
+                </p>
+                <p style='color:gray; font-size:0.9em;'>This confirmation link expires in 24 hours.</p>
+                <hr style='margin:20px 0; border-color:#eee;' />
+                <p style='font-size:0.9em; color:#666;'>
+                    If you did not request this account, please contact the administrator.
+                </p>
+            </div>";
+            }
+            else
+            {
+                // Email for self-registration (only confirmation number)
+                body = $@"
+            <div style='font-family:Arial; max-width:600px; margin:0 auto; padding:20px; border:1px solid #ddd; border-radius:5px;'>
+                <h2 style='color:#333;'>Email Confirmation</h2>
+                <p>Thank you for registering! Your confirmation code is:</p>
+                <h3 style='background:#0d6efd; color:white; padding:10px; border-radius:5px; text-align:center;'>{user.ConfirmationNumber}</h3>
+                <p>Click the button below to confirm your email:</p>
+                <p>
+                    <a href='{link}' style='padding:12px 24px; background:#0d6efd; color:#fff; text-decoration:none; border-radius:5px; display:inline-block;'>
+                        Confirm Email
+                    </a>
+                </p>
+                <p style='color:gray; font-size:0.9em;'>This confirmation link expires in 24 hours.</p>
+            </div>";
+            }
+
+            await _emailService.SendAsync(user.Email!, tempPassword != null ? "Your Account Has Been Created" : "Confirm Your Email", body, true);
+        }
+
+        private string GenerateConfirmationNumber() =>
+            Random.Shared.Next(100000, 999999).ToString();
+
+        private string GenerateEmailToken() =>
+            Convert
+                .ToBase64String(Guid.NewGuid().ToByteArray())
+                .Replace("/", "_")
+                .Replace("+", "-")
+                .Replace("=", "");
+
         private async Task<Dictionary<string, string>> BuildRoleEntityIdMap(AppUser user)
         {
             var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -923,6 +894,171 @@ namespace Application.Services
             }
 
             return map;
+        }
+
+        private async Task CleanupUploadedFiles(List<string> filePaths, string userId)
+        {
+            foreach (var path in filePaths)
+            {
+                try
+                {
+                    await _fileService.DeleteFileAsync(path, userId);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(
+                        $"Failed to cleanup file during rollback: {path} information: {ex}"
+                    );
+                }
+            }
+        }
+
+        private int CalculateAge(DateOnly birthDate)
+        {
+            var today = DateOnly.FromDateTime(DateTime.Now);
+
+            int age = today.Year - birthDate.Year;
+
+            // If birthday hasn't occurred yet this year, subtract 1
+            if (birthDate > today.AddYears(-age))
+            {
+                age--;
+            }
+
+            return age;
+        }
+
+        private async Task LinkFilesToParent(
+            string parentId,
+            List<string> filePaths,
+            string identityDocumentName,
+            string userId
+        )
+        {
+            bool identityDocumentProcessed = false;
+
+            foreach (var filePath in filePaths)
+            {
+                // Get the FileRecord
+                var fileRecordResult = await _fileService.GetFileByPathAsync(filePath, userId);
+                if (!fileRecordResult.Success || fileRecordResult.Data == null)
+                    continue;
+
+                var fileRecord = fileRecordResult.Data;
+
+                if (
+                    !identityDocumentProcessed
+                    || fileRecord.FileName.Contains(
+                        Path.GetFileNameWithoutExtension(identityDocumentName)
+                    )
+                )
+                {
+                    fileRecord.FileType = "identity";
+                    identityDocumentProcessed = true;
+                }
+                else
+                {
+                    fileRecord.FileType = "additional";
+                }
+
+                fileRecord.Id = parentId;
+
+                await _unitOfWork.FileRecordRepository.UpdateAsync(fileRecord);
+            }
+
+            // Save changes
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        private async Task<List<DocumentInfo>> GetUploadedDocumentInfos(
+            List<string> filePaths,
+            string userId
+        )
+        {
+            var documentInfos = new List<DocumentInfo>();
+
+            foreach (var path in filePaths)
+            {
+                var fileResult = await _fileService.GetFileByPathAsync(path, userId);
+                if (fileResult.Success && fileResult.Data != null)
+                {
+                    documentInfos.Add(
+                        new DocumentInfo
+                        {
+                            Id = fileResult.Data.Id,
+                            Path = fileResult.Data.RelativePath,
+                            Type = fileResult.Data.FileType ?? "unknown",
+                            OriginalFileName = fileResult.Data.FileName,
+                            FileSize = fileResult.Data.FileSize,
+                            UploadedAt = fileResult.Data.UploadedAt,
+                        }
+                    );
+                }
+            }
+            return documentInfos;
+        }
+
+        private async Task<ServiceResult<string>> CreateUserByAdminAsync(
+    AdminCreateUserBaseDto request,
+    string role
+)
+        {
+            var existingUser = await _userRepo.GetByEmailAsync(request.Email);
+            if (existingUser != null)
+                return ServiceResult<string>.Fail("Email already registered.");
+
+            int age = CalculateAge(request.BirthDay);
+
+            var user = _mapper.Map<AppUser>(request);
+            user.Id = Guid.NewGuid().ToString();
+            user.EmailConfirmed = false;
+            user.PendingRole = role;
+            user.ConfirmationNumber = GenerateConfirmationNumber();
+            user.EmailConfirmationToken = GenerateEmailToken();
+            user.ConfirmationTokenExpiry = DateTime.Now.AddHours(24);
+            user.Age = age;
+
+            // 🔐 Temporary password (user will reset later)
+            var tempPassword = GenerateStrongPassword(); // Use a better password generator
+
+            var result = await _userRepo.CreateAsync(user, tempPassword);
+            if (!result.Succeeded)
+                return ServiceResult<string>.Fail(
+                    string.Join(", ", result.Errors.Select(e => e.Description))
+                );
+
+            // Send email with temp password for admin-created users
+            await SendConfirmationEmail(user, tempPassword);
+
+            return ServiceResult<string>.Ok(
+                "Account created successfully. Confirmation email with temporary password sent."
+            );
+        }
+        private string GenerateStrongPassword()
+        {
+            const string lower = "abcdefghijklmnopqrstuvwxyz";
+            const string upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string digits = "0123456789";
+            const string special = "!@#$%^&*()-_=+[]{}|;:,.<>?";
+
+            var random = new Random();
+            var password = new char[12];
+
+            // Ensure at least one of each required character type
+            password[0] = lower[random.Next(lower.Length)];
+            password[1] = upper[random.Next(upper.Length)];
+            password[2] = digits[random.Next(digits.Length)];
+            password[3] = special[random.Next(special.Length)];
+
+            // Fill the rest with random characters from all sets
+            var allChars = lower + upper + digits + special;
+            for (int i = 4; i < password.Length; i++)
+            {
+                password[i] = allChars[random.Next(allChars.Length)];
+            }
+
+            // Shuffle the password
+            return new string(password.OrderBy(c => random.Next()).ToArray());
         }
     }
 }
