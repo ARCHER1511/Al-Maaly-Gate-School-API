@@ -145,7 +145,7 @@ public class FontResolver : IFontResolver
         else if (isItalic)
             key += ",Italic";
 
-        if (_fontMapping.TryGetValue(key, out string fontName))
+        if (_fontMapping.TryGetValue(key, out string? fontName))
         {
             return new FontResolverInfo(fontName);
         }
@@ -182,6 +182,6 @@ public class FontResolver : IFontResolver
         }
 
         // If not found, return null to use default
-        return null;
+        return null!;
     }
 }

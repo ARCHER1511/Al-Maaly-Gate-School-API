@@ -18,5 +18,6 @@ namespace Infrastructure.Interfaces
         Task<string> GeneratePasswordResetTokenAsync(AppUser user);
         Task<bool> ResetPasswordAsync(AppUser user, string token, string newPassword);
         Task<IList<string>> GetUserRolesAsync(AppUser user);
+        Task<List<AppUser>> GetAllUsersAsync();
     }
 }

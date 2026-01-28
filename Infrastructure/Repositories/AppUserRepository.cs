@@ -1,6 +1,7 @@
-﻿using Infrastructure.Interfaces;
-using Domain.Entities;
+﻿using Domain.Entities;
+using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -46,7 +47,11 @@ namespace Infrastructure.Repositories
         public async Task<IdentityResult> DeleteAsync(AppUser user) =>
             await _userManager.DeleteAsync(user);
 
-        public async Task<bool> ChangePasswordAsync(AppUser user, string oldPassword, string newPassword)
+        public async Task<bool> ChangePasswordAsync(
+            AppUser user,
+            string oldPassword,
+            string newPassword
+        )
         {
             var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
             return result.Succeeded;
@@ -64,9 +69,13 @@ namespace Infrastructure.Repositories
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
             return result.Succeeded;
         }
+
         public async Task<IList<string>> GetUserRolesAsync(AppUser user)
         {
             return await _userManager.GetRolesAsync(user);
         }
+
+        public async Task<List<AppUser>> GetAllUsersAsync() =>
+            await _userManager.Users.ToListAsync();
     }
 }
