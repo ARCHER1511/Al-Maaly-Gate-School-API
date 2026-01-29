@@ -1,4 +1,6 @@
-﻿using Al_Maaly_Gate_School.ControllerResponseHandler;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Al_Maaly_Gate_School.ControllerResponseHandler;
 using Application.DTOs.AdminDTOs;
 using Application.DTOs.AuthDTOs;
 using Application.DTOs.FileRequestDTOs;
@@ -7,8 +9,6 @@ using Domain.Entities;
 using Domain.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace Al_Maaly_Gate_School.Controllers
 {
@@ -28,21 +28,36 @@ namespace Al_Maaly_Gate_School.Controllers
             _authService = authService;
             _fileService = fileService;
         }
+
         [HttpPost("create-teacher")]
-        public async Task<IActionResult> CreateTeacher(CreateTeacherRequest request) => await this.HandleAsync(() => _authService.CreateTeacherAsync(request));
+        public async Task<IActionResult> CreateTeacher(CreateTeacherRequest request) =>
+            await this.HandleAsync(() => _authService.CreateTeacherAsync(request));
+
         [HttpPost("create-student")]
-        public async Task<IActionResult> CreateStudent(CreateStudentRequest request) => await this.HandleAsync(() => _authService.CreateStudentAsync(request));
+        public async Task<IActionResult> CreateStudent(CreateStudentRequest request) =>
+            await this.HandleAsync(() => _authService.CreateStudentAsync(request));
+
         [HttpPost("create-parent")]
-        public async Task<IActionResult> CreateParent(CreateParentRequest request) => await this.HandleAsync(() => _authService.CreateParentAsync(request));
+        public async Task<IActionResult> CreateParent(CreateParentRequest request) =>
+            await this.HandleAsync(() => _authService.CreateParentAsync(request));
+
+        [HttpPost("bulk-create-users")]
+        public async Task<IActionResult> BulkCreateUsers([FromBody] BulkCreateUsersRequest request)
+        {
+            return await this.HandleAsync(() => _authService.BulkCreateUsersAsync(request));
+        }
 
         [HttpGet("pending-teachers")]
-        public async Task<IActionResult> GetPendingTeachers() => await this.HandleAsync(() => _authService.GetPendingRoleTeacherAsync());
+        public async Task<IActionResult> GetPendingTeachers() =>
+            await this.HandleAsync(() => _authService.GetPendingRoleTeacherAsync());
 
         [HttpGet("pending-students")]
-        public async Task<IActionResult> GetPendingStudents() => await this.HandleAsync(() => _authService.GetPendingRoleStudentAsync());
+        public async Task<IActionResult> GetPendingStudents() =>
+            await this.HandleAsync(() => _authService.GetPendingRoleStudentAsync());
 
         [HttpGet("pending-parents")]
-        public async Task<IActionResult> GetPendingParents() => await this.HandleAsync(() => _authService.GetPendingRoleParentAsync());
+        public async Task<IActionResult> GetPendingParents() =>
+            await this.HandleAsync(() => _authService.GetPendingRoleParentAsync());
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()

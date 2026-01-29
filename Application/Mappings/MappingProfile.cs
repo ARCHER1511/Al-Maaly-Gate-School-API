@@ -106,6 +106,10 @@ namespace Application.Mappings
                 .ForMember(dest => dest.ConfirmationNumber, opt => opt.Ignore())
                 .ForMember(dest => dest.EmailConfirmationToken, opt => opt.Ignore())
                 .ForMember(dest => dest.ConfirmationTokenExpiry, opt => opt.Ignore());
+            //bulk user create DTO mapprer
+            CreateMap<AdminCreateUserBaseDto, CreateTeacherRequest>();
+            CreateMap<AdminCreateUserBaseDto, CreateStudentRequest>();
+            CreateMap<AdminCreateUserBaseDto, CreateParentRequest>();
             #endregion
 
             #region Teacher Mappings
