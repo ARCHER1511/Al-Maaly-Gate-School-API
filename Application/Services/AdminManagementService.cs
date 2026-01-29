@@ -925,27 +925,27 @@ namespace Application.Services
             Console.WriteLine("Student moved successfully");
 
             // Build notification message
-            string message;
-            if (string.IsNullOrEmpty(newClassId))
-            {
-                message =
-                    $"Dear {student.AppUser.FullName}, you have been unassigned from your previous class ({oldClassName ?? "N/A"}).";
-            }
-            else
-            {
-                var curriculumName = student.Class?.Grade.Curriculum?.Name ?? "N/A";
-                message =
-                    $"Dear {student.AppUser.FullName}, you have been moved to class {student.Class?.ClassName ?? "N/A"} with curriculum {curriculumName}.";
-            }
+            //string message;
+            //if (string.IsNullOrEmpty(newClassId))
+            //{
+            //    message =
+            //        $"Dear {student.AppUser.FullName}, you have been unassigned from your previous class ({oldClassName ?? "N/A"}).";
+            //}
+            //else
+            //{
+            //    var curriculumName = student.Class?.Grade.Curriculum?.Name ?? "N/A";
+            //    message =
+            //        $"Dear {student.AppUser.FullName}, you have been moved to class {student.Class?.ClassName ?? "N/A"} with curriculum {curriculumName}.";
+            //}
 
-            await _notificationService.CreateNotificationAsync(
-                title: "Class Assignment Updated",
-                message: message,
-                type: "Class Change",
-                creatorUserId: adminUserId,
-                targetUserIds: new[] { student.AppUserId },
-                role: "Student"
-            );
+            //await _notificationService.CreateNotificationAsync(
+            //    title: "Class Assignment Updated",
+            //    message: message,
+            //    type: "Class Change",
+            //    creatorUserId: adminUserId,
+            //    targetUserIds: new[] { student.AppUserId },
+            //    role: "Student"
+            //);
 
             return ServiceResult<bool>.Ok(true, "Student moved successfully.");
         }
