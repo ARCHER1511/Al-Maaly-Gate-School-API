@@ -15,6 +15,7 @@ namespace Application.Interfaces
         Task<ServiceResult<string>> CreateTeacherAsync(CreateTeacherRequest request);
         Task<ServiceResult<string>> CreateStudentAsync(CreateStudentRequest request);
         Task<ServiceResult<string>> CreateParentAsync(CreateParentRequest request);
+        Task<ServiceResult<List<object>>> BulkCreateUsersAsync(BulkCreateUsersRequest request);
         Task<ServiceResult<AuthResponse>> RegisterAsync(RegisterRequest request);
         Task<ServiceResult<AuthResponse>> LoginAsync(LoginRequest request);
         Task<ServiceResult<string>> CreateRoleAsync(CreateRoleRequest roleName);

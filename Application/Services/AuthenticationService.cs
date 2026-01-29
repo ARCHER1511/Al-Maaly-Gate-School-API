@@ -111,6 +111,52 @@ namespace Application.Services
             return await CreateUserByAdminAsync(request, "parent");
         }
 
+        //create bulk users
+        public async Task<ServiceResult<List<object>>> BulkCreateUsersAsync(
+            BulkCreateUsersRequest request
+        )
+        {
+            var result = new List<object>();
+
+            foreach (var user in request.Users)
+            {
+                ServiceResult<string> createResult;
+
+                switch (request.UserType.ToLower())
+                {
+                    case "teacher":
+                        var teacherRequest = _mapper.Map<CreateTeacherRequest>(user);
+                        createResult = await CreateTeacherAsync(teacherRequest);
+                        break;
+
+                    case "student":
+                        var studentRequest = _mapper.Map<CreateStudentRequest>(user);
+                        createResult = await CreateStudentAsync(studentRequest);
+                        break;
+
+                    case "parent":
+                        var parentRequest = _mapper.Map<CreateParentRequest>(user);
+                        createResult = await CreateParentAsync(parentRequest);
+                        break;
+
+                    default:
+                        createResult = ServiceResult<string>.Fail("Invalid user type");
+                        break;
+                }
+
+                result.Add(
+                    new
+                    {
+                        user.Email,
+                        Status = createResult.Success ? "Success" : "Failed",
+                        Message = createResult.Message,
+                    }
+                );
+            }
+
+            return ServiceResult<List<object>>.Ok(result);
+        }
+
         public async Task<ServiceResult<AuthResponse>> RegisterAsync(RegisterRequest request)
         {
             if (request.Password != request.ConfirmPassword)
@@ -286,8 +332,8 @@ namespace Application.Services
         }
 
         public async Task<ServiceResult<string>> ResendConfirmationAsync(
-    ResendConfirmationRequest request
-)
+            ResendConfirmationRequest request
+        )
         {
             var user = await _userRepo.GetByEmailAsync(request.Email);
             if (user == null)
@@ -791,14 +837,16 @@ namespace Application.Services
         private async Task SendConfirmationEmail(AppUser user, string? tempPassword = null)
         {
             var token = UrlEncoder.Default.Encode(user.EmailConfirmationToken!);
-            var link = $"{_config["App:BaseUrl"]}/api/authentication/confirm-email?token={token}&userId={user.Id}";
+            var link =
+                $"{_config["App:BaseUrl"]}/api/authentication/confirm-email?token={token}&userId={user.Id}";
 
             string body;
 
             if (tempPassword != null)
             {
                 // Email for admin-created users (includes temp password)
-                body = $@"
+                body =
+                    $@"
             <div style='font-family:Arial; max-width:600px; margin:0 auto; padding:20px; border:1px solid #ddd; border-radius:5px;'>
                 <h2 style='color:#333;'>Account Created by Administrator</h2>
                 <p>Your account has been created by an administrator. Here are your login details:</p>
@@ -825,7 +873,8 @@ namespace Application.Services
             else
             {
                 // Email for self-registration (only confirmation number)
-                body = $@"
+                body =
+                    $@"
             <div style='font-family:Arial; max-width:600px; margin:0 auto; padding:20px; border:1px solid #ddd; border-radius:5px;'>
                 <h2 style='color:#333;'>Email Confirmation</h2>
                 <p>Thank you for registering! Your confirmation code is:</p>
@@ -840,7 +889,12 @@ namespace Application.Services
             </div>";
             }
 
-            await _emailService.SendAsync(user.Email!, tempPassword != null ? "Your Account Has Been Created" : "Confirm Your Email", body, true);
+            await _emailService.SendAsync(
+                user.Email!,
+                tempPassword != null ? "Your Account Has Been Created" : "Confirm Your Email",
+                body,
+                true
+            );
         }
 
         private string GenerateConfirmationNumber() =>
@@ -999,9 +1053,9 @@ namespace Application.Services
         }
 
         private async Task<ServiceResult<string>> CreateUserByAdminAsync(
-    AdminCreateUserBaseDto request,
-    string role
-)
+            AdminCreateUserBaseDto request,
+            string role
+        )
         {
             var existingUser = await _userRepo.GetByEmailAsync(request.Email);
             if (existingUser != null)
@@ -1034,6 +1088,7 @@ namespace Application.Services
                 "Account created successfully. Confirmation email with temporary password sent."
             );
         }
+
         private string GenerateStrongPassword()
         {
             const string lower = "abcdefghijklmnopqrstuvwxyz";
