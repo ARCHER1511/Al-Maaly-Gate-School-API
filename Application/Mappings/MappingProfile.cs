@@ -21,6 +21,7 @@ namespace Application.Mappings
 {
     public class MappingProfile : Profile
     {
+     
         public MappingProfile()
         {
             #region Mapping Template
@@ -110,11 +111,22 @@ namespace Application.Mappings
             CreateMap<AdminCreateUserBaseDto, CreateTeacherRequest>();
             CreateMap<AdminCreateUserBaseDto, CreateStudentRequest>();
             CreateMap<AdminCreateUserBaseDto, CreateParentRequest>();
-            #endregion
 
-            #region Teacher Mappings
-            // View mappings
-            CreateMap<CreateTeacherDto, Teacher>()
+            CreateMap<AdminCreateUserBaseDto, RegisterRequest>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
+                .ForMember(dest => dest.ContactInfo, opt => opt.MapFrom(src => src.ContactInfo))
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender))
+                .ForMember(dest => dest.BirthDay, opt => opt.MapFrom(src => src.BirthDay))
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role)).IgnoreUnmapped();
+
+      
+        #endregion
+
+        #region Teacher Mappings
+        // View mappings
+        CreateMap<CreateTeacherDto, Teacher>()
                 .ForMember(dest => dest.SpecializedCurricula, opt => opt.Ignore()); // Will be handled in service
 
             CreateMap<UpdateTeacherDto, Teacher>()

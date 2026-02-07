@@ -16,6 +16,7 @@ using Domain.Wrappers;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Services
 {
@@ -112,37 +113,61 @@ namespace Application.Services
         }
 
         //create bulk users
-        public async Task<ServiceResult<List<object>>> BulkCreateUsersAsync(
-            BulkCreateUsersRequest request
-        )
+        //public async Task<ServiceResult<List<object>>> BulkCreateUsersAsync(
+        //    BulkCreateUsersRequest request
+        //)
+        //{
+        //    var result = new List<object>();
+
+        //    foreach (var user in request.Users)
+        //    {
+        //        ServiceResult<string> createResult;
+
+        //        switch (request.UserType.ToLower())
+        //        {
+        //            case "teacher":
+        //                var teacherRequest = _mapper.Map<CreateTeacherRequest>(user);
+        //                createResult = await CreateTeacherAsync(teacherRequest);
+        //                break;
+
+        //            case "student":
+        //                var studentRequest = _mapper.Map<CreateStudentRequest>(user);
+        //                createResult = await CreateStudentAsync(studentRequest);
+        //                break;
+
+        //            case "parent":
+        //                var parentRequest = _mapper.Map<CreateParentRequest>(user);
+        //                createResult = await CreateParentAsync(parentRequest);
+        //                break;
+
+        //            default:
+        //                createResult = ServiceResult<string>.Fail("Invalid user type");
+        //                break;
+        //        }
+
+        //        result.Add(
+        //            new
+        //            {
+        //                user.Email,
+        //                Status = createResult.Success ? "Success" : "Failed",
+        //                Message = createResult.Message,
+        //            }
+        //        );
+        //    }
+
+        //    return ServiceResult<List<object>>.Ok(result);
+        //}
+
+        public async Task<ServiceResult<List<object>>> BulkCreateUsersAsync(BulkCreateUsersRequest request)
         {
             var result = new List<object>();
 
             foreach (var user in request.Users)
             {
-                ServiceResult<string> createResult;
+                ServiceResult<AuthResponse> createResult;
 
-                switch (request.UserType.ToLower())
-                {
-                    case "teacher":
-                        var teacherRequest = _mapper.Map<CreateTeacherRequest>(user);
-                        createResult = await CreateTeacherAsync(teacherRequest);
-                        break;
-
-                    case "student":
-                        var studentRequest = _mapper.Map<CreateStudentRequest>(user);
-                        createResult = await CreateStudentAsync(studentRequest);
-                        break;
-
-                    case "parent":
-                        var parentRequest = _mapper.Map<CreateParentRequest>(user);
-                        createResult = await CreateParentAsync(parentRequest);
-                        break;
-
-                    default:
-                        createResult = ServiceResult<string>.Fail("Invalid user type");
-                        break;
-                }
+                var Request = _mapper.Map<RegisterRequest>(user);
+                createResult = await RegisterAsync(Request);
 
                 result.Add(
                     new
@@ -156,11 +181,55 @@ namespace Application.Services
 
             return ServiceResult<List<object>>.Ok(result);
         }
+        public static string GenerateRandomEmail(string userId, string role, string fullName)
+        {
+            // Use userId hash or create new random
+            var random = new Random(userId?.GetHashCode() ?? Guid.NewGuid().GetHashCode());
 
+            // Get name part
+            string namePart = "user";
+            if (!string.IsNullOrWhiteSpace(fullName))
+            {
+                var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length > 0)
+                {
+                    namePart = parts[0].ToLower();
+                }
+            }
+
+            // Clean name (letters only)
+            namePart = new string(namePart.Where(char.IsLetter).Take(8).ToArray());
+
+            // Add random numbers
+            int randomNum = random.Next(100, 99999);
+
+            // Get domain
+            string domain = role?.ToLower() switch
+            {
+                "admin" => "admin.acc",
+                "teacher" => "teacher.acc",
+                "student" => "student.acc",
+                "parent" => "parent.acc",
+                _ => "user.acc"
+            };
+
+            return $"{namePart}{randomNum}@{domain}";
+        }
         public async Task<ServiceResult<AuthResponse>> RegisterAsync(RegisterRequest request)
         {
-            if (request.Password != request.ConfirmPassword)
-                return ServiceResult<AuthResponse>.Fail("Passwords do not match.");
+            if (request.Password != null || request.ConfirmPassword != null)
+            {
+                if (request.Password == null || request.ConfirmPassword == null)
+                    return ServiceResult<AuthResponse>.Fail("Both password fields are required.");
+
+                if (request.Password != request.ConfirmPassword)
+                    return ServiceResult<AuthResponse>.Fail("Passwords do not match.");
+            }
+            else
+            {
+                request.Password = GenerateStrongPassword();
+                request.ConfirmPassword = request.Password;
+            }
 
             var existingUser = await _userRepo.GetByEmailAsync(request.Email);
             if (existingUser != null)
@@ -176,13 +245,21 @@ namespace Application.Services
 
             int age = CalculateAge(request.BirthDay);
 
+       
+
             var user = _mapper.Map<AppUser>(request);
             user.Id = Guid.NewGuid().ToString();
             user.EmailConfirmed = false;
             user.PendingRole = role;
-            user.ConfirmationNumber = GenerateConfirmationNumber();
-            user.EmailConfirmationToken = GenerateEmailToken();
-            user.ConfirmationTokenExpiry = DateTime.Now.AddHours(24);
+
+            if (user.Email == null || user.Email.IsNullOrEmpty())
+            {
+                user.Email = GenerateRandomEmail(userId: user.Id,role: user.PendingRole,fullName: user.FullName);
+            }
+           
+            //user.ConfirmationNumber = GenerateConfirmationNumber();
+            //user.EmailConfirmationToken = GenerateEmailToken();
+            //user.ConfirmationTokenExpiry = DateTime.Now.AddHours(24);
             user.Age = age;
 
             var result = await _userRepo.CreateAsync(user, request.Password);
@@ -192,16 +269,25 @@ namespace Application.Services
                 );
 
             // Send email WITHOUT temp password for self-registration
-            await SendConfirmationEmail(user);
+            //await SendConfirmationEmail(user);
+
+            var ConfirmEmailRequest = new ConfirmEmailRequest 
+            {
+                Email = user.Email,
+                UserId = user.Id,
+            };
+
+            //skip email confirmation proccess
+            await ConfirmEmailAsync(ConfirmEmailRequest);
 
             return ServiceResult<AuthResponse>.Ok(
                 new AuthResponse
                 {
                     UserId = user.Id,
                     Email = user.Email!,
-                    RequiresConfirmation = true,
+                    RequiresConfirmation = false, // we skip confirmation
                 },
-                "Registration successful. Please confirm your email."
+                "Registration is successful."
             );
         }
 
@@ -230,13 +316,11 @@ namespace Application.Services
         {
             AppUser? user = null;
 
-            if (!string.IsNullOrEmpty(request.Token) && !string.IsNullOrEmpty(request.UserId))
+            if (!string.IsNullOrEmpty(request.UserId))
                 user = await _userRepo.GetByIdAsync(request.UserId);
-            else if (
-                !string.IsNullOrEmpty(request.ConfirmationNumber)
-                && !string.IsNullOrEmpty(request.Email)
+            else if ( !string.IsNullOrEmpty(request.Email)
             )
-                user = await _userRepo.GetByEmailAsync(request.Email);
+            user = await _userRepo.GetByEmailAsync(request.Email!);
 
             if (user == null)
                 return ServiceResult<string>.Fail("User not found.");
@@ -247,17 +331,17 @@ namespace Application.Services
             if (user.ConfirmationTokenExpiry < DateTime.Now)
                 return ServiceResult<string>.Fail("Confirmation expired.");
 
-            if (
-                user.EmailConfirmationToken != request.Token
-                && user.ConfirmationNumber != request.ConfirmationNumber
-            )
-                return ServiceResult<string>.Fail("Invalid confirmation data.");
+            //if (
+            //    user.EmailConfirmationToken != request.Token
+            //    && user.ConfirmationNumber != request.ConfirmationNumber
+            //)
+            //return ServiceResult<string>.Fail("Invalid confirmation data.");
 
             // ✅ CONFIRM EMAIL
             user.EmailConfirmed = true;
-            user.ConfirmationNumber = null;
-            user.EmailConfirmationToken = null;
-            user.ConfirmationTokenExpiry = null;
+            //user.ConfirmationNumber = null;
+            //user.EmailConfirmationToken = null;
+            //user.ConfirmationTokenExpiry = null;
 
             // ✅ ASSIGN ROLE
             var role = user.PendingRole!;
@@ -331,29 +415,29 @@ namespace Application.Services
             }
         }
 
-        public async Task<ServiceResult<string>> ResendConfirmationAsync(
-            ResendConfirmationRequest request
-        )
-        {
-            var user = await _userRepo.GetByEmailAsync(request.Email);
-            if (user == null)
-                return ServiceResult<string>.Fail("User not found.");
+        //public async Task<ServiceResult<string>> ResendConfirmationAsync(
+        //    ResendConfirmationRequest request
+        //)
+        //{
+        //    var user = await _userRepo.GetByEmailAsync(request.Email);
+        //    if (user == null)
+        //        return ServiceResult<string>.Fail("User not found.");
 
-            if (user.EmailConfirmed)
-                return ServiceResult<string>.Fail("Email already confirmed.");
+        //    if (user.EmailConfirmed)
+        //        return ServiceResult<string>.Fail("Email already confirmed.");
 
-            user.ConfirmationNumber = GenerateConfirmationNumber();
-            user.EmailConfirmationToken = GenerateEmailToken();
-            user.ConfirmationTokenExpiry = DateTime.Now.AddHours(24);
+        //    user.ConfirmationNumber = GenerateConfirmationNumber();
+        //    user.EmailConfirmationToken = GenerateEmailToken();
+        //    user.ConfirmationTokenExpiry = DateTime.Now.AddHours(24);
 
-            await _userRepo.UpdateAsync(user);
+        //    await _userRepo.UpdateAsync(user);
 
-            // SIMPLE: Always send WITHOUT temp password on resend
-            // If user lost password, they should use "Forgot Password"
-            await SendConfirmationEmail(user); // Send without password
+        //    // SIMPLE: Always send WITHOUT temp password on resend
+        //    // If user lost password, they should use "Forgot Password"
+        //    await SendConfirmationEmail(user); // Send without password
 
-            return ServiceResult<string>.Ok("Confirmation email resent.");
-        }
+        //    return ServiceResult<string>.Ok("Confirmation email resent.");
+        //}
 
         public async Task<ServiceResult<AuthResponse>> LoginAsync(LoginRequest request)
         {
@@ -834,78 +918,78 @@ namespace Application.Services
             return ServiceResult<AuthResponse>.Ok(response, "Profile photo uploaded");
         }
 
-        private async Task SendConfirmationEmail(AppUser user, string? tempPassword = null)
-        {
-            var token = UrlEncoder.Default.Encode(user.EmailConfirmationToken!);
-            var link =
-                $"{_config["App:BaseUrl"]}/api/authentication/confirm-email?token={token}&userId={user.Id}";
+        //private async Task SendConfirmationEmail(AppUser user, string? tempPassword = null)
+        //{
+        //    var token = UrlEncoder.Default.Encode(user.EmailConfirmationToken!);
+        //    var link =
+        //        $"{_config["App:BaseUrl"]}/api/authentication/confirm-email?token={token}&userId={user.Id}";
 
-            string body;
+        //    string body;
 
-            if (tempPassword != null)
-            {
-                // Email for admin-created users (includes temp password)
-                body =
-                    $@"
-            <div style='font-family:Arial; max-width:600px; margin:0 auto; padding:20px; border:1px solid #ddd; border-radius:5px;'>
-                <h2 style='color:#333;'>Account Created by Administrator</h2>
-                <p>Your account has been created by an administrator. Here are your login details:</p>
-                <div style='background-color:#f8f9fa; padding:15px; border-radius:5px; margin:15px 0;'>
-                    <p><strong>Email:</strong> {user.Email}</p>
-                    <p><strong>Temporary Password:</strong> <code style='background:#e9ecef; padding:2px 6px; border-radius:3px;'>{tempPassword}</code></p>
-                    <p><small style='color:#6c757d;'>You will be prompted to change this password on first login.</small></p>
-                </div>
-                <p>Your confirmation code:</p>
-                <h3 style='background:#0d6efd; color:white; padding:10px; border-radius:5px; text-align:center;'>{user.ConfirmationNumber}</h3>
-                <p>Click the button below to confirm your email:</p>
-                <p>
-                    <a href='{link}' style='padding:12px 24px; background:#0d6efd; color:#fff; text-decoration:none; border-radius:5px; display:inline-block;'>
-                        Confirm Email
-                    </a>
-                </p>
-                <p style='color:gray; font-size:0.9em;'>This confirmation link expires in 24 hours.</p>
-                <hr style='margin:20px 0; border-color:#eee;' />
-                <p style='font-size:0.9em; color:#666;'>
-                    If you did not request this account, please contact the administrator.
-                </p>
-            </div>";
-            }
-            else
-            {
-                // Email for self-registration (only confirmation number)
-                body =
-                    $@"
-            <div style='font-family:Arial; max-width:600px; margin:0 auto; padding:20px; border:1px solid #ddd; border-radius:5px;'>
-                <h2 style='color:#333;'>Email Confirmation</h2>
-                <p>Thank you for registering! Your confirmation code is:</p>
-                <h3 style='background:#0d6efd; color:white; padding:10px; border-radius:5px; text-align:center;'>{user.ConfirmationNumber}</h3>
-                <p>Click the button below to confirm your email:</p>
-                <p>
-                    <a href='{link}' style='padding:12px 24px; background:#0d6efd; color:#fff; text-decoration:none; border-radius:5px; display:inline-block;'>
-                        Confirm Email
-                    </a>
-                </p>
-                <p style='color:gray; font-size:0.9em;'>This confirmation link expires in 24 hours.</p>
-            </div>";
-            }
+        //    if (tempPassword != null)
+        //    {
+        //        // Email for admin-created users (includes temp password)
+        //        body =
+        //            $@"
+        //    <div style='font-family:Arial; max-width:600px; margin:0 auto; padding:20px; border:1px solid #ddd; border-radius:5px;'>
+        //        <h2 style='color:#333;'>Account Created by Administrator</h2>
+        //        <p>Your account has been created by an administrator. Here are your login details:</p>
+        //        <div style='background-color:#f8f9fa; padding:15px; border-radius:5px; margin:15px 0;'>
+        //            <p><strong>Email:</strong> {user.Email}</p>
+        //            <p><strong>Temporary Password:</strong> <code style='background:#e9ecef; padding:2px 6px; border-radius:3px;'>{tempPassword}</code></p>
+        //            <p><small style='color:#6c757d;'>You will be prompted to change this password on first login.</small></p>
+        //        </div>
+        //        <p>Your confirmation code:</p>
+        //        <h3 style='background:#0d6efd; color:white; padding:10px; border-radius:5px; text-align:center;'>{user.ConfirmationNumber}</h3>
+        //        <p>Click the button below to confirm your email:</p>
+        //        <p>
+        //            <a href='{link}' style='padding:12px 24px; background:#0d6efd; color:#fff; text-decoration:none; border-radius:5px; display:inline-block;'>
+        //                Confirm Email
+        //            </a>
+        //        </p>
+        //        <p style='color:gray; font-size:0.9em;'>This confirmation link expires in 24 hours.</p>
+        //        <hr style='margin:20px 0; border-color:#eee;' />
+        //        <p style='font-size:0.9em; color:#666;'>
+        //            If you did not request this account, please contact the administrator.
+        //        </p>
+        //    </div>";
+        //    }
+        //    else
+        //    {
+        //        // Email for self-registration (only confirmation number)
+        //        body =
+        //            $@"
+        //    <div style='font-family:Arial; max-width:600px; margin:0 auto; padding:20px; border:1px solid #ddd; border-radius:5px;'>
+        //        <h2 style='color:#333;'>Email Confirmation</h2>
+        //        <p>Thank you for registering! Your confirmation code is:</p>
+        //        <h3 style='background:#0d6efd; color:white; padding:10px; border-radius:5px; text-align:center;'>{user.ConfirmationNumber}</h3>
+        //        <p>Click the button below to confirm your email:</p>
+        //        <p>
+        //            <a href='{link}' style='padding:12px 24px; background:#0d6efd; color:#fff; text-decoration:none; border-radius:5px; display:inline-block;'>
+        //                Confirm Email
+        //            </a>
+        //        </p>
+        //        <p style='color:gray; font-size:0.9em;'>This confirmation link expires in 24 hours.</p>
+        //    </div>";
+        //    }
 
-            await _emailService.SendAsync(
-                user.Email!,
-                tempPassword != null ? "Your Account Has Been Created" : "Confirm Your Email",
-                body,
-                true
-            );
-        }
+        //    await _emailService.SendAsync(
+        //        user.Email!,
+        //        tempPassword != null ? "Your Account Has Been Created" : "Confirm Your Email",
+        //        body,
+        //        true
+        //    );
+        //}
 
-        private string GenerateConfirmationNumber() =>
-            Random.Shared.Next(100000, 999999).ToString();
+        //private string GenerateConfirmationNumber() =>
+        //    Random.Shared.Next(100000, 999999).ToString();
 
-        private string GenerateEmailToken() =>
-            Convert
-                .ToBase64String(Guid.NewGuid().ToByteArray())
-                .Replace("/", "_")
-                .Replace("+", "-")
-                .Replace("=", "");
+        //private string GenerateEmailToken() =>
+        //    Convert
+        //        .ToBase64String(Guid.NewGuid().ToByteArray())
+        //        .Replace("/", "_")
+        //        .Replace("+", "-")
+        //        .Replace("=", "");
 
         private async Task<Dictionary<string, string>> BuildRoleEntityIdMap(AppUser user)
         {
@@ -1067,9 +1151,9 @@ namespace Application.Services
             user.Id = Guid.NewGuid().ToString();
             user.EmailConfirmed = false;
             user.PendingRole = role;
-            user.ConfirmationNumber = GenerateConfirmationNumber();
-            user.EmailConfirmationToken = GenerateEmailToken();
-            user.ConfirmationTokenExpiry = DateTime.Now.AddHours(24);
+            //user.ConfirmationNumber = GenerateConfirmationNumber();
+            //user.EmailConfirmationToken = GenerateEmailToken();
+            //user.ConfirmationTokenExpiry = DateTime.Now.AddHours(24);
             user.Age = age;
 
             // 🔐 Temporary password (user will reset later)
@@ -1082,7 +1166,7 @@ namespace Application.Services
                 );
 
             // Send email with temp password for admin-created users
-            await SendConfirmationEmail(user, tempPassword);
+            //await SendConfirmationEmail(user, tempPassword);
 
             return ServiceResult<string>.Ok(
                 "Account created successfully. Confirmation email with temporary password sent."
@@ -1114,6 +1198,11 @@ namespace Application.Services
 
             // Shuffle the password
             return new string(password.OrderBy(c => random.Next()).ToArray());
+        }
+
+        public Task<ServiceResult<string>> ResendConfirmationAsync(ResendConfirmationRequest request)
+        {
+            throw new NotImplementedException();
         }
     }
 }

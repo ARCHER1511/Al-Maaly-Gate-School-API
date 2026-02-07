@@ -125,7 +125,7 @@ namespace Al_Maaly_Gate_School.Controllers
             [FromQuery] string userId
         )
         {
-            var request = new ConfirmEmailRequest { Token = token, UserId = userId };
+            var request = new ConfirmEmailRequest { UserId = userId };
 
             var result = await _authService.ConfirmEmailAsync(request);
 

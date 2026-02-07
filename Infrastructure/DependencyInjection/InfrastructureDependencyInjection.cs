@@ -52,7 +52,12 @@ namespace Infrastructure.DependencyInjection
         {
             // DbContext
             services.AddDbContext<AlMaalyGateSchoolContext>(options =>
-                options.UseSqlServer(config.GetConnectionString("DefaultConnection"))
+
+                options.UseSqlServer(config.GetConnectionString("DefaultConnection"),
+                sqlOptions => sqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
+
+                )
+                
             );
             return services;
         }
