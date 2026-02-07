@@ -6,6 +6,178 @@
     <RootNamespace>Al_Maaly_Gate_School</RootNamespace>
     <UserSecretsId>4836cb4e-b46c-492d-b639-ef8b2a9a6580</UserSecretsId>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Fonts\arabic-bold.ttf" />
+    <None Remove="Fonts\arabic-regular.ttf" />
+    <None Remove="Fonts\arial.ttf" />
+    <None Remove="Fonts\ARIALBD 1.TTF" />
+    <None Remove="Fonts\arialbd.ttf" />
+    <None Remove="Fonts\ARIALBI 1.TTF" />
+    <None Remove="Fonts\ARIALBI.TTF" />
+    <None Remove="Fonts\ARIALBLACKITALIC.TTF" />
+    <None Remove="Fonts\ArialCE.ttf" />
+    <None Remove="Fonts\arialceb.ttf" />
+    <None Remove="Fonts\ArialCEBoldItalic.ttf" />
+    <None Remove="Fonts\ArialCEItalic.ttf" />
+    <None Remove="Fonts\ArialCEMTBlack.ttf" />
+    <None Remove="Fonts\ARIALI 1.TTF" />
+    <None Remove="Fonts\ARIALI.TTF" />
+    <None Remove="Fonts\ARIALLGT.TTF" />
+    <None Remove="Fonts\ARIALLGTITL.TTF" />
+    <None Remove="Fonts\ArialMdm.ttf" />
+    <None Remove="Fonts\ArialMdmItl.ttf" />
+    <None Remove="Fonts\ARIALN.TTF" />
+    <None Remove="Fonts\ARIALNB.TTF" />
+    <None Remove="Fonts\ARIALNBI.TTF" />
+    <None Remove="Fonts\ARIALNI.TTF" />
+    <None Remove="Fonts\ARIBLK.TTF" />
+    <None Remove="Fonts\cour.ttf" />
+    <None Remove="Fonts\courbd.ttf" />
+    <None Remove="Fonts\courbi.ttf" />
+    <None Remove="Fonts\couri.ttf" />
+    <None Remove="Fonts\DejaVuSans-Bold.ttf" />
+    <None Remove="Fonts\DejaVuSans.ttf" />
+    <None Remove="Fonts\LiberationSans-Bold.ttf" />
+    <None Remove="Fonts\LiberationSans-Regular.ttf" />
+    <None Remove="Fonts\NotoSansArabic-Bold.ttf" />
+    <None Remove="Fonts\NotoSansArabic-Regular.ttf" />
+    <None Remove="Fonts\times.ttf" />
+    <None Remove="Fonts\timesbd.ttf" />
+    <None Remove="Fonts\timesbi.ttf" />
+    <None Remove="Fonts\timesi.ttf" />
+    <None Remove="Fonts\verdana.ttf" />
+    <None Remove="Fonts\verdanab.ttf" />
+    <None Remove="Fonts\verdanai.ttf" />
+    <None Remove="Fonts\verdanaz.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Fonts\arabic-bold.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\arabic-regular.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\arial.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ARIALBD 1.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\arialbd.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ARIALBI 1.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ARIALBI.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ARIALBLACKITALIC.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ArialCE.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\arialceb.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ArialCEBoldItalic.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ArialCEItalic.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ArialCEMTBlack.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ARIALI 1.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ARIALI.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ARIALLGT.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ARIALLGTITL.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ArialMdm.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ArialMdmItl.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ARIALN.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ARIALNB.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ARIALNBI.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ARIALNI.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\ARIBLK.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\cour.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\courbd.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\courbi.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\couri.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\DejaVuSans-Bold.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\DejaVuSans.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\LiberationSans-Bold.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\LiberationSans-Regular.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\NotoSansArabic-Bold.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\NotoSansArabic-Regular.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\times.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\timesbd.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\timesbi.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\timesi.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\verdana.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\verdanab.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\verdanai.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fonts\verdanaz.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
@@ -27,18 +199,6 @@
     <Folder Include="wwwroot\uploads\Parent\pdf\" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Fonts\arial.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Fonts\ARIALBD 1.TTF">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Fonts\LiberationSans-Bold.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Fonts\LiberationSans-Regular.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
 	<None Update="Templates\*.pdf">
 		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
