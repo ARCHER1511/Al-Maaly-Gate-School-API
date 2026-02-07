@@ -4,6 +4,7 @@ using Application.SignalR;
 using Common.Extensions;
 using Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.OpenApi.Models;
 using OfficeOpenXml;
@@ -16,20 +17,19 @@ namespace Al_Maaly_Gate_School
 {
     public class Program
     {
-        public void Main() { }
+      
         public static async Task Main(string[] args)
         {
-            QuestPDF.Settings.License = LicenseType.Community;
-
-            if (GlobalFontSettings.FontResolver == null)
-            {
-                GlobalFontSettings.FontResolver = new FontResolver();
-            }
             var builder = WebApplication.CreateBuilder(args);
+
+            //license
+            QuestPDF.Settings.License = LicenseType.Community;
+            //font resolver
+            GlobalFontSettings.FontResolver = new FontResolver();
+
             var configuration = builder.Configuration;
 
             // Add services to the container.
-
             builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddDatabase(builder.Configuration);
@@ -121,6 +121,6 @@ namespace Al_Maaly_Gate_School
 
             app.Run();
         }
-
+     
     }
 }

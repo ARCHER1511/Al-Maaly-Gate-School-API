@@ -1,4 +1,5 @@
 ﻿using BidiReshapeSharp;
+using System.Linq;
 
 namespace Application.Helpers
 {
@@ -9,8 +10,16 @@ namespace Application.Helpers
             if (string.IsNullOrWhiteSpace(text))
                 return text;
 
-            // Call the static method directly on BidiReshape
+            // Only process if Arabic exists
+            if (!ContainsArabic(text))
+                return text;
+
             return BidiReshape.ProcessString(text);
+        }
+
+        private static bool ContainsArabic(string text)
+        {
+            return text.Any(c => c >= 0x0600 && c <= 0x06FF);
         }
     }
 }
