@@ -116,28 +116,76 @@ using PdfSharp.Fonts;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 public class FontResolver : IFontResolver
 {
+    // First, check if a font file exists
+    private bool FontExists(string path)
+    {
+        try
+        {
+            return File.Exists(path);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    // Map font faces to actual font files with Arabic support
     private readonly Dictionary<string, string> _fontMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
-        { "Arial", "LiberationSans-Regular" },
-        { "Arial,Bold", "LiberationSans-Bold" },
-        { "Arial,Italic", "LiberationSans-Italic" },
-        { "Arial,BoldItalic", "LiberationSans-BoldItalic" },
-        { "Helvetica", "LiberationSans-Regular" },
-        { "Helvetica,Bold", "LiberationSans-Bold" },
-        { "Helvetica,Italic", "LiberationSans-Italic" },
-        { "Helvetica,BoldItalic", "LiberationSans-BoldItalic" },
-        { "Times New Roman", "LiberationSerif-Regular" },
-        { "Times", "LiberationSerif-Regular" },
-        { "Courier New", "LiberationMono-Regular" },
-        { "Courier", "LiberationMono-Regular" }
+        // Arabic fonts - highest priority
+        { "NotoSansArabic", "NotoSansArabic-Regular" },
+        { "NotoSansArabic,Bold", "NotoSansArabic-Bold" },
+        { "NotoSansArabic,Italic", "NotoSansArabic-Regular" }, // Arabic typically doesn't use italics
+        { "NotoSansArabic,BoldItalic", "NotoSansArabic-Bold" },
+
+        { "KacstOne", "KacstOne" },
+        { "KacstOne,Bold", "KacstOne" },
+
+        { "DejaVuSans", "DejaVuSans" },
+        { "DejaVuSans,Bold", "DejaVuSans-Bold" },
+        { "DejaVuSans,Italic", "DejaVuSans-Oblique" },
+        { "DejaVuSans,BoldItalic", "DejaVuSans-BoldOblique" },
+        
+        // Latin fonts as fallback
+        { "Arial", "DejaVuSans" }, // DejaVu has better Arabic support than Liberation
+        { "Arial,Bold", "DejaVuSans-Bold" },
+        { "Arial,Italic", "DejaVuSans-Oblique" },
+        { "Arial,BoldItalic", "DejaVuSans-BoldOblique" },
+
+        { "Times New Roman", "DejaVuSerif" },
+        { "Times", "DejaVuSerif" },
+        { "Courier New", "DejaVuSansMono" },
+        { "Courier", "DejaVuSansMono" }
     };
 
     public FontResolverInfo ResolveTypeface(string familyName, bool isBold, bool isItalic)
     {
-        string key = familyName;
+        // Log for debugging
+        Console.WriteLine($"ResolveTypeface called: {familyName}, Bold: {isBold}, Italic: {isItalic}");
+
+        // Check if it's likely Arabic text (based on font name hinting)
+        bool shouldUseArabicFont = familyName.Contains("Arabic", StringComparison.OrdinalIgnoreCase) ||
+                                  familyName.Equals("HEADER", StringComparison.OrdinalIgnoreCase) ||
+                                  familyName.Equals("TEXT", StringComparison.OrdinalIgnoreCase) ||
+                                  familyName.Contains("Noto", StringComparison.OrdinalIgnoreCase);
+
+        string key;
+
+        if (shouldUseArabicFont)
+        {
+            // Use Arabic font
+            key = "NotoSansArabic";
+        }
+        else
+        {
+            // Use the requested font family
+            key = familyName;
+        }
+
         if (isBold && isItalic)
             key += ",BoldItalic";
         else if (isBold)
@@ -145,43 +193,83 @@ public class FontResolver : IFontResolver
         else if (isItalic)
             key += ",Italic";
 
+        // Try to get from mapping
         if (_fontMapping.TryGetValue(key, out string? fontName))
         {
+            Console.WriteLine($"Mapped {key} to {fontName}");
             return new FontResolverInfo(fontName);
         }
 
-        // Default to Liberation Sans
-        string defaultFont = "LiberationSans-Regular";
-        if (isBold && isItalic)
-            defaultFont = "LiberationSans-BoldItalic";
-        else if (isBold)
-            defaultFont = "LiberationSans-Bold";
-        else if (isItalic)
-            defaultFont = "LiberationSans-Italic";
-
-        return new FontResolverInfo(defaultFont);
+        // Default to Arabic font for better Unicode support
+        Console.WriteLine($"Using default Arabic font for: {familyName}");
+        return new FontResolverInfo("NotoSansArabic");
     }
 
     public byte[] GetFont(string faceName)
     {
-        // Try different font locations
-        string[] possiblePaths = {
-            $"/usr/share/fonts/truetype/liberation/{faceName}.ttf",
-            $"/usr/share/fonts/truetype/liberation2/{faceName}.ttf",
-            $"/usr/share/fonts/truetype/dejavu/{faceName}.ttf",
-            $"/usr/share/fonts/truetype/msttcorefonts/{faceName}.ttf",
-            $"/usr/share/fonts/opentype/urw-base35/{faceName}.otf"
-        };
+        Console.WriteLine($"GetFont called for: {faceName}");
 
-        foreach (var path in possiblePaths)
+        // Define all possible font paths to check
+        var fontPaths = new List<string>();
+
+        // Add Arabic font paths first (highest priority)
+        fontPaths.AddRange(new[]
         {
-            if (File.Exists(path))
+            // Noto Sans Arabic (excellent Arabic support)
+            $"/usr/share/fonts/truetype/noto/NotoSansArabic-Regular.ttf",
+            $"/usr/share/fonts/truetype/noto/NotoSansArabic-Bold.ttf",
+            $"/usr/local/share/fonts/NotoSansArabic-Regular.ttf",
+            
+            // Kacst Arabic fonts
+            $"/usr/share/fonts/truetype/kacst/KacstOne.ttf",
+            $"/usr/share/fonts/truetype/kacst-one/KacstOne.ttf",
+            
+            // DejaVu fonts (good Arabic support)
+            $"/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            $"/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+            $"/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf",
+            $"/usr/share/fonts/truetype/dejavu/DejaVuSans-BoldOblique.ttf",
+            $"/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf",
+            $"/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
+            
+            // Arabic Eyes fonts
+            $"/usr/share/fonts/truetype/arabeyes/ae_AlMateen.ttf",
+            $"/usr/share/fonts/truetype/arabeyes/ae_AlHor.ttf",
+            
+            // Liberation fonts (fallback, poor Arabic support)
+            $"/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+            $"/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+            $"/usr/share/fonts/truetype/liberation/LiberationSans-Italic.ttf",
+            $"/usr/share/fonts/truetype/liberation/LiberationSans-BoldItalic.ttf"
+        });
+
+        // Also check for exact faceName matches
+        foreach (var path in fontPaths)
+        {
+            string fileName = Path.GetFileNameWithoutExtension(path);
+            if (fileName.Equals(faceName, StringComparison.OrdinalIgnoreCase) ||
+                path.Contains(faceName, StringComparison.OrdinalIgnoreCase))
             {
+                if (FontExists(path))
+                {
+                    Console.WriteLine($"Found font: {path}");
+                    return File.ReadAllBytes(path);
+                }
+            }
+        }
+
+        // Fallback: Try to find any font file that contains the faceName
+        foreach (var path in fontPaths)
+        {
+            if (FontExists(path))
+            {
+                Console.WriteLine($"Using fallback font: {path}");
                 return File.ReadAllBytes(path);
             }
         }
 
-        // If not found, return null to use default
+        // Last resort: Try to use embedded resource or return null
+        Console.WriteLine($"WARNING: No font found for {faceName}");
         return null!;
     }
 }
